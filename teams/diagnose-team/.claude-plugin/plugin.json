@@ -1,0 +1,27 @@
+{
+  "name": "diagnose-team",
+  "version": "1.0.0",
+  "description": "A 5-agent diagnostic team for when normal approaches fail. Handles stubborn bugs and implementation mismatches by systematically closing the gap between intent and reality. Use when you've tried multiple times and it's still wrong, when behavior doesn't match expectations, or when the root cause is unclear.",
+  "author": {
+    "name": "Alexander Thompson"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/AlexanderStephenThompson/claude-customizations",
+  "keywords": [
+    "debugging",
+    "diagnosis",
+    "troubleshooting",
+    "multi-agent",
+    "root-cause-analysis",
+    "bug-fixing",
+    "intent-matching"
+  ],
+  "commands": "./commands/",
+  "agents": [
+    "./agents/clarifier.md",
+    "./agents/investigator.md",
+    "./agents/hypothesizer.md",
+    "./agents/resolver.md",
+    "./agents/validator.md"
+  ]
+}

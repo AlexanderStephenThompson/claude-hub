@@ -1,0 +1,18 @@
+{
+  "_instructions": "Rename this file (remove _ prefix). Document in SKILL.md > Assets table.",
+
+  "brand": {
+    "name": "Company Name",
+    "tagline": "Your tagline here"
+  },
+  "colors": {
+    "primary": "#2563eb",
+    "secondary": "#7c3aed",
+    "text": "#1f2937",
+    "background": "#ffffff"
+  },
+  "typography": {
+    "heading": "Inter, sans-serif",
+    "body": "Inter, sans-serif"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "refactor-team",
+  "version": "2.0.0",
+  "description": "A 7-agent refactoring team that explores, researches, tests, plans, challenges, executes, and verifies code improvements. Runs autonomously with gated decisions at planning and verification stages. Includes comprehensive skills for code quality, architecture, design, security, and documentation.",
+  "author": {
+    "name": "Alexander Thompson"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/alexanderthompson/refactor-team-plugin",
+  "keywords": [
+    "refactoring",
+    "code-quality",
+    "multi-agent",
+    "clean-code",
+    "automation",
+    "architecture",
+    "security",
+    "documentation"
+  ],
+  "commands": "./commands/",
+  "agents": [
+    "./agents/explorer.md",
+    "./agents/researcher.md",
+    "./agents/tester.md",
+    "./agents/planner.md",
+    "./agents/challenger.md",
+    "./agents/refactorer.md",
+    "./agents/verifier.md"
+  ]
+}
