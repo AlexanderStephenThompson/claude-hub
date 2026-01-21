@@ -1,61 +1,56 @@
 # Sync Guide for AI Assistants
 
-Instructions for syncing this repository with the local Claude Code installation.
+## Paths
+
+| Name | Path |
+|------|------|
+| Repository | `c:\Users\Alexa\Downloads\clawd\claude-customizations` |
+| Claude Home | `C:\Users\Alexa\.claude` |
+| GitHub | https://github.com/AlexanderStephenThompson/claude-hub |
 
 ---
 
-## Repository Info
+## Sync (Pull + Deploy)
 
-- **Repository**: `AlexanderStephenThompson/claude-hub`
-- **URL**: https://github.com/AlexanderStephenThompson/claude-hub
+When user says "sync" or "sync from GitHub":
+
+```bash
+# 1. Pull latest
+cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
+git pull
+
+# 2. Create directories if needed
+mkdir -p "C:\Users\Alexa\.claude\skills"
+mkdir -p "C:\Users\Alexa\.claude\agents"
+mkdir -p "C:\Users\Alexa\.claude\commands"
+
+# 3. Copy files
+cp -r skills/* "C:\Users\Alexa\.claude\skills/"
+cp agents/*.md "C:\Users\Alexa\.claude\agents/"
+cp commands/*.md "C:\Users\Alexa\.claude\commands/"
+```
 
 ---
 
-## Deployment Targets
+## Deploy Only
 
-| Source | Target | Method |
-|--------|--------|--------|
-| `skills/` | `~/.claude/skills/` | Copy |
-| `agents/` | `~/.claude/agents/` | Copy |
-| `commands/` | `~/.claude/commands/` | Copy |
-| `teams/` | Claude plugins | Marketplace install |
+When user says "deploy" (no git pull):
+
+```bash
+cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
+cp -r skills/* "C:\Users\Alexa\.claude\skills/"
+cp agents/*.md "C:\Users\Alexa\.claude\agents/"
+cp commands/*.md "C:\Users\Alexa\.claude\commands/"
+```
 
 ---
 
-## Common Tasks
+## Push to GitHub
 
-### Deploy to Local Claude
-
-```bash
-# Deploy skills, agents, and commands
-cp -r skills/* ~/.claude/skills/
-cp agents/*.md ~/.claude/agents/
-cp commands/*.md ~/.claude/commands/
-```
-
-### Install Teams via Marketplace
+When user says "push":
 
 ```bash
-# Add marketplace (one-time)
-claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
-
-# Install teams
-claude plugin install refactor-team
-claude plugin install implement-team
-claude plugin install diagnose-team
-```
-
-### Update Teams
-
-```bash
-claude plugin update refactor-team
-claude plugin update implement-team
-claude plugin update diagnose-team
-```
-
-### Push Changes to GitHub
-
-```bash
+cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
 git add -A
 git commit -m "description of changes"
 git push
@@ -63,58 +58,35 @@ git push
 
 ---
 
-## Repository Structure
+## Update Plugins
 
-```
-claude-hub/
-├── .claude-plugin/
-│   └── marketplace.json    # Plugin marketplace config
-├── agents/                 # Standalone agents
-├── commands/               # Slash commands
-├── skills/                 # Shared skills (single source of truth)
-│   ├── architecture/
-│   ├── code-quality/
-│   ├── code-standards/
-│   ├── design/
-│   ├── documentation/
-│   ├── security/
-│   └── web-*/              # Web-specific skills
-├── teams/                  # Plugin teams
-│   ├── refactor-team/
-│   ├── implement-team/
-│   └── diagnose-team/
-├── templates/              # Boilerplate for new skills
-├── DEPLOYMENT.md
-├── README.md
-└── SYNC-GUIDE.md
+When user says "update plugins":
+
+```bash
+claude plugin update refactor-team
+claude plugin update implement-team
+claude plugin update diagnose-team
 ```
 
 ---
 
-## Version Tracking
+## Deployment Map
 
-| Component | Location | Version |
-|-----------|----------|---------|
-| Marketplace | `.claude-plugin/marketplace.json` | 1.0.0 |
-| refactor-team | `teams/refactor-team/.claude-plugin/plugin.json` | 2.0.0 |
-| implement-team | `teams/implement-team/.claude-plugin/plugin.json` | 1.0.0 |
-| diagnose-team | `teams/diagnose-team/.claude-plugin/plugin.json` | 1.0.0 |
+| Source | Target |
+|--------|--------|
+| `skills/` | `C:\Users\Alexa\.claude\skills\` |
+| `agents/` | `C:\Users\Alexa\.claude\agents\` |
+| `commands/` | `C:\Users\Alexa\.claude\commands\` |
+| `teams/` | Via marketplace (plugin install) |
 
 ---
 
-## Troubleshooting
+## Verify
 
-### Authentication Issues
-
-```bash
-gh auth status
-gh auth login
-```
-
-### Check GitHub Connection
+After sync, confirm files exist:
 
 ```bash
-git remote -v
-git fetch
-git status
+ls "C:\Users\Alexa\.claude\skills/"
+ls "C:\Users\Alexa\.claude\agents/"
+ls "C:\Users\Alexa\.claude\commands/"
 ```
