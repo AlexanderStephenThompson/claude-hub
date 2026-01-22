@@ -174,7 +174,7 @@ Both types benefit from the same workflow—closing the intent-reality gap.
 
 ```bash
 # Add marketplace (one-time)
-claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-plugins
+claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
 
 # Install teams
 claude plugin install refactor-team

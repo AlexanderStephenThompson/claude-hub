@@ -29,13 +29,13 @@ Explorer → Researcher → Tester → Planner → Challenger → Refactorer →
 
 ```bash
 # Load for a single session (from parent directory)
-claude --plugin-dir ./refactor-team-plugin
+claude --plugin-dir ./refactor-team
 
 # Or with full path
-claude --plugin-dir "path/to/refactor-team-plugin"
+claude --plugin-dir "path/to/refactor-team"
 
 # Validate plugin structure
-claude plugin validate ./refactor-team-plugin
+claude plugin validate ./refactor-team
 ```
 
 ## Quick Start
@@ -183,7 +183,7 @@ Executes the roadmap in three ordered phases:
 ## File Structure
 
 ```
-refactor-team-plugin/
+refactor-team/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin manifest (v2.0.0)
 ├── agents/
