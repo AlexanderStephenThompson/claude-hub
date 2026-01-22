@@ -1,108 +1,87 @@
 # CLAUDE.md
 
-## What This Repository Is
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-This is **claude-hub**, a personal collection of Claude Code customizations including:
-- **Teams**: Multi-agent plugin workflows (refactor-team, implement-team, diagnose-team)
-- **Skills**: Shared standards and references used by all teams
-- **Agents**: Standalone agents (improvement-auditor, codebase-scout)
-- **Commands**: Standalone slash commands (/commit, /audit)
+## Repository Overview
 
-## Key Paths
+**claude-hub** is a Claude Code customizations repository containing multi-agent plugin teams, shared skills, standalone agents, and commands.
 
-| Name | Path |
-|------|------|
-| This Repository | `c:\Users\Alexa\Downloads\clawd\claude-customizations` |
-| Claude Home | `C:\Users\Alexa\.claude` |
-| GitHub | https://github.com/AlexanderStephenThompson/claude-hub |
+| Component | Location | Deployment |
+|-----------|----------|------------|
+| Teams | `teams/` | Marketplace plugins |
+| Skills | `skills/` | `~/.claude/skills/` |
+| Agents | `agents/` | `~/.claude/agents/` |
+| Commands | `commands/` | `~/.claude/commands/` |
 
-## Structure
+**GitHub:** https://github.com/AlexanderStephenThompson/claude-hub
+
+## Architecture
 
 ```
-claude-customizations/
-├── teams/           # Multi-agent plugins (installed via marketplace)
-│   ├── refactor-team/   # 7-agent refactoring workflow
-│   ├── implement-team/  # 5-agent TDD implementation
-│   └── diagnose-team/   # 5-agent diagnostic workflow
-├── skills/          # Shared standards (single source of truth)
-├── agents/          # Standalone agents
-├── commands/        # Standalone slash commands
-└── templates/       # Boilerplate for new skills
+Source Repository                    Deployed Location
+──────────────────                   ─────────────────
+skills/           ─────────────────► ~/.claude/skills/
+agents/           ─────────────────► ~/.claude/agents/
+commands/         ─────────────────► ~/.claude/commands/
+teams/            ─────────────────► plugins/ (via marketplace)
 ```
 
-## Common Tasks
+**Key principle:** Skills are the single source of truth. All teams reference shared skills from `~/.claude/skills/`, not embedded copies.
+
+### Multi-Agent Teams
+
+| Team | Agents | Workflow |
+|------|--------|----------|
+| refactor-team | 7 | Explorer → Researcher → Tester → Planner → Challenger → Refactorer → Verifier |
+| implement-team | 5 | Planner → Challenger → Implementor → Security → Refactorer |
+| diagnose-team | 5 | Clarifier → Investigator → Hypothesizer → Resolver → Validator |
+
+### Audit → Refactor Pipeline
+
+```
+/audit                    → Produces AUDIT-REPORT-[YYYY-MM-DD].md
+/refactor-team:refactor   → Finds and uses the audit report automatically
+```
+
+## Common Commands
 
 ### Sync from GitHub
-When user says "sync":
 ```bash
-cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
 git pull
 cp -r skills/* "C:\Users\Alexa\.claude\skills/"
 cp agents/*.md "C:\Users\Alexa\.claude\agents/"
 cp commands/*.md "C:\Users\Alexa\.claude\commands/"
 ```
 
-### Deploy Only (no git pull)
-When user says "deploy":
+### Deploy (no pull)
 ```bash
-cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
 cp -r skills/* "C:\Users\Alexa\.claude\skills/"
 cp agents/*.md "C:\Users\Alexa\.claude\agents/"
 cp commands/*.md "C:\Users\Alexa\.claude\commands/"
 ```
 
-### Push to GitHub
-When user says "push":
-```bash
-cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
-git add -A
-git commit -m "description of changes"
-git push
-```
-
-### Update Plugins After Changes
-After modifying team files, plugins must be reinstalled:
+### Update Plugins
+After modifying team files, reinstall plugins:
 ```bash
 claude plugin uninstall refactor-team && claude plugin install refactor-team
 claude plugin uninstall implement-team && claude plugin install implement-team
 claude plugin uninstall diagnose-team && claude plugin install diagnose-team
 ```
 
-Note: `claude plugin marketplace update` only updates the marketplace cache, not installed plugins.
+Note: `claude plugin marketplace update` updates the cache, not installed plugins.
 
-## Key Workflows
+## Development
 
-### Audit → Refactor Pipeline
-1. Run `/audit` to produce `AUDIT-REPORT-[YYYY-MM-DD].md`
-2. Run `/refactor-team:refactor` which finds and uses the audit report
-3. The refactor workflow has 8 steps with gated decisions at steps 5.1 and 7
+| Change Type | Edit Location | Then |
+|-------------|---------------|------|
+| Teams | `teams/<team>/` | Push + reinstall plugin |
+| Skills | `skills/<skill>/` | Deploy to `~/.claude/skills/` |
+| Agents | `agents/` | Deploy to `~/.claude/agents/` |
+| Commands | `commands/` | Deploy to `~/.claude/commands/` |
 
-### Team Agents
-- **refactor-team**: Explorer → Researcher → Tester → Planner → Challenger → Refactorer → Verifier
-- **implement-team**: Planner → Challenger → Implementor → Security → Refactorer
-- **diagnose-team**: Clarifier → Investigator → Hypothesizer → Resolver → Validator
+## File Conventions
 
-## Development Guidelines
-
-### Making Changes to Teams
-1. Edit files in `teams/<team-name>/`
-2. Push to GitHub
-3. Reinstall the plugin (uninstall + install)
-
-### Making Changes to Skills
-1. Edit files in `skills/<skill-name>/`
-2. Deploy: `cp -r skills/* "C:\Users\Alexa\.claude\skills/"`
-3. Changes apply immediately (no plugin reinstall needed)
-
-### Making Changes to Agents/Commands
-1. Edit files in `agents/` or `commands/`
-2. Deploy to `~/.claude/agents/` or `~/.claude/commands/`
-
-## File Naming Conventions
-
+- Commands: lowercase (`commit.md`, `audit.md`)
+- Agents: kebab-case (`improvement-auditor.md`)
+- Skills: `skills/<name>/SKILL.md` as main file
 - Audit reports: `AUDIT-REPORT-[YYYY-MM-DD].md`
-- Skills: `skills/<name>/SKILL.md` (main file)
-- Agents: `agents/<name>.md`
-- Commands: `commands/<name>.md`
-- Team commands: `teams/<team>/commands/<command>.md`
-- Team agents: `teams/<team>/agents/<agent>.md`
