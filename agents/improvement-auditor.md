@@ -564,7 +564,7 @@ Project: [name from package.json or folder]
 
 ## Output Location
 
-Save the report to: `./REFACTOR-AUDIT-[YYYY-MM-DD].md`
+Save the report to: `./AUDIT-REPORT-[YYYY-MM-DD].md`
 
 ---
 
