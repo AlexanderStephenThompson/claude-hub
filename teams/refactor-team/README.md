@@ -200,79 +200,10 @@ refactor-team/
 │   ├── analyze_complexity.py
 │   ├── analyze_dependencies.py
 │   └── detect_dead_code.py
-├── skills/
-│   ├── code-quality/
-│   │   ├── SKILL.md
-│   │   ├── references/
-│   │   │   ├── naming-patterns.md
-│   │   │   ├── testing-pyramid.md
-│   │   │   └── directory-conventions.md
-│   │   ├── assets/
-│   │   │   ├── tdd-checklist.md
-│   │   │   └── docstring-template.md
-│   │   └── scripts/
-│   │       ├── validate_structure.py
-│   │       └── check_naming.py
-│   ├── architecture/
-│   │   ├── SKILL.md
-│   │   ├── references/
-│   │   │   ├── module-boundaries.md
-│   │   │   ├── design-patterns.md
-│   │   │   └── migration-patterns.md
-│   │   └── assets/
-│   │       ├── architecture-checklist.md
-│   │       └── decision-record-template.md
-│   ├── design/
-│   │   ├── SKILL.md
-│   │   ├── references/
-│   │   │   ├── semantic-html.md
-│   │   │   ├── accessibility-guide.md
-│   │   │   ├── css-formatting.md
-│   │   │   └── responsive-breakpoints.md
-│   │   ├── assets/
-│   │   │   ├── component-states-checklist.md
-│   │   │   ├── anti-patterns.md
-│   │   │   └── layout-examples.md
-│   │   └── scripts/
-│   │       ├── validate_design_tokens.py
-│   │       └── check_accessibility.py
-│   ├── security/
-│   │   ├── SKILL.md
-│   │   ├── references/
-│   │   │   ├── owasp-top-10.md
-│   │   │   ├── input-validation.md
-│   │   │   └── auth-patterns.md
-│   │   ├── assets/
-│   │   │   ├── security-checklist.md
-│   │   │   └── threat-model-template.md
-│   │   └── scripts/
-│   │       ├── scan_secrets.py
-│   │       └── check_dependencies.py
-│   ├── documentation/
-│   │   ├── SKILL.md
-│   │   ├── references/
-│   │   │   ├── semver-guide.md
-│   │   │   ├── changelog-format.md
-│   │   │   └── feature-spec-guide.md
-│   │   ├── assets/
-│   │   │   ├── feature-template.md
-│   │   │   ├── module-template.md
-│   │   │   └── changelog-template.md
-│   │   └── scripts/
-│   │       ├── validate_docs.py
-│   │       └── generate_feature.py
-│   └── code-standards/
-│       ├── SKILL.md
-│       ├── references/
-│       │   ├── javascript.md
-│       │   ├── python.md
-│       │   ├── sql.md
-│       │   └── testing.md
-│       └── assets/
-│           ├── commit-templates.md
-│           └── refactor-checklist.md
 └── README.md
 ```
+
+**Note:** Skills (code-quality, architecture, design, etc.) are shared across all teams and live at the repository root in `skills/`. They are deployed to `~/.claude/skills/` and referenced by agents via their frontmatter.
 
 ## Design Principles
 

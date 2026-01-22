@@ -25,9 +25,8 @@ Use this template to create new skills for teams. A skill is a reusable knowledg
 4. Run through `CHECKLIST.md` before shipping
 5. Delete `CHECKLIST.md` when done
 
-**Example locations for new skills:**
-- `teams/refactor-team/skills/my-new-skill/`
-- `teams/implement-team/skills/my-new-skill/`
+**Example location for new skills:**
+- `skills/my-new-skill/` (skills are shared at repository root, not inside teams)
 
 ## Template Conventions
 

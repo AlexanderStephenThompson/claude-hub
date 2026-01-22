@@ -1,5 +1,6 @@
 ---
 description: Run a comprehensive codebase audit
+argument-hint: [focus area]
 ---
 
 # /audit

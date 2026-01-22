@@ -114,6 +114,63 @@ If hardcoded secrets are found, it flags them for remediation.
 
 ---
 
+## Improvement Auditor
+
+**Purpose**: Perform deep-dive codebase analysis to identify semantic clarity improvements, documentation gaps, and refactoring opportunities.
+
+### When It's Invoked
+
+Claude automatically uses this agent when you:
+- Run `/audit` command
+- Ask to "audit this codebase"
+- Request "improvement analysis"
+- Need to identify "refactoring opportunities"
+
+### Audit Categories
+
+The agent analyzes across multiple dimensions:
+
+| Category | Focus |
+|----------|-------|
+| **Naming Clarity** | Variables, functions, files, folders |
+| **Documentation** | Missing docs, outdated content, gaps |
+| **File Organization** | Structure, duplication, placement |
+| **Code Patterns** | Consistency, anti-patterns, conventions |
+| **Potential Improvements** | Refactoring opportunities |
+
+### Priority Levels
+
+Findings are prioritized by impact:
+
+| Priority | Description |
+|----------|-------------|
+| **P0** | Critical issues blocking functionality |
+| **P1** | High-impact improvements |
+| **P2** | Medium improvements |
+| **P3** | Nice-to-haves |
+
+### Output
+
+The agent produces `AUDIT-REPORT-[YYYY-MM-DD].md` containing:
+- Executive summary
+- Stack detection results
+- Findings by category with file:line references
+- Prioritized recommendations
+- Suggested next steps
+
+### Integration with Refactor Team
+
+The audit report is automatically detected by `/refactor-team:refactor`:
+
+```
+/audit                          # Produces AUDIT-REPORT-*.md
+/refactor-team:refactor         # Finds and uses the report
+```
+
+This creates a seamless audit → refactor pipeline.
+
+---
+
 ## Installing Agents
 
 Agents are stored in `~/.claude/agents/`. To install:
