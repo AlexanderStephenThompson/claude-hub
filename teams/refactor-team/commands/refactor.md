@@ -40,26 +40,32 @@ npm test    # Tests passing? (or equivalent)
 
 ## Workflow
 
-### Step 0: Check for Existing Analysis
+### Step 1: Check for Existing Audit
 
-Before exploring, check for an existing audit report:
+Check if a previous audit report exists:
 
 ```bash
 ls AUDIT-REPORT*.md 2>/dev/null
 ```
 
-**If found:**
-- Report to user: "✓ Found existing AUDIT-REPORT-[date].md - will use as starting point"
-- Pass the audit report path to the Explorer agent
-- The Explorer will validate and expand on the audit findings
+**Report the result to the user:**
 
-**If not found:**
-- Report to user: "No existing audit found - Explorer will perform fresh analysis"
-- Proceed to Step 1
+If audit found:
+```
+✓ Step 1 Complete: Found AUDIT-REPORT-[date].md
+  This pre-existing analysis will accelerate the refactoring process.
+  The Explorer will validate and build upon these findings.
+```
+
+If no audit found:
+```
+✓ Step 1 Complete: No existing audit found
+  The Explorer will perform a fresh codebase analysis.
+```
 
 ---
 
-### Step 1: Explore
+### Step 2: Explore
 
 Invoke the **@explorer** agent.
 
@@ -73,7 +79,7 @@ Explorer produces:
 
 ---
 
-### Step 2: Research
+### Step 3: Research
 
 Invoke the **@researcher** agent with Explorer's findings.
 
@@ -86,7 +92,7 @@ Researcher produces:
 
 ---
 
-### Step 3: Assess Tests
+### Step 4: Assess Tests
 
 Invoke the **@tester** agent with Researcher's best practices.
 
@@ -100,7 +106,7 @@ Tester produces:
 
 ---
 
-### Step 4: Plan Refactoring
+### Step 5: Plan Refactoring
 
 Invoke the **@planner** agent with all upstream findings.
 
@@ -111,20 +117,20 @@ Planner produces:
 
 ---
 
-### Step 4.1: Challenge the Plan (GATE)
+### Step 5.1: Challenge the Plan (GATE)
 
 Invoke the **@challenger** agent for roadmap review.
 
 Challenger's decision:
-- **Approve** → Proceed to Step 5
-- **Revise** → Send to Planner, then re-run 4.1 only (max 2 cycles)
+- **Approve** → Proceed to Step 6
+- **Revise** → Send to Planner, then re-run 5.1 only (max 2 cycles)
 - **Block** → Stop. Ask user for missing info
 
-**Do NOT loop back to Steps 1-3 on "Revise."**
+**Do NOT loop back to Steps 1-4 on "Revise."**
 
 ---
 
-### Step 5: Refactor (Execution)
+### Step 6: Refactor (Execution)
 
 Invoke the **@refactorer** agent with approved roadmap.
 
@@ -141,12 +147,12 @@ Refactorer produces:
 
 ---
 
-### Step 6: Verify Results (GATE)
+### Step 7: Verify Results (GATE)
 
 Invoke the **@verifier** agent with completed work.
 
 Verifier's decision:
-- **Approve** → Proceed to Step 7
+- **Approve** → Proceed to Step 8
 - **Route back** → Send to appropriate agent (max 2 cycles)
 - **Block** → Stop. Escalate to user
 
@@ -154,7 +160,7 @@ Verifier's decision:
 
 ---
 
-### Step 7: Finalize + Report
+### Step 8: Finalize + Report
 
 Produce one concise final summary:
 
