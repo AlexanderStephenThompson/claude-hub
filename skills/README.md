@@ -15,7 +15,7 @@ Shared skills that all teams and agents can reference. Each skill is a comprehen
 | [documentation/](./documentation/) | SemVer, changelog, feature specs, module templates |
 | [security/](./security/) | OWASP Top 10, input validation, auth patterns |
 
-### Web-Specific Skills (Stubs)
+### Web-Specific Skills (Scaffolds)
 
 | Skill | Purpose |
 |-------|---------|
