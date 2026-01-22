@@ -53,7 +53,7 @@ Standalone commands stored in `~/.claude/commands/` (reference docs only).
 
 | Command | Description |
 |---------|-------------|
-| [/commit](./commands/Commit.md) | Stage all changes and create conventional commit |
+| [/commit](./commands/commit.md) | Stage all changes and create conventional commit |
 
 ---
 

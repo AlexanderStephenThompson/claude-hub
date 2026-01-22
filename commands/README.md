@@ -8,7 +8,7 @@ Reference documentation for Claude Code slash commands stored in `~/.claude/comm
 
 | Command | Description | Output |
 |---------|-------------|--------|
-| [/commit](./Commit.md) | Stage all changes and create a conventional commit | Git commit |
+| [/commit](./commit.md) | Stage all changes and create a conventional commit | Git commit |
 
 > **Note:** The project audit functionality has been moved to the [Improvement Auditor](../agents/improvement-auditor.md) agent for better autonomous operation.
 
@@ -81,7 +81,7 @@ Commands are stored in `~/.claude/commands/`. To install:
 mkdir -p ~/.claude/commands
 
 # Copy command file
-cp Commit.md ~/.claude/commands/
+cp commit.md ~/.claude/commands/
 ```
 
 Commands become available immediately after placing the `.md` file in the directory.
