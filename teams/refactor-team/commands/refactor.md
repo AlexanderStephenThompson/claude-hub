@@ -40,6 +40,25 @@ npm test    # Tests passing? (or equivalent)
 
 ## Workflow
 
+### Step 0: Check for Existing Analysis
+
+Before exploring, check for an existing audit report:
+
+```bash
+ls AUDIT-REPORT*.md 2>/dev/null
+```
+
+**If found:**
+- Report to user: "✓ Found existing AUDIT-REPORT-[date].md - will use as starting point"
+- Pass the audit report path to the Explorer agent
+- The Explorer will validate and expand on the audit findings
+
+**If not found:**
+- Report to user: "No existing audit found - Explorer will perform fresh analysis"
+- Proceed to Step 1
+
+---
+
 ### Step 1: Explore
 
 Invoke the **@explorer** agent.
