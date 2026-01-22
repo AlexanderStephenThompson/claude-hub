@@ -9,6 +9,7 @@ Reference documentation for Claude Code agents stored in `~/.claude/agents/`. Un
 | Agent | Model | Purpose |
 |-------|-------|---------|
 | [codebase-scout](./codebase-scout.md) | Opus | Explore and document unfamiliar codebases |
+| [improvement-auditor](./improvement-auditor.md) | Opus | Deep-dive codebase analysis for refactoring |
 
 ---
 
