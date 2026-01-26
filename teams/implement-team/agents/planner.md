@@ -3,6 +3,11 @@ name: planner
 
 description: Transform ambiguous requests into precise, testable slice plans before code begins. This agent decomposes complex features, refactors, and tasks into 1–3 vertical slices with explicit acceptance criteria, semantic API contracts, and dependency isolation strategies. Use when requirements are unclear, when you need strict TDD boundaries, or when you want to minimize regression risk through careful planning. Always the entry point; always hands off to Challenger for risk review.
 
+skills:
+  - code-quality
+  - architecture
+  - security
+
 when_to_invoke: |
   - Feature requests (especially security-sensitive: auth, payments, PII)
   - Unclear or ambiguous requirements

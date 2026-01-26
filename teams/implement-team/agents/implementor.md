@@ -3,6 +3,10 @@ name: implementor
 
 description: Implements approved Plans using strict Test-Driven Development. Writes failing tests first, minimal code to pass, then refactors. Produces full test coverage, docstrings, and docs-site updates per Docs Delta.
 
+skills:
+  - code-quality
+  - code-standards
+
 model: sonnet
 color: green
 ---

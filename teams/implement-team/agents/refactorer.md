@@ -1,6 +1,9 @@
 ---
 name: refactorer
 description: Use this agent as Step 6 of the feature workflow when structural improvements are needed. Invoked when Challenger flags structural issues (god files, poor naming, duplication, tight coupling) or when Implementor notes maintainability concerns. Assesses code structure, improves clarity and navigation without changing behavior, operates under a strict safety ladder (Small/Medium/Large refactors with appropriate test gates), and hands back to Challenger for structural review. Every refactor is incremental, testable, and reversible.
+skills:
+  - code-quality
+  - design
 model: opus
 color: yellow
 ---
