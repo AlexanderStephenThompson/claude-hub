@@ -15,20 +15,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **GitHub:** https://github.com/AlexanderStephenThompson/claude-hub
 
-## Architecture
-
-```
-Source Repository                    Deployed Location
-──────────────────                   ─────────────────
-skills/           ─────────────────► ~/.claude/skills/
-agents/           ─────────────────► ~/.claude/agents/
-commands/         ─────────────────► ~/.claude/commands/
-teams/            ─────────────────► plugins/ (via marketplace)
-```
-
 **Key principle:** Skills are the single source of truth. All teams reference shared skills from `~/.claude/skills/`, not embedded copies.
 
-### Multi-Agent Teams
+## Multi-Agent Teams
 
 | Team | Agents | Workflow |
 |------|--------|----------|
@@ -36,12 +25,27 @@ teams/            ─────────────────► plugins
 | implement-team | 5 | Planner → Challenger → Implementor → Security → Refactorer |
 | diagnose-team | 5 | Clarifier → Investigator → Hypothesizer → Resolver → Validator |
 
+### When to Use Which Team
+
+| Situation | Team |
+|-----------|------|
+| Existing codebase needs cleanup | refactor-team |
+| Legacy code modernization | refactor-team |
+| New feature implementation | implement-team |
+| Bug fix with design decisions | implement-team |
+| Security-sensitive features | implement-team (triggers Security agent) |
+| Stubborn bug that won't stay fixed | diagnose-team |
+| "It works but not how I wanted" | diagnose-team |
+| Root cause is unclear after multiple attempts | diagnose-team |
+
 ### Audit → Refactor Pipeline
 
 ```
-/audit                    → Produces AUDIT-REPORT-[YYYY-MM-DD].md
+/audit [focus]            → Produces AUDIT-REPORT-[YYYY-MM-DD].md
 /refactor-team:refactor   → Finds and uses the audit report automatically
 ```
+
+Focus options: `css`, `a11y`, `perf`, `structure` (or omit for full audit).
 
 ## Common Commands
 
@@ -60,8 +64,7 @@ cp agents/*.md "C:\Users\Alexa\.claude\agents/"
 cp commands/*.md "C:\Users\Alexa\.claude\commands/"
 ```
 
-### Update Plugins
-After modifying team files, reinstall plugins:
+### Reinstall Plugins (after modifying team files)
 ```bash
 claude plugin uninstall refactor-team && claude plugin install refactor-team
 claude plugin uninstall implement-team && claude plugin install implement-team
@@ -69,6 +72,13 @@ claude plugin uninstall diagnose-team && claude plugin install diagnose-team
 ```
 
 Note: `claude plugin marketplace update` updates the cache, not installed plugins.
+
+### Analysis Scripts (refactor-team)
+```bash
+python teams/refactor-team/scripts/analyze_complexity.py <path>     # High-complexity functions
+python teams/refactor-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
+python teams/refactor-team/scripts/detect_dead_code.py <path>       # Unused code
+```
 
 ## Development
 

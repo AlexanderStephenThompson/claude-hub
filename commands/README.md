@@ -9,8 +9,10 @@ Reference documentation for Claude Code slash commands stored in `~/.claude/comm
 | Command | Description | Output |
 |---------|-------------|--------|
 | [/commit](./commit.md) | Stage all changes and create a conventional commit | Git commit |
+| [/audit](./audit.md) | Run comprehensive codebase audit | AUDIT-REPORT-[date].md |
+| [/optimize-prompt](./optimize-prompt.md) | Rewrite a prompt for clarity and effectiveness | Optimized prompt |
 
-> **Note:** The project audit functionality has been moved to the [Improvement Auditor](../agents/improvement-auditor.md) agent for better autonomous operation.
+> **Note:** The audit command invokes the [Improvement Auditor](../agents/improvement-auditor.md) agent.
 
 ---
 
@@ -68,6 +70,39 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 /commit                    # Analyze and commit all changes
 /commit auth              # Hint that changes relate to auth
 /commit "login feature"   # Provide context for the commit
+```
+
+---
+
+## /optimize-prompt
+
+**Purpose**: Rewrite prompts for clarity, specificity, and effectiveness.
+
+### What It Does
+
+1. Analyzes the input prompt for common issues
+2. Identifies ambiguity, vague scope, poor structure
+3. Rewrites with concrete details and clear structure
+4. Explains what changed and why
+
+### Usage
+
+```bash
+/optimize-prompt "Write something about authentication"
+/optimize-prompt "Fix the bug"
+/optimize-prompt "Make this code better"
+```
+
+### Example Transformation
+
+**Input**: "Write something about authentication"
+
+**Output**:
+```
+Write a 500-word technical overview of JWT vs session-based
+authentication for a Node.js API. Include: security tradeoffs,
+implementation complexity, and a recommendation for a B2B SaaS
+with 10K users.
 ```
 
 ---
