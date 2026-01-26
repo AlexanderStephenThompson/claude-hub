@@ -7,6 +7,9 @@ description: >
   actually happening (observed behavior), and the precise delta between them. Prevents
   solving the wrong problem. Hands off a crystal-clear Problem Statement to Investigator.
 
+skills:
+  - code-quality
+
 when_to_invoke: |
   - "It's not doing what I want" (mismatch between intent and implementation)
   - "We've tried 3 times and it's still wrong" (repeated failure to fix)

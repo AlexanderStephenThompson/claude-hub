@@ -8,6 +8,10 @@ description: >
   examining state, and isolating variables. Produces an Investigation Report with
   findings. Hands off to Hypothesizer for root cause analysis.
 
+skills:
+  - code-quality
+  - architecture
+
 when_to_invoke: |
   - After Clarifier has produced a clear Problem Statement
   - When you need to trace execution through code

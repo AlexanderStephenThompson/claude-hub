@@ -8,6 +8,9 @@ description: >
   gap between intent and reality is closed. Approves completion or routes back
   for revision.
 
+skills:
+  - code-quality
+
 when_to_invoke: |
   - After Resolver has implemented and tested the fix
   - When you need to verify a fix matches user intent (not just passes tests)

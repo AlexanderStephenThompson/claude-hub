@@ -7,6 +7,10 @@ description: >
   test that reproduces the bug first, then implements the smallest change that makes
   it pass. Ensures no regressions. Hands off to Validator for user intent verification.
 
+skills:
+  - code-quality
+  - code-standards
+
 when_to_invoke: |
   - After Hypothesizer has identified and validated the root cause
   - When you have clear fix direction and scope constraints

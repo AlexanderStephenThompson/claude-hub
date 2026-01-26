@@ -8,6 +8,10 @@ description: >
   the most probable root cause. Hands off a validated hypothesis to Resolver with
   clear fix direction.
 
+skills:
+  - code-quality
+  - architecture
+
 when_to_invoke: |
   - After Investigator has identified where the divergence occurs
   - When you need to analyze WHY something is happening
