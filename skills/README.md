@@ -6,25 +6,73 @@ Shared skills that all teams and agents can reference. Each skill is a comprehen
 
 ### Core Skills (Complete)
 
-| Skill | Purpose |
-|-------|---------|
-| [architecture/](./architecture/) | Architecture principles, module boundaries, design patterns |
-| [code-quality/](./code-quality/) | TDD, naming conventions, docstrings, 3-tier structure |
-| [code-standards/](./code-standards/) | Language-specific standards (JavaScript, Python, SQL) |
-| [design/](./design/) | Design system, semantic HTML, CSS, accessibility |
-| [documentation/](./documentation/) | SemVer, changelog, feature specs, module templates |
-| [security/](./security/) | OWASP Top 10, input validation, auth patterns |
+Fully developed skills with comprehensive standards, examples, and checklists.
 
-### Web-Specific Skills (Scaffolds)
+| Skill | Purpose | Status |
+|-------|---------|--------|
+| [architecture/](./architecture/) | Architecture principles, module boundaries, design patterns | Complete |
+| [code-quality/](./code-quality/) | TDD, naming conventions, docstrings, 3-tier structure | Complete |
+| [code-standards/](./code-standards/) | Language-specific standards (JavaScript, Python, SQL) | Complete |
+| [design/](./design/) | Design system, semantic HTML, CSS formatting, component states | Complete |
+| [documentation/](./documentation/) | SemVer, changelog, feature specs, module templates | Complete |
+| [security/](./security/) | OWASP Top 10, input validation, auth patterns | Complete |
 
-| Skill | Purpose |
-|-------|---------|
-| [web-accessibility/](./web-accessibility/) | WCAG compliance, screen readers, keyboard nav |
-| [web-css/](./web-css/) | CSS architecture, methodologies |
-| [web-graphql/](./web-graphql/) | GraphQL patterns, Apollo |
-| [web-performance/](./web-performance/) | Performance optimization |
-| [web-react/](./web-react/) | React patterns, hooks, state |
-| [web-testing/](./web-testing/) | Frontend testing strategies |
+### Web Skills (Complete)
+
+Complete skills focused on specific web development domains.
+
+| Skill | Purpose | Status |
+|-------|---------|--------|
+| [web-accessibility/](./web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management | Complete |
+| [web-css/](./web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns | Complete |
+
+### Web Skills (Scaffolds)
+
+Placeholder skills with basic structure. Expand as needed.
+
+| Skill | Purpose | Status |
+|-------|---------|--------|
+| [web-graphql/](./web-graphql/) | GraphQL patterns, Apollo | Scaffold |
+| [web-performance/](./web-performance/) | Performance optimization | Scaffold |
+| [web-react/](./web-react/) | React patterns, hooks, state | Scaffold |
+| [web-testing/](./web-testing/) | Frontend testing strategies | Scaffold |
+
+## Skill Relationships
+
+Skills have defined boundaries to avoid duplication. See each skill's "Scope and Boundaries" section.
+
+```
+                    ┌─────────────┐
+                    │ code-quality│ (TDD, naming, docstrings)
+                    └──────┬──────┘
+                           │
+         ┌─────────────────┼─────────────────┐
+         │                 │                 │
+    ┌────▼────┐      ┌─────▼─────┐     ┌─────▼─────┐
+    │architecture│   │code-standards│   │documentation│
+    │(layering, │    │(JS, Python, │    │(versioning, │
+    │ modules)  │    │   SQL)      │    │  changelog) │
+    └───────────┘    └─────────────┘    └─────────────┘
+
+         ┌─────────────────┬─────────────────┐
+         │                 │                 │
+    ┌────▼────┐      ┌─────▼─────┐     ┌─────▼─────┐
+    │ design  │      │web-access-│     │  web-css  │
+    │(tokens, │ ───► │  ibility  │ ◄── │(variables,│
+    │semantic │      │(WCAG,ARIA)│     │   BEM)    │
+    │  HTML)  │      └───────────┘     └───────────┘
+    └─────────┘
+         │
+    ┌────▼────┐
+    │security │ (OWASP, validation, auth)
+    └─────────┘
+```
+
+**Key relationships:**
+- `design` defines principles; `web-css` implements them
+- `web-accessibility` extends `design` with WCAG compliance
+- `code-quality` is foundational; most skills build on it
+- `security` is independent but referenced by high-stakes workflows
 
 ## Skill Structure
 
