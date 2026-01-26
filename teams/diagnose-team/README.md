@@ -127,6 +127,31 @@ Code works as built, but that's not what the user wanted. The spec was wrong or 
 
 Both types benefit from the same workflow—closing the intent-reality gap.
 
+## Components
+
+### Agents (5)
+
+All in `agents/`:
+- `clarifier.md` — Understand intent vs reality
+- `investigator.md` — Find divergence point
+- `hypothesizer.md` — Root cause analysis
+- `resolver.md` — Minimal TDD fix
+- `validator.md` — Verify user satisfaction
+
+### Skills Inheritance by Agent
+
+| Agent | Inherits | Why |
+|-------|----------|-----|
+| Clarifier | code-quality | Understands quality standards |
+| Investigator | code-quality, architecture | Traces through architecture |
+| Hypothesizer | code-quality, architecture | Analyzes root causes in context |
+| Resolver | code-quality, code-standards | Implements fixes with TDD |
+| Validator | code-quality | Validates against quality criteria |
+
+### Commands (1)
+
+- `/diagnose-team:diagnose <problem>` — Run full workflow
+
 ## File Structure
 
 ```

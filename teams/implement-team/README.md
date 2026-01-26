@@ -106,6 +106,16 @@ All in `agents/`:
 - `security.md` — Security review
 - `refactorer.md` — Structure improvement
 
+### Skills Inheritance by Agent
+
+| Agent | Inherits | Why |
+|-------|----------|-----|
+| Planner | code-quality, architecture, security | Plans with architectural and security awareness |
+| Challenger | code-quality, architecture, security | Reviews for security risks and architecture |
+| Implementor | code-quality, code-standards | Follows TDD and language standards |
+| Security | security | Focused security review |
+| Refactorer | code-quality, design | Executes with clean design patterns |
+
 ### Commands (1)
 
 - `/implement-team:implement <feature>` — Run full workflow
