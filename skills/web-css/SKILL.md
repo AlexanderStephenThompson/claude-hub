@@ -13,6 +13,30 @@ user-invocable: false
 
 ---
 
+## Scope and Boundaries
+
+**This skill covers:**
+- Design token implementation (CSS variables in :root)
+- Token categories (colors, typography, spacing, borders, shadows, animations, z-index)
+- Dark mode implementation with CSS variables
+- CSS file organization and import order
+- BEM-inspired naming conventions
+- Mobile-first responsive breakpoints
+- Layout patterns (Grid for structure, Flexbox for flow)
+- Component states implementation
+- CSS property ordering
+- CSS anti-patterns
+
+**Defers to other skills:**
+- `design`: Design system philosophy, when to use Grid vs Flexbox, premium UI principles
+- `web-accessibility`: Focus indicator patterns, reduced motion media queries, screen reader utilities
+
+**Use this skill when:** You need CSS architecture, token implementation, or responsive patterns.
+**Use design when:** You need design principles, layout philosophy, or component state requirements.
+**Use web-accessibility when:** You need WCAG compliance or accessibility-specific CSS patterns.
+
+---
+
 ## Core Principles
 
 1. **Design Tokens First** — All values come from CSS variables.

@@ -13,6 +13,32 @@ user-invocable: false
 
 ---
 
+## Scope and Boundaries
+
+**This skill covers:**
+- WCAG 2.1 Level AA compliance
+- POUR principles (Perceivable, Operable, Understandable, Robust)
+- Semantic HTML for accessibility (landmarks, headings, buttons vs links)
+- Keyboard navigation and focus management
+- Focus trapping for modals
+- ARIA usage patterns and roles
+- Form accessibility (labels, errors, required fields)
+- Color contrast requirements
+- Images and media alt text
+- Dynamic content and live regions
+- Reduced motion support
+- Screen reader testing
+
+**Defers to other skills:**
+- `design`: Design token system, overall design principles, component states
+- `web-css`: CSS implementation details, file organization, responsive breakpoints
+
+**Use this skill when:** You need WCAG compliance, screen reader support, focus management, or ARIA patterns.
+**Use design when:** You need design system principles, token enforcement, or layout philosophy.
+**Use web-css when:** You need CSS architecture or responsive implementation.
+
+---
+
 ## Core Principles (POUR)
 
 1. **Perceivable** — Users can perceive all content (see, hear, or feel it).

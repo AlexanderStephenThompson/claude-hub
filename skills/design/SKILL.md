@@ -13,6 +13,28 @@ user-invocable: false
 
 ---
 
+## Scope and Boundaries
+
+**This skill covers:**
+- Design system philosophy and principles
+- Design token usage and enforcement
+- Semantic HTML patterns (element selection)
+- CSS formatting and quality rules
+- Component states (hover, focus, active, disabled)
+- Layout philosophy (Grid vs Flexbox selection)
+- Responsive design principles and breakpoints
+- Premium UI philosophy and anti-patterns
+
+**Defers to other skills:**
+- `web-accessibility`: Deep WCAG compliance, screen reader patterns, ARIA usage, keyboard navigation
+- `web-css`: CSS architecture, file organization, naming conventions (BEM), dark mode implementation
+
+**Use this skill when:** You need design principles, token enforcement, or semantic HTML guidance.
+**Use web-accessibility when:** You need WCAG compliance, screen reader support, or focus management.
+**Use web-css when:** You need CSS organization, variable architecture, or responsive implementation details.
+
+---
+
 ## Core Principles
 
 1. **Users First** — Prioritize user needs, workflows, and ease of use
