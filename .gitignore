@@ -10,3 +10,4 @@ Thumbs.db
 # Local development
 .env
 .env.local
+commands/sync.md
