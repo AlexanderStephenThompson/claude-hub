@@ -248,6 +248,26 @@ The codebase has been refactored to improve semantic clarity and organization.
 
 ---
 
+## Audit Findings Addressed
+
+**IF an audit report was used**, report which findings were addressed:
+
+**Coverage:** X of Y findings addressed (Z%)
+
+### By Slice:
+| Slice | Finding ID | How Addressed |
+|-------|------------|---------------|
+| Slice 1.1 | AUDIT-001 | [specific action taken] |
+| Slice 1.2 | AUDIT-003 | [specific action taken] |
+| Slice 2.1 | AUDIT-002 | [specific action taken] |
+
+### Deferred:
+| Finding ID | Reason |
+|------------|--------|
+| AUDIT-004 | [why not addressed - e.g., out of scope, requires future work] |
+
+---
+
 Next: Verifier will confirm behavior unchanged and clarity improved.
 ```
 

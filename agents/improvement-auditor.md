@@ -471,7 +471,16 @@ Below are the detailed checklists each specialized auditor should use. **Pass th
 
 ## Final Report Template
 
-After consolidating all auditor findings, generate this report:
+After consolidating all auditor findings, generate this report.
+
+**CRITICAL: Finding IDs**
+
+Every finding MUST have a unique ID in format `AUDIT-NNN` (e.g., AUDIT-001, AUDIT-002). These IDs enable the refactor-team to:
+- Reference specific findings in their roadmap
+- Track which findings were addressed
+- Report remediation status
+
+Number findings sequentially across all priority levels (Critical starts at 001, continues through High, Medium, Low).
 
 ```markdown
 # Project Audit Report
@@ -500,21 +509,38 @@ Project: [name from package.json or folder]
 ## Critical Issues (Fix First)
 [Issues that actively cause problems or block progress]
 
-### Issue 1: [Name]
+### AUDIT-001: [Name]
+- **Priority:** Critical
 - **Location:** path/to/file.js
 - **Problem:** [specific description]
 - **Impact:** [why this matters]
 - **Recommendation:** [specific action]
 - **Effort:** Low/Medium/High
 
+### AUDIT-002: [Name]
+...
+
 ## High Priority (Major Improvements)
 [Issues that significantly improve maintainability]
+
+### AUDIT-003: [Name]
+- **Priority:** High
+- **Location:** [path]
+- **Problem:** [description]
+- **Recommendation:** [action]
+- **Effort:** Low/Medium/High
 
 ## Medium Priority (Nice to Have)
 [Improvements that help but aren't urgent]
 
+### AUDIT-NNN: [Name]
+...
+
 ## Low Priority (Future Consideration)
 [Minor polish items]
+
+### AUDIT-NNN: [Name]
+...
 
 ## Suggested File Renames
 | Current | Proposed | Reason |

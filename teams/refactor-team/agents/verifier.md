@@ -204,6 +204,21 @@ npm test  # or equivalent
 
 ---
 
+## Audit Remediation Verification
+
+**IF an audit report was used**, verify each finding's remediation:
+
+| Finding ID | Issue | Status | Verification |
+|------------|-------|--------|--------------|
+| AUDIT-001 | [name] | ✅ Addressed | [how verified - e.g., "checked file exists", "tested manually"] |
+| AUDIT-002 | [name] | ✅ Addressed | [how verified] |
+| AUDIT-003 | [name] | ✅ Addressed | [how verified] |
+| AUDIT-004 | [name] | ⏸️ Deferred | N/A - [reason from Refactorer] |
+
+**Audit Coverage:** X of Y findings addressed (Z%)
+
+---
+
 ## Decision Rationale
 
 **[DECISION]**

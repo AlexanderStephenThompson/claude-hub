@@ -148,6 +148,23 @@ This roadmap transforms [Project Name] from [current state] to [target state].
 
 ---
 
+## Audit Coverage Map
+
+**IF an audit report exists (AUDIT-REPORT-*.md)**, map each slice to the audit findings it addresses:
+
+| Finding ID | Issue | Priority | Addressed By | Status |
+|------------|-------|----------|--------------|--------|
+| AUDIT-001 | [name] | Critical | Slice 1.1 | PLANNED |
+| AUDIT-002 | [name] | High | Slice 2.2 | PLANNED |
+| AUDIT-003 | [name] | Medium | Slice 1.3 | PLANNED |
+| AUDIT-004 | [name] | Low | - | DEFERRED |
+
+**Coverage:** X of Y findings addressed (Z%)
+
+**Deferred findings:** List any findings intentionally not addressed in this roadmap, with reason (e.g., out of scope, requires major architecture change, low priority).
+
+---
+
 ## Prioritization Rationale
 
 ### Why This Order?
