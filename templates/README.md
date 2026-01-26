@@ -45,6 +45,26 @@ Use this template to create agents for teams. An agent is a specialized role in 
 
 ---
 
+### Command Template
+
+Location: `command/`
+
+Use this template to create commands for team plugins. A command is an entry point that triggers a team workflow.
+
+**Contents:**
+- `COMMAND.md` - Command definition template (usage, examples, workflow)
+- `CHECKLIST.md` - Validation checklist before finalizing
+
+**To create a new command:**
+
+1. Copy `COMMAND.md` to `teams/[team-name]/commands/[command-name].md`
+2. Fill in the template with your command details
+3. Add the command to `.claude-plugin/plugin.json`
+4. Run through `CHECKLIST.md` before shipping
+5. Delete `CHECKLIST.md` when done
+
+---
+
 ### Skill Template
 
 Location: `skill/`
