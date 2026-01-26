@@ -101,14 +101,19 @@ npm test
 - Follow verification steps from slice
 - Example: `grep oldName` should return 0
 
-**7. Merge to main**
+**7. Update audit report (if applicable)**
+- If this slice addresses an audit finding, update AUDIT-REPORT-*.md
+- Add "✅ TENDED TO" block with how it was addressed
+- See "Updating the Audit Report" section below
+
+**8. Merge to main**
 ```bash
 git checkout main
 git merge refactor/[slice-name]
 git branch -d refactor/[slice-name]
 ```
 
-**8. Move to next slice**
+**9. Move to next slice**
 
 ### Step 2: Execute Phase 2 (Medium Refactors)
 
@@ -154,6 +159,57 @@ Format: `refactor: [what changed]` or `docs: [what changed]`
 - Hack tests to make them pass
 - Proceed with known breaks
 - Change behavior (only structure)
+
+---
+
+## Updating the Audit Report
+
+**IF an audit report exists (AUDIT-REPORT-*.md)**, update it as you address each finding.
+
+### When to Update
+
+After completing a slice that addresses an audit finding:
+1. Open the audit report file
+2. Find the finding by its ID (e.g., `### AUDIT-001:`)
+3. Add a "Tended to" block immediately after the finding
+
+### Update Format
+
+Add this block after the finding's details:
+
+```markdown
+### AUDIT-001: [Original Name]
+- **Priority:** Critical
+- **Location:** path/to/file.js
+- **Problem:** [original description]
+- **Recommendation:** [original action]
+- **Effort:** Low
+
+> **✅ TENDED TO** (Slice 1.1)
+>
+> **How:** [Specific action taken - e.g., "Added skills: frontmatter to all 5 implement-team agents"]
+>
+> **Files changed:** [List of files modified]
+>
+> **Commit:** `abc1234` - refactor: [commit message]
+```
+
+### For Deferred Findings
+
+If a finding is intentionally not addressed, mark it as deferred:
+
+```markdown
+### AUDIT-007: [Name]
+...
+
+> **⏸️ DEFERRED**
+>
+> **Reason:** [Why not addressed - e.g., "Out of scope for this refactoring pass", "Requires major architecture change"]
+```
+
+### Commit the Updates
+
+Include the audit report updates in your refactoring commits. The audit report becomes a living record of what was fixed.
 
 ---
 
