@@ -4,7 +4,7 @@
 
 | Name | Path |
 |------|------|
-| Repository | `c:\Users\Alexa\Downloads\clawd\claude-customizations` |
+| Repository | `c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\claude-customizations` |
 | Claude Home | `C:\Users\Alexa\.claude` |
 | GitHub | https://github.com/AlexanderStephenThompson/claude-hub |
 
@@ -16,7 +16,7 @@ When user says "sync" or "sync from GitHub":
 
 ```bash
 # 1. Pull latest
-cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
+cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\claude-customizations"
 git pull
 
 # 2. Create directories if needed
@@ -37,7 +37,7 @@ cp commands/*.md "C:\Users\Alexa\.claude\commands/"
 When user says "deploy" (no git pull):
 
 ```bash
-cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
+cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\claude-customizations"
 cp -r skills/* "C:\Users\Alexa\.claude\skills/"
 cp agents/*.md "C:\Users\Alexa\.claude\agents/"
 cp commands/*.md "C:\Users\Alexa\.claude\commands/"
@@ -50,7 +50,7 @@ cp commands/*.md "C:\Users\Alexa\.claude\commands/"
 When user says "push":
 
 ```bash
-cd "c:\Users\Alexa\Downloads\clawd\claude-customizations"
+cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\claude-customizations"
 git add -A
 git commit -m "description of changes"
 git push

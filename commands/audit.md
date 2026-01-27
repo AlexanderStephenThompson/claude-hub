@@ -24,3 +24,5 @@ Run the `improvement-auditor` agent.
 If an argument is provided (e.g., `css`, `a11y`, `perf`, `structure`), pass it to the agent as the focus area.
 
 The agent handles everything else: stack detection, parallel auditors, report generation.
+
+**Do NOT delete the generated report file.** The report is a deliverable the user expects to keep — not a temporary artifact. Leave it in place after the audit completes.
