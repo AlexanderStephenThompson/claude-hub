@@ -16,19 +16,50 @@ If no scope specified above, audit the full project. Otherwise, focus on the spe
 
 ---
 
-## Before Starting
+## Parallel Audit Architecture
 
-Walk the directory tree and build a mental map. Then answer:
+This command uses **parallel sub-agents** for focused, deep analysis. Instead of one agent covering everything shallowly, spawn specialists that each go deep on one structural dimension.
+
+---
+
+### Phase 1: Discovery (Sequential)
+
+Walk the directory tree and build a map of the project. Then answer:
 
 1. **What's the organizing principle?** (By feature? By type? By layer? A mix?)
 2. **Is that principle applied consistently?**
 3. **Where would someone get lost?**
 
+Gather:
+- Full directory tree (excluding node_modules, .git, dist, build, __pycache__)
+- File counts by extension
+- Total file count
+
+This context is shared with all auditors in Phase 2.
+
 ---
 
-## Checklist
+### Phase 2: Parallel Auditors
 
-### 1. Root Directory
+**CRITICAL: Launch ALL 5 auditors in parallel using the Task tool.**
+
+Use a SINGLE message with MULTIPLE Task tool calls (subagent_type="Explore") to run these simultaneously. Pass each auditor the directory tree from Phase 1 and their specific checklist below.
+
+Each auditor returns findings in this format:
+
+```markdown
+## [Category] Findings
+
+### Issues Found
+- **What**: file(s) or folder(s) affected
+- **Why**: what's wrong with current placement or naming
+- **Action**: specific move, rename, merge, or delete
+- **Effort**: Quick Tidy / Reorganization / Restructuring
+```
+
+---
+
+#### Auditor 1: Root & Config
 
 The root is the first impression. It should be clean and intentional.
 
@@ -38,7 +69,9 @@ The root is the first impression. It should be clean and intentional.
 - Are dotfiles and configs grouped or hidden where possible?
 - Is `package.json` (or equivalent) clean? No unused scripts, no leftover dependencies.
 
-### 2. Folder Structure
+---
+
+#### Auditor 2: Folder Structure
 
 The shape of the project should mirror how you think about it.
 
@@ -57,7 +90,9 @@ The shape of the project should mirror how you think about it.
 - Is casing consistent across all folders? (all kebab-case, all camelCase — pick one)
 - Could you guess what's in a folder from its name alone?
 
-### 3. File Organization
+---
+
+#### Auditor 3: File Organization
 
 Every file should have a clear reason to exist and a clear place to live.
 
@@ -77,7 +112,9 @@ Every file should have a clear reason to exist and a clear place to live.
 - Any commented-out code blocks that should just be deleted?
 - Is `.gitignore` catching everything it should? (No `node_modules`, `dist`, `.env` in the repo)
 
-### 4. Naming Conventions
+---
+
+#### Auditor 4: Naming Conventions
 
 Naming is navigation. Consistent naming means you can guess your way through the project.
 
@@ -87,7 +124,9 @@ Naming is navigation. Consistent naming means you can guess your way through the
 - Are index files used intentionally? (Clean public APIs, not just re-exporting everything)
 - No generic names: `helpers.ts`, `utils.ts`, `misc.ts`, `stuff.ts` — name them by what they actually do.
 
-### 5. Documentation Placement
+---
+
+#### Auditor 5: Documentation Placement
 
 Docs should live where you'd look for them.
 
@@ -95,6 +134,17 @@ Docs should live where you'd look for them.
 - Do major folders have a `README` if their purpose isn't obvious from naming alone?
 - Are docs co-located with the code they describe, or buried in a separate `/docs` folder nobody checks?
 - Is there a single source of truth for project setup and getting started?
+
+---
+
+### Phase 3: Synthesis (Sequential)
+
+After ALL auditors complete:
+
+1. **Collect** all auditor outputs
+2. **Deduplicate** overlapping findings (e.g., naming issues found by both Auditor 2 and Auditor 4)
+3. **Classify** each finding by effort level
+4. **Generate** the final report in the output format below
 
 ---
 

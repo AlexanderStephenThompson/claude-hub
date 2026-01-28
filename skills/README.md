@@ -17,25 +17,18 @@ Fully developed skills with comprehensive standards, examples, and checklists.
 | [documentation/](./documentation/) | SemVer, changelog, feature specs, module templates | Complete |
 | [security/](./security/) | OWASP Top 10, input validation, auth patterns | Complete |
 
-### Web Skills (Complete)
+### Web Skills
 
-Complete skills focused on specific web development domains.
+Web-specific skills with comprehensive SKILL.md content. These do not yet have `assets/`, `references/`, or `scripts/` subdirectories like core skills.
 
-| Skill | Purpose | Status |
-|-------|---------|--------|
-| [web-accessibility/](./web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management | Complete |
-| [web-css/](./web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns | Complete |
-
-### Web Skills (Scaffolds)
-
-Placeholder skills with basic structure. Expand as needed.
-
-| Skill | Purpose | Status |
-|-------|---------|--------|
-| [web-graphql/](./web-graphql/) | GraphQL patterns, Apollo | Scaffold |
-| [web-performance/](./web-performance/) | Performance optimization | Scaffold |
-| [web-react/](./web-react/) | React patterns, hooks, state | Scaffold |
-| [web-testing/](./web-testing/) | Frontend testing strategies | Scaffold |
+| Skill | Purpose |
+|-------|---------|
+| [web-accessibility/](./web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management |
+| [web-css/](./web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns |
+| [web-graphql/](./web-graphql/) | GraphQL patterns, Apollo |
+| [web-performance/](./web-performance/) | Performance optimization |
+| [web-react/](./web-react/) | React patterns, hooks, state |
+| [web-testing/](./web-testing/) | Frontend testing strategies |
 
 ## Skill Relationships
 

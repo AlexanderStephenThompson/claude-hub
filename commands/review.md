@@ -15,21 +15,47 @@ If no focus area specified above, run the full review. Otherwise, prioritize the
 
 ---
 
-## Before Reviewing
+## Parallel Review Architecture
 
-Answer these framing questions first — they set the priority for everything below:
+This command uses **parallel sub-agents** for focused, deep analysis. Instead of one reviewer juggling four concerns, spawn specialists that each go deep on one dimension.
+
+---
+
+### Phase 1: Context Gathering (Sequential)
+
+Answer these framing questions first — they set the priority for everything that follows:
 
 1. **What is this code's job?** (What user goal or system responsibility does it serve?)
 2. **Does the implementation serve that job effectively?**
 3. **What would confuse, slow down, or break things** for a user or a future developer?
 
-Use these answers to decide what matters most in the review.
+Identify the files and scope under review. If a focus area was specified, note it — all reviewers should still run, but the focused category gets extra depth and its findings get priority in the final report.
+
+This context is shared with all reviewers in Phase 2.
 
 ---
 
-## Review Categories
+### Phase 2: Parallel Reviewers
 
-### 1. Content & Information Design
+**CRITICAL: Launch ALL 4 reviewers in parallel using the Task tool.**
+
+Use a SINGLE message with MULTIPLE Task tool calls (subagent_type="Explore") to run these simultaneously. Pass each reviewer the framing context from Phase 1, the list of files under review, and their specific checklist below.
+
+Each reviewer returns up to 5 findings in this format:
+
+```markdown
+## [Category] Review Findings
+
+### Finding
+- **Location**: file path and line number or component name
+- **Issue**: what's wrong and why it matters
+- **Fix**: the specific change to make
+- **Impact**: Critical / Important / Polish
+```
+
+---
+
+#### Reviewer 1: Content & Information Design
 
 The user experience of understanding. Every piece of content should teach, guide, or clarify.
 
@@ -53,7 +79,9 @@ The user experience of understanding. Every piece of content should teach, guide
 - Could someone follow this without asking you clarifying questions?
 - Would a first-time user understand what to do without external instructions?
 
-### 2. Code Quality
+---
+
+#### Reviewer 2: Code Quality
 
 Clean code for both humans and AI. If an AI agent can't read your code and immediately understand what to change and where, it's not clean enough.
 
@@ -75,7 +103,9 @@ Clean code for both humans and AI. If an AI agent can't read your code and immed
 - Are relationships between files discoverable from imports and naming alone?
 - Are there implicit dependencies or conventions that aren't visible in the code itself?
 
-### 3. File & Folder Organization
+---
+
+#### Reviewer 3: File & Folder Organization
 
 The codebase should be navigable by intuition. If you have to search to find something, the structure isn't working.
 
@@ -88,7 +118,9 @@ The codebase should be navigable by intuition. If you have to search to find som
 - Is nesting depth reasonable? No deeply nested folders for single files.
 - Are shared utilities and constants in a discoverable, predictable location?
 
-### 4. Consistency & Patterns
+---
+
+#### Reviewer 4: Consistency & Patterns
 
 Inconsistency is where confusion starts — for you and for the AI working in your codebase.
 
@@ -97,6 +129,20 @@ Inconsistency is where confusion starts — for you and for the AI working in yo
 - Do new additions follow established patterns, or introduce a different approach?
 - Are there emerging patterns that should be made explicit? (Extract to shared, document the convention)
 - Is formatting and code style uniform? No mixed conventions within the same scope.
+
+---
+
+### Phase 3: Synthesis (Sequential)
+
+After ALL reviewers complete:
+
+1. **Collect** all reviewer outputs
+2. **Deduplicate** overlapping findings across reviewers
+3. **Rank by impact** across all categories (a "Critical" from any reviewer stays Critical)
+4. **Cap at 10 findings** — focused on what moves the needle most
+5. **Generate** the final report in the output format below
+
+If a focus area was specified, prioritize findings from that category higher when resolving ties.
 
 ---
 

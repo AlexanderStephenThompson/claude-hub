@@ -53,7 +53,12 @@ Standalone commands stored in `~/.claude/commands/` (reference docs only).
 
 | Command | Description |
 |---------|-------------|
-| [/commit](./commands/commit.md) | Stage all changes and create conventional commit |
+| [/audit](./commands/audit.md) | Run a comprehensive codebase audit |
+| [/cleanup](./commands/cleanup.md) | Check project structure, file organization, and overall tidiness |
+| [/commit](./commands/commit.md) | Stage all changes and create a well-crafted commit message |
+| [/optimize-prompt](./commands/optimize-prompt.md) | Rewrite a prompt for clarity, specificity, and effectiveness |
+| [/orient](./commands/orient.md) | Orient yourself to this project before starting work |
+| [/review](./commands/review.md) | Review the current work for content clarity, code quality, organization, and consistency |
 
 ---
 
@@ -91,6 +96,9 @@ Boilerplate templates for extending the customization system.
 
 | Template | Purpose |
 |----------|---------|
+| [team/](./templates/team/) | Create new multi-agent teams |
+| [agent/](./templates/agent/) | Create new agents for teams |
+| [command/](./templates/command/) | Create new slash commands |
 | [skill/](./templates/skill/) | Create new skills |
 
 ---
@@ -110,12 +118,6 @@ claude plugin install refactor-team
 ```
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for full deployment guide.
-
----
-
-## For AI Assistants
-
-See [SYNC-GUIDE.md](./SYNC-GUIDE.md) for instructions on syncing this repository.
 
 ---
 
