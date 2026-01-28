@@ -87,7 +87,7 @@ find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' \
   | sed 's/.*\.//' | sort | uniq -c | sort -rn
 
 # Check for package.json (web stack detection)
-cat package.json 2>/dev/null | head -50
+# Use the Read tool to check if package.json exists and read its first 50 lines
 ```
 
 **Detect stack to determine which auditors to spawn:**

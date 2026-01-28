@@ -42,11 +42,7 @@ npm test    # Tests passing? (or equivalent)
 
 ### Step 1: Check for Existing Audit
 
-Check if a previous audit report exists:
-
-```bash
-ls AUDIT-REPORT*.md 2>/dev/null
-```
+Check if a previous audit report exists using the Glob tool to search for `AUDIT-REPORT*.md` in the current directory.
 
 **Report the result to the user:**
 

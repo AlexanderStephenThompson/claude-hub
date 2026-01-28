@@ -47,9 +47,7 @@ Explorer (you) → Researcher → Tester → Planner → Challenger → Refactor
 
 **First, look for an Improvement Auditor report:**
 
-```bash
-ls AUDIT-REPORT*.md 2>/dev/null
-```
+Use the Glob tool to check for `AUDIT-REPORT*.md` files in the current directory.
 
 If found:
 - Read the audit report thoroughly
