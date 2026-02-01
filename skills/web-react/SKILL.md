@@ -343,6 +343,57 @@ src/
 
 ---
 
+## JSX Cleanliness
+
+### Semantic Elements
+
+Use the right element for the job — not `<div>` for everything.
+
+```jsx
+// ❌ Div soup
+<div className="nav">
+  <div className="nav-item" onClick={handleClick}>Home</div>
+</div>
+
+// ✅ Semantic elements
+<nav>
+  <a href="/">Home</a>
+</nav>
+```
+
+| Need | Use | Not |
+|------|-----|-----|
+| Navigation | `<nav>`, `<a>` | `<div onClick>` |
+| Actions | `<button>` | `<div onClick>` |
+| Lists | `<ul>`, `<li>` | `<div>` with bullets |
+| Page sections | `<main>`, `<section>`, `<article>` | Nested `<div>` |
+
+### No Inline Styles
+
+Styles belong in CSS files, not JSX.
+
+```jsx
+// ❌ Inline styles
+<div style={{ marginTop: 16, padding: '8px 16px', backgroundColor: '#3b82f6' }}>
+
+// ✅ CSS class
+<div className="card-header">
+```
+
+### Minimal Class Lists
+
+If an element needs 5+ classes, consolidate them into one semantic class.
+
+```jsx
+// ❌ Class soup
+<button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+
+// ✅ Semantic class
+<button className="btn-primary">
+```
+
+---
+
 ## Anti-Patterns
 
 | Anti-Pattern | Problem | Fix |
@@ -355,6 +406,9 @@ src/
 | **Inline functions in JSX** | New reference each render | useCallback or extract |
 | **Missing loading/error states** | Bad UX | Always handle all states |
 | **Fetching in useEffect** | Race conditions, no caching | Use Apollo useQuery |
+| **Inline styles** | Mixes concerns, hard to maintain | Use CSS classes |
+| **Div soup** | Poor accessibility, unclear structure | Use semantic HTML elements |
+| **Class bloat (5+ classes)** | Hard to read, maintain | Consolidate to semantic class |
 
 ---
 

@@ -130,6 +130,52 @@ user-invocable: false
 
 ---
 
+## HTML Cleanliness
+
+### Headings Are for Structure
+
+Headings (`<h1>`-`<h6>`) define document structure, not visual styling.
+
+```html
+<!-- ❌ Wrong - Using heading for font size -->
+<h3>Sale Price</h3>  <!-- Not a section heading, just wants bold text -->
+
+<!-- ✅ Right - Use a class for styling -->
+<p class="price-label">Sale Price</p>
+```
+
+### No Class Bloat
+
+Elements should have 1-3 classes. More than 4 is a smell — consolidate into a semantic class.
+
+```html
+<!-- ❌ Bad - Class soup -->
+<button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:ring-2">
+  Submit
+</button>
+
+<!-- ✅ Good - Semantic class (styling lives in CSS) -->
+<button class="btn btn--primary">
+  Submit
+</button>
+```
+
+### No Inline Styles
+
+HTML describes structure. CSS handles presentation. Keep them separated.
+
+```jsx
+// ❌ Bad - Inline styles
+<div style={{ marginTop: '16px', padding: '8px' }}>
+
+// ✅ Good - CSS class
+<div className="card-section">
+```
+
+**Only exception:** Truly dynamic values computed at runtime. Even then, prefer CSS custom properties.
+
+---
+
 ## CSS Quality
 
 ### Formatting Rules

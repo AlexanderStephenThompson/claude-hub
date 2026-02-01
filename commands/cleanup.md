@@ -82,8 +82,13 @@ The shape of the project should mirror how you think about it.
 
 **Depth & Balance**
 - Is nesting depth reasonable? No folders three levels deep containing a single file.
-- Are there empty or near-empty folders that should be removed or merged?
+- Are there empty folders that should be removed? **Exception:** Keep empty folders if they're part of an intentional structure pattern (e.g., template directories, repeated organizational scaffolding like `assets/`, `scripts/`, `references/` appearing in multiple sibling folders). If the same folder structure repeats across the project, it's likely intentional — leave it alone.
 - Are top-level folders balanced? No single folder with 40 files next to one with 2.
+
+**Structural Opportunities**
+- Are there obvious groupings that would benefit from folders? (e.g., 5+ files with a shared prefix like `user-*.ts` could become a `user/` folder)
+- Would adding a consistent subfolder pattern improve navigability? (e.g., if some features have `components/`, `hooks/`, `utils/` subfolders but others don't, and the inconsistency creates confusion)
+- Only suggest new structure when the benefit is clear — don't impose organization on projects that are simple enough without it.
 
 **Naming**
 - Do folder names describe what's inside, not how it's used? (`components` not `stuff`, `hooks` not `misc`)

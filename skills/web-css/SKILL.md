@@ -44,6 +44,51 @@ user-invocable: false
 3. **Mobile-First** — Base styles for mobile, enhance up.
 4. **No Magic Numbers** — Every value has a purpose and comes from the system.
 5. **Readable Over Clever** — Obvious code beats clever code.
+6. **Consolidate, Don't Duplicate** — Check for existing styles before creating new ones.
+
+---
+
+## Before Writing New CSS
+
+**Stop and check:** Does similar styling already exist?
+
+### The AI Duplication Problem
+
+AI tends to create working CSS for each component independently, leading to:
+- `.card-a { padding: 16px }` and `.card-b { padding: 1rem }` (same value)
+- `.btn-primary` and `.action-button` with nearly identical rules
+- Slight variations that should be identical
+
+### Before Creating a New Class
+
+1. **Search for similar styles** — Is there already a button, card, or layout pattern?
+2. **Check for near-matches** — Could an existing class work with minor tweaks?
+3. **Extract if repeated** — If you're writing the same properties twice, make it one class.
+
+```css
+/* ❌ Creating a new class that duplicates existing patterns */
+.modal-submit-btn {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+/* ✅ Reuse existing .btn-primary, add modifier only if truly different */
+.modal-footer .btn-primary {
+  /* Only add what's actually different */
+}
+```
+
+### Consolidation Opportunities
+
+When you see these patterns, consolidate:
+
+| Pattern | Action |
+|---------|--------|
+| Same properties, different class names | Merge into one class |
+| Same values, different units (`16px` vs `1rem`) | Standardize on tokens |
+| Base + tiny variation | Use modifier class instead |
+| 3+ classes with shared properties | Extract base class |
 
 ---
 
