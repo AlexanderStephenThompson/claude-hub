@@ -8,36 +8,39 @@ CSS should be written for humans first, machines second. Readable code is mainta
 
 ## File Organization
 
-### Structure
+### The 5-File Architecture
+
+All CSS lives in exactly 5 files. This structure mirrors the cascade intentionally.
+
+```
+styles/
+├── tokens.css      # CSS variables only (:root)
+├── base.css        # Reset + element defaults
+├── layouts.css     # Page scaffolding, grids, containers
+├── components.css  # All component styles (BEM)
+└── utilities.css   # Single-purpose helpers
+```
+
+**Import order:** tokens → base → layouts → components → utilities
+
+### Within Each File
+
+Use section comments to organize rules:
 
 ```css
 /* =================================================================
-   1. VARIABLES & CUSTOM PROPERTIES
+   BUTTONS
    ================================================================= */
 
-/* =================================================================
-   2. RESET & BASE STYLES
-   ================================================================= */
+/* Primary
+   ----------------------------------------------------------------- */
 
-/* =================================================================
-   3. TYPOGRAPHY
-   ================================================================= */
+.btn-primary { ... }
 
-/* =================================================================
-   4. LAYOUT COMPONENTS
-   ================================================================= */
+/* Secondary
+   ----------------------------------------------------------------- */
 
-/* =================================================================
-   5. UI COMPONENTS
-   ================================================================= */
-
-/* =================================================================
-   6. UTILITIES
-   ================================================================= */
-
-/* =================================================================
-   7. MEDIA QUERIES (Mobile-First)
-   ================================================================= */
+.btn-secondary { ... }
 ```
 
 ### Section Comments

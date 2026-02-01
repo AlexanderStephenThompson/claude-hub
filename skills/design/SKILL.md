@@ -53,7 +53,7 @@ user-invocable: false
 ### Critical Rules
 
 1. **ALWAYS use design tokens** — NEVER use hardcoded values
-2. **All values come from `/styles/global.css`** — Single source of truth
+2. **All values come from `styles/tokens.css`** — Single source of truth for CSS variables
 3. **No magic numbers** — Every color, spacing, size uses a CSS variable
 
 ### Examples

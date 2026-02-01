@@ -265,35 +265,46 @@ All design values live in a global CSS file (e.g., `styles/tokens.css` or `globa
 
 ## File Organization
 
-### Component-Scoped CSS
+### The 5-File Architecture
+
+All projects use exactly 5 CSS files. This structure is intentional — it mirrors the cascade and keeps styling predictable.
 
 ```
-src/
-├── styles/
-│   ├── tokens.css       # Design tokens (import first)
-│   ├── reset.css        # CSS reset/normalize
-│   ├── base.css         # Base element styles
-│   └── utilities.css    # Utility classes (sparingly)
-├── components/
-│   ├── Button/
-│   │   ├── Button.jsx
-│   │   └── Button.css   # Button-specific styles
-│   └── Modal/
-│       ├── Modal.jsx
-│       └── Modal.css
-└── App.css              # App layout only
+styles/
+├── tokens.css      # 1. Design system foundation (CSS variables only)
+├── base.css        # 2. Reset + element defaults
+├── layouts.css     # 3. Grid systems, page scaffolding
+├── components.css  # 4. All component styles
+└── utilities.css   # 5. Helper classes
 ```
+
+### What Goes Where
+
+| File | Contents | Selectors |
+|------|----------|-----------|
+| `tokens.css` | CSS variables only. Colors, spacing, typography, shadows, z-index, breakpoints, animation timing. | `:root` only |
+| `base.css` | Reset/normalize + base element styles. Body, headings, links, forms, lists, tables. | Element selectors (`body`, `h1`, `a`, `input`) |
+| `layouts.css` | Page scaffolding, grid systems, containers, section spacing. | `.page-layout`, `.container`, `.grid-*`, `.section-*` |
+| `components.css` | All component classes using BEM. Buttons, cards, modals, forms, navs, etc. | `.btn`, `.card`, `.modal`, `.nav`, etc. |
+| `utilities.css` | Single-purpose helpers. Visually hidden, text alignment, spacing overrides. | `.u-visually-hidden`, `.u-text-center`, `.u-mt-*` |
 
 ### Import Order
 
 ```css
 /* In main entry (App.jsx or index.jsx) */
-import './styles/tokens.css';    /* 1. Design tokens first */
-import './styles/reset.css';     /* 2. Reset */
-import './styles/base.css';      /* 3. Base element styles */
-import './styles/utilities.css'; /* 4. Utilities (if any) */
-import './App.css';              /* 5. App layout */
+import './styles/tokens.css';     /* 1. Variables first - no styles yet */
+import './styles/base.css';       /* 2. Reset + element defaults */
+import './styles/layouts.css';    /* 3. Page structure */
+import './styles/components.css'; /* 4. UI components */
+import './styles/utilities.css';  /* 5. Overrides last (highest priority) */
 ```
+
+### Why This Structure
+
+1. **Cascade is intentional** — Each layer builds on the previous. Utilities override components override layouts override base.
+2. **One place to look** — Need to change a button? It's in `components.css`. Need a layout grid? It's in `layouts.css`.
+3. **No specificity wars** — Tokens have no specificity, utilities win by source order.
+4. **Scales naturally** — For very large projects, split `components.css` into separate files that get bundled.
 
 ---
 

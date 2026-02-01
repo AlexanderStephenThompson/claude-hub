@@ -43,8 +43,18 @@ Gather the UI codebase context:
 1. **Find all CSS files** — `.css`, `.scss`, `.module.css`, inline styles in JS/JSX
 2. **Find all HTML/JSX files** — `.html`, `.jsx`, `.tsx`
 3. **Identify the styling approach** — Vanilla CSS? Tailwind/utility classes? CSS-in-JS (styled-components, Emotion)? CSS Modules? Adapt the audit accordingly.
-4. **Identify the design token source** — Look for `tokens.css`, `global.css`, CSS variables in `:root`, theme files, or Tailwind config. Note if no token system exists.
-5. **Count components** — How many UI components exist?
+4. **Verify the 5-file structure** — For vanilla CSS projects, check for the required files:
+   ```
+   styles/
+   ├── tokens.css      # CSS variables only
+   ├── base.css        # Reset + element defaults
+   ├── layouts.css     # Page scaffolding, grids
+   ├── components.css  # All component styles
+   └── utilities.css   # Helper classes
+   ```
+   Flag missing files or incorrect organization (e.g., component CSS scattered across many files).
+5. **Identify the design token source** — Should be `tokens.css`. Look for CSS variables in `:root`. Note if tokens are missing or in the wrong file.
+6. **Count components** — How many UI components exist?
 
 Build a file manifest and share it with all auditors in Phase 2.
 
