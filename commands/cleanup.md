@@ -127,6 +127,20 @@ Naming is navigation. Consistent naming means you can guess your way through the
 - Is the naming pattern consistent? (If one component is `UserProfile.tsx`, another shouldn't be `profileSettings.tsx`)
 - Do file names match their primary export? (`useAuth.ts` exports `useAuth`, not `useAuthentication`)
 - Are index files used intentionally? (Clean public APIs, not just re-exporting everything)
+
+**Non-Semantic Names (Flag for Attention)**
+
+Flag any files — especially images and assets — with meaningless names. Don't rename them automatically; just surface them for the user to address.
+
+- `untitled`, `Untitled-1`, `new`, `copy`, `final`, `final-v2`
+- Random strings: `a8f3b2c1.png`, `IMG_20240115.jpg`, `DSC_0042.png`
+- UUIDs or hashes used as filenames
+- Generic placeholders: `image.png`, `file.pdf`, `document.docx`, `test.js`
+- Screenshot defaults: `Screenshot 2024-01-15`, `Screen Shot...`, `Capture.PNG`
+
+These break discoverability. A file named `hero-banner.png` is findable; `IMG_4521.jpg` is not.
+
+**Offer to suggest names:** For flagged images/assets, offer to open and view the file, then suggest a descriptive name based on its contents. Use the file's folder location as additional context (e.g., an image in `/assets/heroes/` is likely a hero image). Wait for user confirmation before renaming.
 - No generic names: `helpers.ts`, `utils.ts`, `misc.ts`, `stuff.ts` — name them by what they actually do.
 
 ---
