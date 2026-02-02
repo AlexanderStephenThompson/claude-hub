@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(gh auth:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Claude Code customizations hub\n\nMulti-agent teams, shared skills, standalone agents and commands for Claude Code.\n\n- 3 teams: refactor-team \\(7 agents\\), implement-team \\(5 agents\\), diagnose-team \\(5 agents\\)\n- 12 skills: architecture, code-quality, code-standards, design, documentation, security, + 6 web stubs\n- 2 standalone agents: codebase-scout, improvement-auditor\n- 2 commands: commit, audit\n- Skill templates for extending the system\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(gh repo create:*)",
+      "Bash(claude plugin list:*)",
+      "Bash(claude plugin uninstall:*)",
+      "Bash(claude plugin marketplace list:*)",
+      "Bash(claude plugin marketplace remove alex-claude-plugins)",
+      "Bash(claude plugin marketplace add:*)",
+      "Bash(claude plugin install refactor-team)",
+      "Bash(claude plugin install:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(claude plugin update:*)",
+      "Bash(claude plugin marketplace update:*)",
+      "Bash(del \"c:\\\\Users\\\\Alexa\\\\OneDrive\\\\Desktop\\\\_Personal\\\\claude-hub\\\\nul\")",
+      "Bash(git rev-parse:*)"
+    ]
+  }
+}
