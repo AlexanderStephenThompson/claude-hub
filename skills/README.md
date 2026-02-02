@@ -19,7 +19,7 @@ Fully developed skills with comprehensive standards, examples, and checklists.
 
 ### Web Skills
 
-Web-specific skills with comprehensive SKILL.md content. These do not yet have `assets/`, `references/`, or `scripts/` subdirectories like core skills.
+Web-specific skills with comprehensive SKILL.md content.
 
 | Skill | Purpose |
 |-------|---------|
@@ -30,42 +30,72 @@ Web-specific skills with comprehensive SKILL.md content. These do not yet have `
 | [web-react/](./web-react/) | React patterns, hooks, state |
 | [web-testing/](./web-testing/) | Frontend testing strategies |
 
+### Data Engineering Skills
+
+Skills for data processing, pipelines, and cloud infrastructure.
+
+| Skill | Purpose |
+|-------|---------|
+| [data-python/](./data-python/) | Python for data processing (pandas, polars, pyspark) |
+| [data-sql/](./data-sql/) | Query optimization, window functions, schema design |
+| [data-pipelines/](./data-pipelines/) | ETL patterns, orchestration, idempotency, data quality |
+| [data-aws/](./data-aws/) | AWS data services (Glue, Lambda, S3, Athena, Redshift) |
+| [data-iac/](./data-iac/) | Infrastructure as Code (Terraform, CDK, CloudFormation) |
+
+### Unity & VRChat Skills
+
+Skills for Unity game development and VRChat content creation.
+
+| Skill | Purpose |
+|-------|---------|
+| [unity-csharp/](./unity-csharp/) | Unity C# scripting, MonoBehaviour patterns, lifecycle |
+| [unity-performance/](./unity-performance/) | VR/mobile optimization, draw calls, batching, profiling |
+| [unity-shaders/](./unity-shaders/) | ShaderLab, HLSL, Shader Graph, single-pass stereo |
+| [vrc-udon/](./vrc-udon/) | Udon/UdonSharp for VRChat worlds, networking |
+| [vrc-worlds/](./vrc-worlds/) | VRChat world building, lighting, optimization |
+| [vrc-avatars/](./vrc-avatars/) | VRChat avatars, expressions, PhysBones, performance limits |
+
 ## Skill Relationships
 
 Skills have defined boundaries to avoid duplication. See each skill's "Scope and Boundaries" section.
 
 ```
-                    ┌─────────────┐
-                    │ code-quality│ (TDD, naming, docstrings)
-                    └──────┬──────┘
-                           │
-         ┌─────────────────┼─────────────────┐
-         │                 │                 │
-    ┌────▼────┐      ┌─────▼─────┐     ┌─────▼─────┐
-    │architecture│   │code-standards│   │documentation│
-    │(layering, │    │(JS, Python, │    │(versioning, │
-    │ modules)  │    │   SQL)      │    │  changelog) │
-    └───────────┘    └─────────────┘    └─────────────┘
+                         ┌─────────────┐
+                         │ code-quality│ (TDD, naming, docstrings)
+                         └──────┬──────┘
+                                │
+         ┌──────────────────────┼──────────────────────┐
+         │                      │                      │
+    ┌────▼────┐           ┌─────▼─────┐          ┌─────▼─────┐
+    │architecture│        │code-standards│       │documentation│
+    └───────────┘         └─────────────┘        └─────────────┘
 
-         ┌─────────────────┬─────────────────┐
-         │                 │                 │
-    ┌────▼────┐      ┌─────▼─────┐     ┌─────▼─────┐
-    │ design  │      │web-access-│     │  web-css  │
-    │(tokens, │ ───► │  ibility  │ ◄── │(variables,│
-    │semantic │      │(WCAG,ARIA)│     │   BEM)    │
-    │  HTML)  │      └───────────┘     └───────────┘
-    └─────────┘
-         │
-    ┌────▼────┐
-    │security │ (OWASP, validation, auth)
-    └─────────┘
+    ┌─────────────────────────────────────────────────────────┐
+    │                      DOMAIN SKILLS                       │
+    └─────────────────────────────────────────────────────────┘
+
+    Web Stack              Data Engineering        Unity/VRChat
+    ──────────             ────────────────        ────────────
+    design ─────┐          data-python             unity-csharp
+    web-css ◄───┤          data-sql                unity-performance
+    web-a11y ◄──┘          data-pipelines          unity-shaders
+    web-react              data-aws                vrc-udon
+    web-graphql            data-iac                vrc-worlds
+    web-performance                                vrc-avatars
+    web-testing
+
+    ┌─────────────────────────────────────────────────────────┐
+    │                       CROSS-CUTTING                      │
+    │                         security                         │
+    └─────────────────────────────────────────────────────────┘
 ```
 
 **Key relationships:**
+- `code-quality` is foundational; most skills build on it
 - `design` defines principles; `web-css` implements them
 - `web-accessibility` extends `design` with WCAG compliance
-- `code-quality` is foundational; most skills build on it
-- `security` is independent but referenced by high-stakes workflows
+- `security` is cross-cutting and applies to all domains
+- Domain skills (web, data, unity) are independent of each other
 
 ## Skill Structure
 

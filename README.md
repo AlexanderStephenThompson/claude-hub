@@ -5,7 +5,7 @@ Personal Claude Code customizations: multi-agent teams, standalone commands, age
 ## Structure
 
 ```
-claude-customizations/
+claude-hub/
 ├── teams/          # Multi-agent plugin teams (installed via marketplace)
 ├── commands/       # Standalone slash commands
 ├── agents/         # Standalone agents
@@ -131,6 +131,8 @@ Standalone agents stored in `~/.claude/agents/` (reference docs only).
 
 Shared skills that all teams and agents reference. Each skill contains standards, references, assets, and validation scripts.
 
+### Core Skills
+
 | Skill | Purpose |
 |-------|---------|
 | [architecture/](./skills/architecture/) | Architecture principles, module boundaries |
@@ -140,7 +142,13 @@ Shared skills that all teams and agents reference. Each skill contains standards
 | [documentation/](./skills/documentation/) | SemVer, changelog, feature specs |
 | [security/](./skills/security/) | OWASP Top 10, input validation, auth patterns |
 
-**Web-specific:** web-accessibility, web-css, web-graphql, web-performance, web-react, web-testing
+### Domain Skills
+
+| Domain | Skills |
+|--------|--------|
+| **Web** | web-accessibility, web-css, web-graphql, web-performance, web-react, web-testing |
+| **Data Engineering** | data-python, data-sql, data-pipelines, data-aws, data-iac |
+| **Unity/VRChat** | unity-csharp, unity-performance, unity-shaders, vrc-udon, vrc-worlds, vrc-avatars |
 
 ---
 

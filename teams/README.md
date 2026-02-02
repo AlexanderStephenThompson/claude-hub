@@ -8,9 +8,47 @@ Multi-agent workflows that coordinate specialized agents to accomplish complex t
 
 | Team | Agents | Command | Purpose |
 |------|--------|---------|---------|
+| [clean-team](./clean-team) | 4 | `/clean-team:clean [scope]` | Codebase hygiene and CSS consolidation |
 | [refactor-team](./refactor-team) | 7 | `/refactor-team:refactor [path]` | Code refactoring with safety gates |
 | [implement-team](./implement-team) | 5 | `/implement-team:implement <feature>` | TDD feature implementation |
 | [diagnose-team](./diagnose-team) | 5 | `/diagnose-team:diagnose <problem>` | Stubborn bugs and intent-reality gaps |
+
+---
+
+## Clean Team (4 Agents)
+
+A codebase hygiene workflow that organizes structure, cleans UI code, polishes remaining issues, and verifies results.
+
+### Workflow
+
+```
+Organizer → Stylist → Polisher → Verifier
+```
+
+### Agents
+
+| Agent | Role | Model |
+|-------|------|-------|
+| **Organizer** | Audits and fixes project structure (moves, renames, deletes) | Opus |
+| **Stylist** | Cleans UI code, enforces CSS ≤5 files, fixes HTML semantics | Opus |
+| **Polisher** | Removes dead code, extracts constants, flags risky changes | Opus |
+| **Verifier** | Runs tests, generates CLEANUP-REPORT.md with before/after metrics | Opus |
+
+### Key Features
+
+- **CSS consolidation**: Stylist enforces ≤5 CSS files for vanilla CSS projects
+- **Commit per agent**: Each agent commits its changes before handoff
+- **Skip conditions**: Stylist skips if no web files exist
+- **Verification report**: CLEANUP-REPORT.md with metrics comparison
+
+### When to Use
+
+| Situation | Use Clean Team |
+|-----------|---------------|
+| Before major work | Start with a clean codebase |
+| After organic growth | Clean up accumulated mess |
+| Before handoff | Leave codebase navigable for next developer |
+| CSS file sprawl | Consolidate to 5-file structure |
 
 ---
 
@@ -177,6 +215,7 @@ Both types benefit from the same workflow—closing the intent-reality gap.
 claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
 
 # Install teams
+claude plugin install clean-team
 claude plugin install refactor-team
 claude plugin install implement-team
 claude plugin install diagnose-team
@@ -185,6 +224,9 @@ claude plugin install diagnose-team
 ## Usage
 
 ```bash
+# Clean up codebase structure and UI code
+/clean-team:clean src/
+
 # Full 7-agent refactoring workflow
 /refactor-team:refactor src/
 
@@ -223,7 +265,10 @@ The `@explorer` and `@researcher` text in command files are **descriptive instru
 
 | Situation | Team |
 |-----------|------|
-| Existing codebase needs cleanup | refactor-team |
+| Quick codebase tidying | clean-team |
+| CSS file sprawl (>5 files) | clean-team |
+| Project structure is messy | clean-team |
+| Existing codebase needs deep refactoring | refactor-team |
 | Legacy code modernization | refactor-team |
 | New feature implementation | implement-team |
 | Bug fix with design decisions | implement-team |

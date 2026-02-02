@@ -45,6 +45,7 @@ cp commands/*.md ~/.claude/commands/
 claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
 
 # Install teams
+claude plugin install clean-team
 claude plugin install refactor-team
 claude plugin install implement-team
 claude plugin install diagnose-team

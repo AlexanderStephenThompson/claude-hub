@@ -6,13 +6,24 @@ Reference documentation for Claude Code slash commands stored in `~/.claude/comm
 
 ## Available Commands
 
+### General Commands
+
 | Command | Description | Output |
 |---------|-------------|--------|
 | [/commit](./commit.md) | Stage all changes and create a conventional commit | Git commit |
-| [/deep-scan](./deep-scan.md) | Run comprehensive codebase audit | AUDIT-REPORT-[date].md |
 | [/optimize-prompt](./optimize-prompt.md) | Rewrite a prompt for clarity and effectiveness | Optimized prompt |
+| [/orient](./orient.md) | Orient yourself to this project before starting work | Context summary |
 
-> **Note:** The deep-scan command invokes the [Improvement Auditor](../agents/improvement-auditor.md) agent.
+### Quality & Audit Commands
+
+| Command | Description | Output |
+|---------|-------------|--------|
+| [/deep-scan](./deep-scan.md) | Deep multi-category codebase analysis | AUDIT-REPORT-[date].md |
+| [/review](./review.md) | Review current work for quality and consistency | Review findings |
+| [/structure](./structure.md) | Audit project structure and file organization | Structure findings |
+| [/ui-audit](./ui-audit.md) | Audit HTML semantics and CSS for consolidation | UI code findings |
+
+> **Note:** The /deep-scan command invokes the [Improvement Auditor](../agents/improvement-auditor.md) agent.
 
 ---
 

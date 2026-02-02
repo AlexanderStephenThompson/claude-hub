@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **clean-team v1.0.0** — 4-agent codebase hygiene workflow (Organizer → Stylist → Polisher → Verifier)
+- `/structure` command — Audit project structure and file organization
+- `/review` command — Review current work for quality and consistency
+- `/ui-audit` command — Audit HTML semantics and CSS for consolidation (with 5-file CSS enforcement)
+- `/orient` command — Orient yourself to this project before starting work
+- Data engineering skills (data-python, data-sql, data-pipelines, data-aws, data-iac)
+- Unity/VRChat skills (unity-csharp, unity-performance, unity-shaders, vrc-udon, vrc-worlds, vrc-avatars)
 - Skill inheritance for implement-team agents (planner, challenger, implementor, security, refactorer)
 - Skill inheritance for diagnose-team agents (clarifier, investigator, hypothesizer, resolver, validator)
 - Scope and Boundaries sections for design, web-accessibility, and web-css skills
@@ -19,7 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CONTRIBUTING.md with guidelines for extending the system
 
 ### Changed
+- Renamed `/audit` to `/deep-scan` for clarity
+- Renamed `/cleanup` to `/structure` for clarity
+- Renamed `/style-audit` to `/ui-audit` for clarity
+- Enhanced `/ui-audit` with stronger 5-file CSS enforcement
 - Updated templates/README.md to document all four template types
+- Updated all documentation to include clean-team and new commands
 
 ---
 
