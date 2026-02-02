@@ -70,22 +70,45 @@ Four commands for analyzing codebase health. Each uses parallel sub-agents to go
 | [/structure](./commands/structure.md) | Project structure | When the project feels messy — audits file organization, naming, folder structure, and navigability |
 | [/ui-audit](./commands/ui-audit.md) | HTML/CSS hygiene | When UI code has grown organically — finds semantic HTML issues, CSS duplication, missing states, and design token violations |
 
+### Recommended Order
+
+```
+/structure    → "Can I navigate this codebase?"
+     ↓
+/deep-scan    → "What needs improving?"
+     ↓
+/ui-audit     → "Is the UI code clean?" (web projects only)
+     ↓
+  [do work]
+     ↓
+/review       → "Is my work solid?"
+```
+
+| Order | Command | Why First |
+|-------|---------|-----------|
+| 1 | `/structure` | Fix organization first — easier to audit code when you can find it |
+| 2 | `/deep-scan` | Comprehensive analysis once structure is clean |
+| 3 | `/ui-audit` | Targeted HTML/CSS cleanup (skip if not a web project) |
+| 4 | `/review` | Validate work after making changes, not before |
+
+**In practice:** Skip to `/deep-scan` if structure is already clean. Run `/review` repeatedly during active development.
+
 ### Quick Reference
 
 ```
-/deep-scan          → "What needs improving?" (spawns improvement-auditor agent)
-/deep-scan css      → Focus on CSS/styling issues
+/structure          → 5 parallel auditors (file org, naming, folders)
+/structure src/     → Focus on specific directory
+
+/deep-scan          → spawns improvement-auditor agent
+/deep-scan css      → Focus on CSS/styling
 /deep-scan a11y     → Focus on accessibility
 /deep-scan perf     → Focus on performance
 
-/review             → "Is this work solid?" (4 parallel reviewers)
-/review code        → Focus on code quality
-
-/structure          → "Is the project organized?" (5 parallel auditors)
-/structure src/     → Focus on specific directory
-
-/ui-audit           → "Is the UI code clean?" (4 parallel auditors)
+/ui-audit           → 4 parallel auditors (HTML, CSS, tokens, states)
 /ui-audit buttons   → Hint to prioritize button-related findings
+
+/review             → 4 parallel reviewers (content, code, org, consistency)
+/review code        → Focus on code quality
 ```
 
 ---
