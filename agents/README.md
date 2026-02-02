@@ -121,7 +121,7 @@ If hardcoded secrets are found, it flags them for remediation.
 ### When It's Invoked
 
 Claude automatically uses this agent when you:
-- Run `/audit` command
+- Run `/deep-scan` command
 - Ask to "audit this codebase"
 - Request "improvement analysis"
 - Need to identify "refactoring opportunities"
@@ -163,7 +163,7 @@ The agent produces `AUDIT-REPORT-[YYYY-MM-DD].md` containing:
 The audit report is automatically detected by `/refactor-team:refactor`:
 
 ```
-/audit                          # Produces AUDIT-REPORT-*.md
+/deep-scan                      # Produces AUDIT-REPORT-*.md
 /refactor-team:refactor         # Finds and uses the report
 ```
 

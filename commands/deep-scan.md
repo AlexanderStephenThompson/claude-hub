@@ -3,18 +3,18 @@ description: Run a comprehensive codebase audit
 argument-hint: [focus area]
 ---
 
-# /audit
+# /deep-scan
 
 Invoke the **improvement-auditor** agent on this codebase.
 
 ## Usage
 
 ```
-/audit              → Full audit across all categories
-/audit css          → Focus on CSS/styling issues
-/audit a11y         → Focus on accessibility
-/audit perf         → Focus on performance
-/audit structure    → Focus on file organization
+/deep-scan              → Full scan across all categories
+/deep-scan css          → Focus on CSS/styling issues
+/deep-scan a11y         → Focus on accessibility
+/deep-scan perf         → Focus on performance
+/deep-scan structure    → Focus on file organization
 ```
 
 ## Instructions

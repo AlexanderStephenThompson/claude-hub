@@ -53,12 +53,40 @@ Standalone commands stored in `~/.claude/commands/` (reference docs only).
 
 | Command | Description |
 |---------|-------------|
-| [/audit](./commands/audit.md) | Run a comprehensive codebase audit |
-| [/cleanup](./commands/cleanup.md) | Check project structure, file organization, and overall tidiness |
 | [/commit](./commands/commit.md) | Stage all changes and create a well-crafted commit message |
 | [/optimize-prompt](./commands/optimize-prompt.md) | Rewrite a prompt for clarity, specificity, and effectiveness |
 | [/orient](./commands/orient.md) | Orient yourself to this project before starting work |
-| [/review](./commands/review.md) | Review the current work for content clarity, code quality, organization, and consistency |
+
+---
+
+## Quality & Audit Commands
+
+Four commands for analyzing codebase health. Each uses parallel sub-agents to go deep on specific dimensions.
+
+| Command | Focus | When to Use |
+|---------|-------|-------------|
+| [/deep-scan](./commands/deep-scan.md) | Deep multi-category analysis | Before major refactoring — identifies improvement opportunities across code quality, CSS, accessibility, performance, and structure |
+| [/review](./commands/review.md) | Current work quality | After implementing a feature — checks content clarity, code quality, organization, and consistency |
+| [/structure](./commands/structure.md) | Project structure | When the project feels messy — audits file organization, naming, folder structure, and navigability |
+| [/ui-audit](./commands/ui-audit.md) | HTML/CSS hygiene | When UI code has grown organically — finds semantic HTML issues, CSS duplication, missing states, and design token violations |
+
+### Quick Reference
+
+```
+/deep-scan          → "What needs improving?" (spawns improvement-auditor agent)
+/deep-scan css      → Focus on CSS/styling issues
+/deep-scan a11y     → Focus on accessibility
+/deep-scan perf     → Focus on performance
+
+/review             → "Is this work solid?" (4 parallel reviewers)
+/review code        → Focus on code quality
+
+/structure          → "Is the project organized?" (5 parallel auditors)
+/structure src/     → Focus on specific directory
+
+/ui-audit           → "Is the UI code clean?" (4 parallel auditors)
+/ui-audit buttons   → Hint to prioritize button-related findings
+```
 
 ---
 

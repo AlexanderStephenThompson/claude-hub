@@ -38,14 +38,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | "It works but not how I wanted" | diagnose-team |
 | Root cause is unclear after multiple attempts | diagnose-team |
 
-### Audit → Refactor Pipeline
+### Deep Scan → Refactor Pipeline
 
 ```
-/audit [focus]            → Produces AUDIT-REPORT-[YYYY-MM-DD].md
+/deep-scan [focus]        → Produces AUDIT-REPORT-[YYYY-MM-DD].md
 /refactor-team:refactor   → Finds and uses the audit report automatically
 ```
 
-Focus options: `css`, `a11y`, `perf`, `structure` (or omit for full audit).
+Focus options: `css`, `a11y`, `perf`, `structure` (or omit for full scan).
 
 ## Common Commands
 

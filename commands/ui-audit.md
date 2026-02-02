@@ -3,7 +3,7 @@ description: Audit HTML semantics and CSS for consolidation opportunities
 argument-hint: [optional hint — e.g., "buttons feel inconsistent" or "check the card components"]
 ---
 
-# Style Audit
+# /ui-audit
 
 ultrathink
 

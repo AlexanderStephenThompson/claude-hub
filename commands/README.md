@@ -9,10 +9,10 @@ Reference documentation for Claude Code slash commands stored in `~/.claude/comm
 | Command | Description | Output |
 |---------|-------------|--------|
 | [/commit](./commit.md) | Stage all changes and create a conventional commit | Git commit |
-| [/audit](./audit.md) | Run comprehensive codebase audit | AUDIT-REPORT-[date].md |
+| [/deep-scan](./deep-scan.md) | Run comprehensive codebase audit | AUDIT-REPORT-[date].md |
 | [/optimize-prompt](./optimize-prompt.md) | Rewrite a prompt for clarity and effectiveness | Optimized prompt |
 
-> **Note:** The audit command invokes the [Improvement Auditor](../agents/improvement-auditor.md) agent.
+> **Note:** The deep-scan command invokes the [Improvement Auditor](../agents/improvement-auditor.md) agent.
 
 ---
 

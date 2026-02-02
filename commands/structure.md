@@ -1,9 +1,9 @@
 ---
-description: Check project structure, file organization, and overall tidiness
+description: Audit project structure, file organization, and navigability
 argument-hint: [optional scope — e.g., "src/components" or "root"]
 ---
 
-# Cleanup
+# /structure
 
 ultrathink
 
