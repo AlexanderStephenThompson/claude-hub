@@ -25,8 +25,43 @@ AI tends to create CSS that works but accumulates inconsistencies:
 - Near-duplicate rules that could be consolidated
 - Hardcoded values that should be design tokens
 - Div soup where semantic HTML would be clearer
+- **CSS file sprawl** — new files created instead of consolidating into existing ones
 
 This audit finds those patterns and proposes consolidation.
+
+---
+
+## Core Principle: Reduce CSS Files
+
+**The 5-file structure is the target for vanilla CSS projects.** Fewer files = easier maintenance, faster onboarding, less duplication.
+
+```
+styles/
+├── tokens.css      # CSS variables only
+├── base.css        # Reset + element defaults
+├── layouts.css     # Page scaffolding, grids
+├── components.css  # All component styles
+└── utilities.css   # Helper classes
+```
+
+**This is not optional.** If the project has more than 5 CSS files:
+
+1. **Flag it as a Critical finding** in the report
+2. **Propose a consolidation plan** — which files merge into which
+3. **If 5 files truly isn't possible**, explain specifically why:
+   - Large component library (50+ components) may justify splitting `components.css` by domain
+   - Third-party CSS that can't be merged
+   - Framework constraints (e.g., CSS Modules require per-component files)
+
+**The burden of proof is on expansion, not reduction.** Default to fewer files. Only accept more when there's a clear, documented reason.
+
+| CSS Files | Verdict |
+|-----------|---------|
+| ≤5 | Target state |
+| 6-7 | Acceptable with justification |
+| 8+ | Requires consolidation plan |
+
+**Note:** This constraint applies to vanilla CSS projects only. Tailwind, CSS-in-JS, and CSS Modules have different organizational patterns — adapt accordingly but still push for minimal file count within that paradigm.
 
 ---
 
@@ -41,9 +76,15 @@ This command uses **parallel sub-agents** for focused analysis. Each auditor goe
 Gather the UI codebase context:
 
 1. **Find all CSS files** — `.css`, `.scss`, `.module.css`, inline styles in JS/JSX
-2. **Find all HTML/JSX files** — `.html`, `.jsx`, `.tsx`
-3. **Identify the styling approach** — Vanilla CSS? Tailwind/utility classes? CSS-in-JS (styled-components, Emotion)? CSS Modules? Adapt the audit accordingly.
-4. **Verify the 5-file structure** — For vanilla CSS projects, check for the required files:
+2. **Count CSS files** — Record the exact number. This is a key metric.
+3. **Find all HTML/JSX files** — `.html`, `.jsx`, `.tsx`
+4. **Identify the styling approach** — Vanilla CSS? Tailwind/utility classes? CSS-in-JS (styled-components, Emotion)? CSS Modules? Adapt the audit accordingly.
+5. **Evaluate against the 5-file target** — For vanilla CSS projects:
+   - **≤5 files**: Target state achieved
+   - **6-7 files**: Note which files could merge; require justification for each extra file
+   - **8+ files**: Flag as **Critical** — create consolidation plan before other findings
+
+   Expected structure:
    ```
    styles/
    ├── tokens.css      # CSS variables only
@@ -52,9 +93,14 @@ Gather the UI codebase context:
    ├── components.css  # All component styles
    └── utilities.css   # Helper classes
    ```
-   Flag missing files or incorrect organization (e.g., component CSS scattered across many files).
-5. **Identify the design token source** — Should be `tokens.css`. Look for CSS variables in `:root`. Note if tokens are missing or in the wrong file.
-6. **Count components** — How many UI components exist?
+
+   For each file beyond 5, document:
+   - What's in it
+   - Why it can't merge into one of the 5 core files
+   - If the reason isn't compelling, propose the merge
+
+6. **Identify the design token source** — Should be `tokens.css`. Look for CSS variables in `:root`. Note if tokens are missing or in the wrong file.
+7. **Count components** — How many UI components exist?
 
 Build a file manifest and share it with all auditors in Phase 2.
 
@@ -205,10 +251,13 @@ After ALL auditors complete:
 ### UI Code Health Summary
 
 Brief overview with quick stats:
+- **CSS Files**: X files (target: ≤5) — **PASS** / **NEEDS CONSOLIDATION** / **CRITICAL: requires consolidation plan**
 - **HTML**: X semantic issues, Y inline styles, Z class bloat instances
 - **CSS**: X near-duplicates, Y unused selectors
 - **Tokens**: X% coverage (or "No token system — Y candidates identified")
 - **States**: X components missing states
+
+**CSS file count is the first metric.** If it's over 5, the consolidation plan appears before other findings.
 
 One-sentence verdict: Is this codebase clean, needs tidying, or needs significant work?
 
