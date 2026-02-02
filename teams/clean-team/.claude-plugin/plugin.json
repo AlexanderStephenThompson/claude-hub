@@ -1,0 +1,24 @@
+{
+  "name": "clean-team",
+  "version": "1.0.0",
+  "description": "4-agent codebase hygiene workflow. Organizes structure, cleans UI code, polishes remaining issues, verifies results.",
+  "author": {
+    "name": "Alexander Thompson"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/AlexanderStephenThompson/claude-hub",
+  "keywords": [
+    "cleanup",
+    "hygiene",
+    "css",
+    "structure",
+    "consolidation"
+  ],
+  "commands": "./commands/",
+  "agents": [
+    "./agents/organizer.md",
+    "./agents/stylist.md",
+    "./agents/polisher.md",
+    "./agents/verifier.md"
+  ]
+}

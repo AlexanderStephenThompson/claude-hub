@@ -21,6 +21,7 @@ Installable plugin teams with multiple coordinated agents.
 
 | Team | Description | Version |
 |------|-------------|---------|
+| [clean-team](./teams/clean-team) | 4-agent codebase hygiene workflow | 1.0.0 |
 | [refactor-team](./teams/refactor-team) | 7-agent refactoring workflow | 2.0.0 |
 | [implement-team](./teams/implement-team) | 5-agent TDD implementation | 1.0.0 |
 | [diagnose-team](./teams/diagnose-team) | 5-agent diagnostic workflow | 1.0.0 |
@@ -32,6 +33,7 @@ Installable plugin teams with multiple coordinated agents.
 claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
 
 # Install teams
+claude plugin install clean-team
 claude plugin install refactor-team
 claude plugin install implement-team
 claude plugin install diagnose-team
@@ -41,6 +43,7 @@ claude plugin install diagnose-team
 
 | Command | Description |
 |---------|-------------|
+| `/clean-team:clean [scope]` | Run 4-agent codebase hygiene workflow |
 | `/refactor-team:refactor [path] [focus]` | Run 7-agent refactoring workflow |
 | `/implement-team:implement <feature>` | Run 5-agent TDD implementation workflow |
 | `/diagnose-team:diagnose <problem>` | Run 5-agent diagnostic workflow |
