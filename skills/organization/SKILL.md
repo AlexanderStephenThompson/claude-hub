@@ -10,7 +10,7 @@ user-invocable: false
 
 # Organization Skill
 
-**Version:** 1.0
+**Version:** 1.1
 **Source:** L1/L2/L3 Cognitive-Phase Framework
 
 > Folder structure should match how your brain navigates, not how a database stores records.
@@ -111,6 +111,28 @@ The layers are NOT literal folder counts. They describe your mental state as you
 
 ---
 
+## Progressive Disclosure
+
+The framework uses progressive disclosure — each level reveals only what you need for your current decision:
+
+```
+Step 1: See 5-8 arenas          (L1 — which world?)
+Step 2: See 3-6 outcomes         (L2 — which goal?)
+Step 3: See the artifacts         (L3 — grab the thing)
+```
+
+### Ideal Counts per Level
+
+| Level | Target | Max Before Splitting |
+|-------|--------|---------------------|
+| L1 arenas | 5-8 | 12 |
+| L2 outcomes per arena | 3-6 | 10 |
+| L3 artifacts per outcome | Varies | 30 (then subgroup) |
+
+If any level exceeds its max, it's a signal to split or restructure.
+
+---
+
 ## Naming Conventions
 
 ### L1 Names: Broad, Stable, Recognizable
@@ -163,7 +185,9 @@ When you have a file and don't know where to put it, ask these questions in orde
 | Is this someone else's output I need to access? | Shortcut/link to the owner's L2, not a copy |
 | I genuinely don't know | `_Unsorted/` — sort it during your weekly review |
 
-### Active vs Reference: The Intent Test
+---
+
+## Active vs Reference: The Intent Test
 
 Folders serve two different cognitive purposes. Mixing them creates confusion.
 
@@ -177,7 +201,9 @@ Folders serve two different cognitive purposes. Mixing them creates confusion.
 - If both → split into two L2 folders. The active folder holds the work and links to the reference folder for lookup.
 - Active folders archive when the work is done. Reference folders persist.
 
-### Overlap Resolution
+---
+
+## Overlap Resolution
 
 When a file feels like it belongs in two places, use this pattern:
 
@@ -191,76 +217,6 @@ When a file feels like it belongs in two places, use this pattern:
 | Same data, different formats | One source of truth. The canonical version lives in the owner's folder |
 
 **Never duplicate.** Two copies means one gets stale.
-
----
-
-## Common Arena Templates
-
-See `assets/` for full templates:
-
-- `assets/home-drive-template.md` — Personal computer or home drive
-- `assets/work-drive-template.md` — Professional or team work drive
-
----
-
-## Red Flags
-
-Stop and reorganize when you see:
-
-| Smell | Problem | Fix |
-|-------|---------|-----|
-| **Catch-all folders** | `Misc/`, `Other/`, `Stuff/`, `New Folder/` | Decide the real L1 arena or L2 outcome |
-| **Deep nesting (6+ levels)** | You're mixing cognitive phases in one branch | Flatten by separating L1/L2/L3 concerns |
-| **Date-only folders at L1** | `2024/`, `2025/` at the top level | Dates are L2 or L3 — put the domain first |
-| **Duplicate file names** | Same file in two places | Pick the owner, link from elsewhere |
-| **Everything in one folder** | 100+ files in one directory | Split into L2 outcomes or L3 artifact types |
-| **Ambiguous names** | `Documents/`, `Files/`, `Data/` | Replace with specific arena names |
-| **Mixing layers** | `Finance/Invoice-2025-03.pdf` (skipped L2) | Add the outcome: `Finance/Accounts-Payable/Invoice-2025-03.pdf` |
-
----
-
-## Adapting by Scale
-
-### Personal Drive (One Person)
-
-- L1 arenas map to life domains: `Work`, `Personal`, `Creative`, `Finance`, `Learning`
-- L2 can be lightweight — sometimes just a project name
-- L3 is where most files live
-
-### Team Drive (Small Team)
-
-- L1 arenas map to functions: `Engineering`, `Design`, `Marketing`, `Operations`
-- L2 becomes more structured — processes, projects, time periods
-- Shared ownership rules matter — decide who owns each L1 arena
-
-### Organization Drive (Company)
-
-- L1 arenas map to departments or business units
-- L2 needs naming conventions enforced across teams
-- Consider access controls aligned with L1 boundaries
-- Archive strategy: move completed L2 folders to `_Archive/` within their L1
-
----
-
-## Archive Strategy
-
-Completed work shouldn't clutter active navigation but should remain findable.
-
-```
-Marketing/
-├── Campaign/                    # Active L2
-│   ├── Q1-2025-Launch/         # Current
-│   └── _Archive/               # Completed campaigns
-│       ├── Q4-2024-Holiday/
-│       └── Q3-2024-Rebrand/
-└── ...
-```
-
-| Rule | Rationale |
-|------|-----------|
-| Prefix with `_Archive` | Sorts to top/bottom predictably, visually distinct |
-| Archive at L2 level | Keep the L1 arena clean, preserve L2 context |
-| Never delete unless required | Storage is cheap, regret is expensive |
 
 ---
 
@@ -312,6 +268,38 @@ Created → Active → Completed → Archived → (Deleted)
 
 ---
 
+## Archive Strategy
+
+Completed work shouldn't clutter active navigation but should remain findable.
+
+```
+Marketing/
+├── Campaign/                    # Active L2
+│   ├── Q1-2025-Launch/         # Current
+│   └── _Archive/               # Completed campaigns
+│       ├── Q4-2024-Holiday/
+│       └── Q3-2024-Rebrand/
+└── ...
+```
+
+| Rule | Rationale |
+|------|-----------|
+| Prefix with `_Archive` | Sorts to top/bottom predictably, visually distinct |
+| Archive at L2 level | Keep the L1 arena clean, preserve L2 context |
+| Never delete unless required | Storage is cheap, regret is expensive |
+
+---
+
+## Adapting by Scale
+
+| Scale | L1 Maps To | L2 Emphasis | Key Consideration |
+|-------|-----------|-------------|-------------------|
+| **Personal** (one person) | Life domains: `Work`, `Personal`, `Creative`, `Finance` | Lightweight — project names or simple outcomes | L3 is where most files live |
+| **Team** (small group) | Functions: `Engineering`, `Design`, `Marketing`, `Operations` | Structured — processes, projects, time periods | Decide who owns each L1 arena |
+| **Organization** (company) | Departments or business units | Enforced naming conventions across teams | Align access controls with L1 boundaries |
+
+---
+
 ## Maintenance Cadence
 
 Structure decays without regular upkeep. These reviews prevent entropy.
@@ -341,6 +329,34 @@ Structure decays without regular upkeep. These reviews prevent entropy.
 | Count items per folder | Flag anything over the max thresholds |
 | Access review (shared drives) | Do permissions still match L1 boundaries? |
 | Run `audit_structure.py` | Get a machine-readable health check |
+
+---
+
+## Red Flags
+
+Stop and reorganize when you see:
+
+| Smell | Problem | Fix |
+|-------|---------|-----|
+| **Catch-all folders** | `Misc/`, `Other/`, `Stuff/`, `New Folder/` | Decide the real L1 arena or L2 outcome |
+| **Deep nesting (6+ levels)** | You're mixing cognitive phases in one branch | Flatten by separating L1/L2/L3 concerns |
+| **Date-only folders at L1** | `2024/`, `2025/` at the top level | Dates are L2 or L3 — put the domain first |
+| **Duplicate file names** | Same file in two places | Pick the owner, link from elsewhere |
+| **Everything in one folder** | 100+ files in one directory | Split into L2 outcomes or L3 artifact types |
+| **Ambiguous names** | `Documents/`, `Files/`, `Data/` | Replace with specific arena names |
+| **Mixing layers** | `Finance/Invoice-2025-03.pdf` (skipped L2) | Add the outcome: `Finance/Accounts-Payable/Invoice-2025-03.pdf` |
+
+---
+
+## Anti-Patterns
+
+| Anti-Pattern | What It Looks Like | Why It Fails |
+|--------------|-------------------|--------------|
+| **The Filing Cabinet** | Rigid categories that don't match how you think | Forces you to memorize arbitrary locations |
+| **The Chronological Dump** | Everything sorted by date first | Dates don't help you find things by topic |
+| **The Mirror** | Folder structure mirrors org chart exactly | Org charts change; your files don't reorganize themselves |
+| **The Perfectionist** | 20 empty folders "for someday" | Empty structure creates noise and false promises |
+| **The Flat Earth** | Everything in one giant folder with search | Works until search fails or context is lost |
 
 ---
 
@@ -384,40 +400,6 @@ The rule says "max 30 items, then subgroup." The exception:
 ### General Rule for Exceptions
 
 > If you're breaking a rule, write down *why* in a `_README.md` at that level. If you can't articulate the reason, you shouldn't break the rule.
-
----
-
-## Progressive Disclosure
-
-The framework uses progressive disclosure — each level reveals only what you need for your current decision:
-
-```
-Step 1: See 5-8 arenas          (L1 — which world?)
-Step 2: See 3-6 outcomes         (L2 — which goal?)
-Step 3: See the artifacts         (L3 — grab the thing)
-```
-
-### Ideal Counts per Level
-
-| Level | Target | Max Before Splitting |
-|-------|--------|---------------------|
-| L1 arenas | 5-8 | 12 |
-| L2 outcomes per arena | 3-6 | 10 |
-| L3 artifacts per outcome | Varies | 30 (then subgroup) |
-
-If any level exceeds its max, it's a signal to split or restructure.
-
----
-
-## Anti-Patterns
-
-| Anti-Pattern | What It Looks Like | Why It Fails |
-|--------------|-------------------|--------------|
-| **The Filing Cabinet** | Rigid categories that don't match how you think | Forces you to memorize arbitrary locations |
-| **The Chronological Dump** | Everything sorted by date first | Dates don't help you find things by topic |
-| **The Mirror** | Folder structure mirrors org chart exactly | Org charts change; your files don't reorganize themselves |
-| **The Perfectionist** | 20 empty folders "for someday" | Empty structure creates noise and false promises |
-| **The Flat Earth** | Everything in one giant folder with search | Works until search fails or context is lost |
 
 ---
 
@@ -478,7 +460,7 @@ Don't pre-create L3 structure. Let it emerge as you actually produce artifacts. 
 
 ### Step 5: Migrate Gradually
 
-Move files in batches. Start with the arena you use most. Don't try to reorganize everything at once.
+Move files in batches. Start with the arena you use most. Don't try to reorganize everything at once. For detailed migration steps, see `references/migration-guide.md`.
 
 ---
 
