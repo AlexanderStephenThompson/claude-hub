@@ -52,23 +52,29 @@ Focus options: `css`, `a11y`, `perf`, `structure` (or omit for full scan).
 
 ## Common Commands
 
-### Sync from GitHub
+### Full Sync (pull + deploy + reinstall)
+
+Use `/sync pull` or run manually:
+
 ```bash
 git pull
-cp -r skills/* "C:\Users\Alexa\.claude\skills/"
-cp agents/*.md "C:\Users\Alexa\.claude\agents/"
-cp commands/*.md "C:\Users\Alexa\.claude\commands/"
 ```
 
-### Deploy (no pull)
-```bash
-cp -r skills/* "C:\Users\Alexa\.claude\skills/"
-cp agents/*.md "C:\Users\Alexa\.claude\agents/"
-cp commands/*.md "C:\Users\Alexa\.claude\commands/"
+```powershell
+# Clean stale files
+Remove-Item 'C:\Users\Alexa\.claude\skills\*' -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item 'C:\Users\Alexa\.claude\agents\*.md' -Force -ErrorAction SilentlyContinue
+Remove-Item 'C:\Users\Alexa\.claude\commands\*.md' -Force -ErrorAction SilentlyContinue
+
+# Copy fresh files
+Copy-Item -Path 'skills\*' -Destination 'C:\Users\Alexa\.claude\skills\' -Recurse -Force
+Copy-Item -Path 'agents\*.md' -Destination 'C:\Users\Alexa\.claude\agents\' -Force
+Copy-Item -Path 'commands\*.md' -Destination 'C:\Users\Alexa\.claude\commands\' -Force
 ```
 
-### Reinstall Plugins (after modifying team files)
 ```bash
+# Reinstall team plugins
+claude plugin uninstall clean-team && claude plugin install clean-team
 claude plugin uninstall refactor-team && claude plugin install refactor-team
 claude plugin uninstall implement-team && claude plugin install implement-team
 claude plugin uninstall diagnose-team && claude plugin install diagnose-team

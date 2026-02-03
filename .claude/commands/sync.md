@@ -15,7 +15,7 @@ Sync customizations between this repo and Claude's local config directory.
 
 | Name | Path |
 |------|------|
-| Repository | `c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\claude-customizations` |
+| Repository | `c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub` |
 | Claude Home | `C:\Users\Alexa\.claude` |
 
 ---
@@ -36,7 +36,7 @@ Check `$ARGUMENTS`:
 #### Push Mode (default)
 
 ```bash
-cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\claude-customizations"
+cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub"
 git add -A
 git status
 ```
@@ -60,7 +60,7 @@ Skip git operations. Proceed directly to deploy.
 #### Pull Mode
 
 ```bash
-cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\claude-customizations"
+cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub"
 git pull
 ```
 
@@ -70,30 +70,55 @@ Then proceed to deploy.
 
 ### 3. Deploy
 
-Create directories if needed and copy files:
+Use PowerShell for all file operations (required on Windows).
 
-```bash
-mkdir -p "C:\Users\Alexa\.claude\skills"
-mkdir -p "C:\Users\Alexa\.claude\agents"
-mkdir -p "C:\Users\Alexa\.claude\commands"
+#### Step 1: Clean stale files
 
-cp -r skills/* "C:\Users\Alexa\.claude\skills/"
-cp agents/*.md "C:\Users\Alexa\.claude\agents/"
-cp commands/*.md "C:\Users\Alexa\.claude\commands/"
+Remove old files first so renamed or deleted items don't linger:
+
+```powershell
+Remove-Item 'C:\Users\Alexa\.claude\skills\*' -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item 'C:\Users\Alexa\.claude\agents\*.md' -Force -ErrorAction SilentlyContinue
+Remove-Item 'C:\Users\Alexa\.claude\commands\*.md' -Force -ErrorAction SilentlyContinue
+```
+
+#### Step 2: Copy fresh files from repo
+
+```powershell
+Copy-Item -Path 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\skills\*' -Destination 'C:\Users\Alexa\.claude\skills\' -Recurse -Force
+Copy-Item -Path 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\agents\*.md' -Destination 'C:\Users\Alexa\.claude\agents\' -Force
+Copy-Item -Path 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\commands\*.md' -Destination 'C:\Users\Alexa\.claude\commands\' -Force
 ```
 
 ---
 
-### 4. Verify & Report
+### 4. Reinstall Team Plugins
+
+Uninstall and reinstall all teams so plugin manifests stay current:
 
 ```bash
-ls "C:\Users\Alexa\.claude\skills/"
-ls "C:\Users\Alexa\.claude\agents/"
-ls "C:\Users\Alexa\.claude\commands/"
+claude plugin uninstall clean-team && claude plugin install clean-team
+claude plugin uninstall refactor-team && claude plugin install refactor-team
+claude plugin uninstall implement-team && claude plugin install implement-team
+claude plugin uninstall diagnose-team && claude plugin install diagnose-team
+```
+
+If a team isn't installed yet, the uninstall will fail silently — just install it.
+
+---
+
+### 5. Verify & Report
+
+```powershell
+Get-ChildItem 'C:\Users\Alexa\.claude\skills' -Directory | Select-Object Name
+Get-ChildItem 'C:\Users\Alexa\.claude\agents\*.md' | Select-Object Name
+Get-ChildItem 'C:\Users\Alexa\.claude\commands\*.md' | Select-Object Name
 ```
 
 Report what was synced:
 - Number of skills deployed
 - Number of agents deployed
 - Number of commands deployed
+- Team plugins reinstalled
+- Any files that were cleaned up (existed before but not in repo)
 - Git status (if push/pull mode)
