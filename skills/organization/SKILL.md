@@ -264,6 +264,129 @@ Marketing/
 
 ---
 
+## System Folders
+
+Some folders are infrastructure, not content. They support the system itself rather than holding domain-specific work. These use a **leading underscore** to signal "this is a system folder — don't file your work here."
+
+| System Folder | Purpose | Scope |
+|---------------|---------|-------|
+| `_Archive/` | Completed work that's no longer active | Within each L2 outcome |
+| `_Unsorted/` | Temporary inbox for files without a clear home | One per drive (top level) |
+| `_Templates/` | Reusable document templates | Per L1 arena or shared at top level |
+| `_Shared/` | Cross-functional items with no single owner | Top level only |
+
+### Rules for System Folders
+
+| Rule | Rationale |
+|------|-----------|
+| **Always underscore-prefixed** | Sorts separately from content folders, visually distinct |
+| **Never nest system folders** | `_Archive/_Archive/` is a red flag — flatten it |
+| **`_Unsorted/` is temporary** | It's an inbox, not a permanent home. Review weekly |
+| **`_Shared/` requires justification** | Every file there should have a reason it can't live in a single arena |
+| **Don't create system folders preemptively** | Add `_Archive/` when you first need to archive, not before |
+
+---
+
+## File Lifecycle
+
+Files move through stages. Knowing the stage tells you where the file belongs right now.
+
+```
+Created → Active → Completed → Archived → (Deleted)
+```
+
+| Stage | Where It Lives | What Happens |
+|-------|---------------|--------------|
+| **Created** | L2 outcome folder (or `_Unsorted/` if unknown) | New file, just produced or received |
+| **Active** | L2 outcome folder | Being worked on, edited, referenced regularly |
+| **Completed** | Stays in L2 outcome folder | Done but still relevant to the current project |
+| **Archived** | `_Archive/` within the L2 outcome | Project is finished, file preserved for lookup |
+| **Deleted** | Gone | Only when legally/contractually safe and truly worthless |
+
+### Lifecycle Rules
+
+- **Don't skip stages.** A file goes Active → Completed → Archived, not Active → Deleted.
+- **Completed ≠ Archived.** A finished deliverable stays in the active folder until the *project* is done. Then the whole outcome folder moves to `_Archive/`.
+- **Reference material doesn't follow this lifecycle.** It's persistent by nature — it lives in `Reference/` and stays there.
+- **Default to keeping.** If you're unsure whether to delete, archive instead. You can always delete later; you can't un-delete.
+
+---
+
+## Maintenance Cadence
+
+Structure decays without regular upkeep. These reviews prevent entropy.
+
+### Weekly (15 minutes)
+
+| Task | Purpose |
+|------|---------|
+| Empty `_Unsorted/` | Sort every file into its L1/L2 home |
+| Clear `Downloads/` | Move or delete everything in your downloads folder |
+| Archive completed L2 outcomes | Move finished work to `_Archive/` |
+
+### Monthly (30 minutes)
+
+| Task | Purpose |
+|------|---------|
+| Review each L1 arena | Does it still reflect your actual domains? |
+| Check L2 outcomes | Archive anything completed, remove empty folders |
+| Review `_Shared/` | Move anything that now has a clear owner |
+| Check naming consistency | Fix any drift in casing or conventions |
+
+### Quarterly (1 hour)
+
+| Task | Purpose |
+|------|---------|
+| Full L1 audit | Add or merge arenas if life/work has changed |
+| Count items per folder | Flag anything over the max thresholds |
+| Access review (shared drives) | Do permissions still match L1 boundaries? |
+| Run `audit_structure.py` | Get a machine-readable health check |
+
+---
+
+## Exceptions: When to Break the Rules
+
+Every rule in this framework has legitimate exceptions. The key: **break rules consciously, not by accident.**
+
+### Date-First at L1
+
+The rule says "no dates at L1." The exception:
+
+| Exception | Example | Why It's OK |
+|-----------|---------|-------------|
+| **Tax/legal compliance** | `2024-Tax-Returns/`, `2025-Tax-Returns/` | Legal requirements are inherently annual. The year IS the domain |
+| **Academic semesters** | `Fall-2025/`, `Spring-2026/` | Each semester is a self-contained world with its own classes and work |
+
+**Test:** Is the time period genuinely the primary organizing principle, not just a habit?
+
+### More Than 12 L1 Arenas
+
+The rule says "5-8, max 12." The exception:
+
+| Exception | Example | Why It's OK |
+|-----------|---------|-------------|
+| **Client-based businesses** | One L1 per major client | Each client is a genuinely separate world with its own context |
+| **Multi-property management** | One L1 per property | Physical locations are natural arenas |
+
+**Test:** Would merging any two arenas force you to constantly context-switch within a single folder?
+
+### Flat L3 With Many Files
+
+The rule says "max 30 items, then subgroup." The exception:
+
+| Exception | Example | Why It's OK |
+|-----------|---------|-------------|
+| **Photo libraries** | 200+ photos in a dated event folder | You're browsing visually, not reading names |
+| **Log files** | Chronological logs in a single folder | Sorted by date, accessed by recency |
+
+**Test:** Can you still find what you need without subgrouping? If search or date-sorting is sufficient, don't force artificial categories.
+
+### General Rule for Exceptions
+
+> If you're breaking a rule, write down *why* in a `_README.md` at that level. If you can't articulate the reason, you shouldn't break the rule.
+
+---
+
 ## Progressive Disclosure
 
 The framework uses progressive disclosure — each level reveals only what you need for your current decision:
