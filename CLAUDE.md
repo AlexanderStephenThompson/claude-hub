@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Team | Agents | Workflow |
 |------|--------|----------|
+| clean-team | 4 | Organizer → Stylist → Polisher → Verifier |
 | refactor-team | 7 | Explorer → Researcher → Tester → Planner → Challenger → Refactorer → Verifier |
 | implement-team | 5 | Planner → Challenger → Implementor → Security → Refactorer |
 | diagnose-team | 5 | Clarifier → Investigator → Hypothesizer → Resolver → Validator |
@@ -29,6 +30,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Situation | Team |
 |-----------|------|
+| Quick codebase tidying | clean-team |
+| CSS file sprawl (>5 files) | clean-team |
 | Existing codebase needs cleanup | refactor-team |
 | Legacy code modernization | refactor-team |
 | New feature implementation | implement-team |

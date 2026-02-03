@@ -149,6 +149,7 @@ Shared skills that all teams and agents reference. Each skill contains standards
 | **Web** | web-accessibility, web-css, web-graphql, web-performance, web-react, web-testing |
 | **Data Engineering** | data-python, data-sql, data-pipelines, data-aws, data-iac |
 | **Unity/VRChat** | unity-csharp, unity-performance, unity-shaders, vrc-udon, vrc-worlds, vrc-avatars |
+| **Productivity** | organization |
 
 ---
 

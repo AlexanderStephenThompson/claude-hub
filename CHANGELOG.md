@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **organization skill v1.0** — L1/L2/L3 cognitive-phase folder organization for drives
 - **clean-team v1.0.0** — 4-agent codebase hygiene workflow (Organizer → Stylist → Polisher → Verifier)
 - `/structure` command — Audit project structure and file organization
 - `/review` command — Review current work for quality and consistency
