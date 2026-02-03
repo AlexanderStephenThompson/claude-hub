@@ -152,30 +152,45 @@ The layers are NOT literal folder counts. They describe your mental state as you
 
 ## Decision Guide: Where Does This File Go?
 
-When you have a file and don't know where to put it:
+When you have a file and don't know where to put it, ask these questions in order. Stop at the first "yes."
 
-```
-1. What domain does this relate to?         → That's your L1 folder
-2. What activity or goal produced this?      → That's your L2 folder
-3. Is this the actual artifact?              → Put it at L3
+| Ask yourself... | If yes → |
+|-----------------|----------|
+| Is this active work I'm producing right now? | L2 outcome folder for that project/activity |
+| Is this reference material I look up but don't edit? | `Reference/` within the relevant L1 arena |
+| Is this a template I reuse across projects? | `_Templates/` (shared or per-arena) |
+| Is this a finished deliverable? | L3 artifact inside the outcome that produced it |
+| Is this someone else's output I need to access? | Shortcut/link to the owner's L2, not a copy |
+| I genuinely don't know | `_Unsorted/` — sort it during your weekly review |
 
-If you can't answer #1, the file may need a new L1 arena.
-If you can't answer #2, the file may belong in a general "Resources"
-   or "Reference" subfolder within L1.
-If a file could go in two places, pick the primary owner and
-   shortcut/link from the secondary.
-```
+### Active vs Reference: The Intent Test
 
-### The "Two Places" Problem
+Folders serve two different cognitive purposes. Mixing them creates confusion.
 
-Files sometimes feel like they belong in two arenas. Resolution:
+| Folder type | Purpose | Brain mode | Examples |
+|-------------|---------|------------|---------|
+| **Active (doing)** | Work in progress, projects, deliverables | "I'm producing something" | `Launch/`, `Ship/`, `Hire/`, `Campaign/` |
+| **Reference (knowing)** | Lookup material, policies, standards, guides | "I'm finding an answer" | `Reference/`, `Policies/`, `Standards/`, `Templates/` |
 
-| Strategy | When to Use |
-|----------|-------------|
-| **Pick the primary owner** | Default. Most files have a natural home |
-| **Use shortcuts/links** | When two teams genuinely need the same file |
-| **Use a shared space** | Cross-functional projects with no clear owner |
-| **Never duplicate** | Two copies means one gets stale |
+**The test:** "Am I opening this folder to *do work* or to *look something up*?"
+
+- If both → split into two L2 folders. The active folder holds the work and links to the reference folder for lookup.
+- Active folders archive when the work is done. Reference folders persist.
+
+### Overlap Resolution
+
+When a file feels like it belongs in two places, use this pattern:
+
+> **The active folder owns the work. The reference folder owns the knowledge. They link to each other — never duplicate.**
+
+| Situation | Resolution |
+|-----------|-----------|
+| File could live in two L1 arenas | Pick the primary owner based on who produced it. Shortcut from the other arena |
+| File is both active work AND reference | Put it in the active folder now. Move to reference when the project completes |
+| Two teams need the same file | One team owns it. The other gets a shortcut. If neither owns it → `_Shared/` |
+| Same data, different formats | One source of truth. The canonical version lives in the owner's folder |
+
+**Never duplicate.** Two copies means one gets stale.
 
 ---
 
@@ -280,6 +295,41 @@ If any level exceeds its max, it's a signal to split or restructure.
 | **The Mirror** | Folder structure mirrors org chart exactly | Org charts change; your files don't reorganize themselves |
 | **The Perfectionist** | 20 empty folders "for someday" | Empty structure creates noise and false promises |
 | **The Flat Earth** | Everything in one giant folder with search | Works until search fails or context is lost |
+
+---
+
+## Quality Checks
+
+Before considering a drive "organized," verify these rules hold. These are the structural equivalent of unit tests — if any fail, there's a boundary violation somewhere.
+
+### Structure Checks
+
+| Check | Pass Condition |
+|-------|---------------|
+| Every L1 arena has at least one active L2 outcome | No empty arenas cluttering the top level |
+| No L2 folder tries to be both active work AND reference lookup | Split into separate doing/knowing folders |
+| Every active L2 folder has artifacts or subfolders | No empty placeholder folders |
+| No L3 artifact is duplicated across arenas | One owner, shortcuts from elsewhere |
+| `_Unsorted/` has fewer than 20 items | You're keeping up with weekly sorting |
+
+### Naming Checks
+
+| Check | Pass Condition |
+|-------|---------------|
+| L1 names are nouns (arenas) | No verbs, dates, or abbreviations at the top level |
+| L2 names signal intent (verbs/outcomes or reference) | Reading the name tells you what happens here |
+| L3 names are specific enough to find via search | No `Document.pdf` or `Notes.txt` |
+| Consistent casing within each level | Not mixing `Title-Case` and `lowercase` at the same depth |
+| No spaces or special characters | Hyphens and underscores only |
+
+### Boundary Checks
+
+| Check | Pass Condition |
+|-------|---------------|
+| Active folders contain work, not reference material | Reference has its own folder |
+| Reference folders contain lookup material, not active projects | Work has its own folder |
+| `_Shared/` contains only genuinely cross-functional items | Not a dumping ground for "I don't know where this goes" |
+| Archive folders live within their L1 arena | Not a top-level `Archive/` that loses context |
 
 ---
 
