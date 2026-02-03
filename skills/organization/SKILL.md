@@ -306,3 +306,19 @@ Don't pre-create L3 structure. Let it emerge as you actually produce artifacts. 
 ### Step 5: Migrate Gradually
 
 Move files in batches. Start with the arena you use most. Don't try to reorganize everything at once.
+
+---
+
+## References
+
+- `references/naming-patterns.md` — Detailed naming examples and conventions for each layer
+- `references/migration-guide.md` — Step-by-step guide for reorganizing existing messy drives
+
+## Assets
+
+- `assets/home-drive-template.md` — Starter structure for a personal home drive
+- `assets/work-drive-template.md` — Starter structure for a professional work drive
+
+## Scripts
+
+- `scripts/audit_structure.py` — Scan a folder tree and report L1/L2/L3 issues (catch-alls, depth, naming)
