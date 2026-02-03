@@ -8,6 +8,12 @@
   },
   "plugins": [
     {
+      "name": "clean-team",
+      "version": "1.0.0",
+      "description": "A 4-agent codebase hygiene workflow: organize → style → polish → verify",
+      "source": "./teams/clean-team"
+    },
+    {
       "name": "refactor-team",
       "version": "2.0.0",
       "description": "A 7-agent refactoring team that explores, researches, tests, plans, challenges, executes, and verifies code improvements",

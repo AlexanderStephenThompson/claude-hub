@@ -19,7 +19,8 @@
       "Bash(claude plugin update:*)",
       "Bash(claude plugin marketplace update:*)",
       "Bash(del \"c:\\\\Users\\\\Alexa\\\\OneDrive\\\\Desktop\\\\_Personal\\\\claude-hub\\\\nul\")",
-      "Bash(git rev-parse:*)"
+      "Bash(git rev-parse:*)",
+      "Bash(xcopy:*)"
     ]
   }
 }

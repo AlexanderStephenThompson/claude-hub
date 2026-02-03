@@ -94,16 +94,21 @@ Copy-Item -Path 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\commands\*
 
 ### 4. Reinstall Team Plugins
 
-Uninstall and reinstall all teams so plugin manifests stay current:
+Discover all teams dynamically from the `teams/` directory and reinstall each one. This ensures new teams are always picked up without editing this file.
+
+```powershell
+Get-ChildItem 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\teams' -Directory | ForEach-Object { $_.Name }
+```
+
+For each team found, uninstall then install:
 
 ```bash
-claude plugin uninstall clean-team && claude plugin install clean-team
-claude plugin uninstall refactor-team && claude plugin install refactor-team
-claude plugin uninstall implement-team && claude plugin install implement-team
-claude plugin uninstall diagnose-team && claude plugin install diagnose-team
+claude plugin uninstall <team-name> && claude plugin install <team-name>
 ```
 
 If a team isn't installed yet, the uninstall will fail silently — just install it.
+
+**Important:** New teams must also be registered in `.claude-plugin/marketplace.json` or `claude plugin install` won't find them.
 
 ---
 

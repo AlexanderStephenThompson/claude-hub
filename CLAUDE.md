@@ -73,14 +73,12 @@ Copy-Item -Path 'commands\*.md' -Destination 'C:\Users\Alexa\.claude\commands\' 
 ```
 
 ```bash
-# Reinstall team plugins
-claude plugin uninstall clean-team && claude plugin install clean-team
-claude plugin uninstall refactor-team && claude plugin install refactor-team
-claude plugin uninstall implement-team && claude plugin install implement-team
-claude plugin uninstall diagnose-team && claude plugin install diagnose-team
+# Reinstall team plugins (discover dynamically from teams/ directory)
+# For each folder in teams/, run:
+claude plugin uninstall <team-name> && claude plugin install <team-name>
 ```
 
-Note: `claude plugin marketplace update` updates the cache, not installed plugins.
+Note: `claude plugin marketplace update` updates the cache, not installed plugins. New teams added to `teams/` are picked up automatically — no need to edit this list.
 
 ### Analysis Scripts (refactor-team)
 ```bash
@@ -93,10 +91,14 @@ python teams/refactor-team/scripts/detect_dead_code.py <path>       # Unused cod
 
 | Change Type | Edit Location | Then |
 |-------------|---------------|------|
-| Teams | `teams/<team>/` | Push + reinstall plugin |
+| Teams | `teams/<team>/` | Add to `.claude-plugin/marketplace.json`, push, reinstall plugin |
 | Skills | `skills/<skill>/` | Deploy to `~/.claude/skills/` |
 | Agents | `agents/` | Deploy to `~/.claude/agents/` |
 | Commands | `commands/` | Deploy to `~/.claude/commands/` |
+
+**New teams require two registrations:**
+1. Create the team folder with `.claude-plugin/plugin.json` and agents under `teams/<team-name>/`
+2. Add an entry to `.claude-plugin/marketplace.json` — without this, `claude plugin install` cannot find the team
 
 ## File Conventions
 
