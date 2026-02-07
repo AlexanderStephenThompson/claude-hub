@@ -15,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cleaning profiles for Formatter agent (`web.md`, `unity.md`, `python.md`, `data.md`)
 - Data engineering skills: data-python, data-sql, data-pipelines, data-aws, data-iac
 - Organization skill v1.0 — L1/L2/L3 cognitive-phase folder organization for drives
-- `/review` command — Review current work for quality and consistency
 - `/ui-audit` command — Audit HTML semantics and CSS for consolidation (5-file CSS enforcement)
 - `/orient` command — Orient yourself to this project before starting work
 - Skill inheritance for implement-team and diagnose-team agents
@@ -43,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **unity-shaders skill** — Removed (too niche for VRChat/Unity workflow)
 - `/deep-scan` command — Replaced by `/refactor-team:audit`
 - `/structure` command — Absorbed into `/deep-scan`, then `/refactor-team:audit`
+- `/optimize-prompt` command — Removed
+- `/review` command — Removed
 - CONTRIBUTING.md — Guidelines consolidated into CLAUDE.md
 
 ---

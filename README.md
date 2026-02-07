@@ -24,8 +24,6 @@ Universal tools that apply to any project.
 |---------|--------------|
 | `/commit` | Stage changes, craft a conventional commit message |
 | `/orient` | Orient yourself to a new project |
-| `/optimize-prompt` | Rewrite a prompt for clarity and effectiveness |
-| `/review [focus]` | Review current work for quality, clarity, and consistency |
 
 ### Agents
 

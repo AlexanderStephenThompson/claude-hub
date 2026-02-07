@@ -11,14 +11,12 @@ Slash commands stored in `~/.claude/commands/`. Invoked directly with `/command-
 | Command | Description | Output |
 |---------|-------------|--------|
 | [/commit](./commit.md) | Stage all changes and create a conventional commit | Git commit |
-| [/optimize-prompt](./optimize-prompt.md) | Rewrite a prompt for clarity and effectiveness | Optimized prompt |
 | [/orient](./orient.md) | Orient yourself to this project before starting work | Context summary |
 
 ### Quality & Analysis
 
 | Command | Description | Output |
 |---------|-------------|--------|
-| [/review](./review.md) | Review current work for quality and consistency | Review findings (up to 10) |
 | [/ui-audit](../../web/commands/ui-audit.md) | Audit HTML semantics and CSS for consolidation | UI code findings |
 
 ### Repo Management
