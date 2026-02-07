@@ -10,36 +10,38 @@ Fully developed skills with comprehensive standards, examples, and checklists.
 
 | Skill | Purpose | Status |
 |-------|---------|--------|
-| [architecture/](./architecture/) | Architecture principles, module boundaries, design patterns, project structure profiles | Complete |
-| [code-quality/](./code-quality/) | TDD, naming, conventions, docstrings, 3-tier structure, language references | Complete |
-| [design/](./design/) | Design system, semantic HTML, CSS formatting, component states | Complete |
-| [documentation/](./documentation/) | SemVer, changelog, feature specs, module templates | Complete |
-| [security/](./security/) | OWASP Top 10, input validation, auth patterns | Complete |
+| [architecture](./architecture/) | Architecture principles, module boundaries, design patterns, project structure profiles | Complete |
+| [code-quality](./code-quality/) | TDD, naming, conventions, docstrings, 3-tier structure, language references | Complete |
+| [documentation](./documentation/) | SemVer, changelog, feature specs, module templates | Complete |
+| [security](./security/) | OWASP Top 10, input validation, auth patterns | Complete |
 
 ### Web Skills
 
-Web-specific skills with comprehensive SKILL.md content.
+Web-specific skills with comprehensive SKILL.md content. Located in `web/skills/`.
 
 | Skill | Purpose |
 |-------|---------|
-| [web-accessibility/](./web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management |
-| [web-css/](./web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns |
-| [web-graphql/](./web-graphql/) | GraphQL patterns, Apollo |
-| [web-performance/](./web-performance/) | Performance optimization |
-| [web-react/](./web-react/) | React patterns, hooks, state |
-| [web-testing/](./web-testing/) | Frontend testing strategies |
+| [design](../../web/skills/design/) | Design system, semantic HTML, CSS formatting, component states |
+| [web-accessibility](../../web/skills/web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management |
+| [web-css](../../web/skills/web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns |
+| [web-graphql](../../web/skills/web-graphql/) | GraphQL patterns, Apollo |
+| [web-performance](../../web/skills/web-performance/) | Performance optimization |
+| [web-react](../../web/skills/web-react/) | React patterns, hooks, state |
+| [web-testing](../../web/skills/web-testing/) | Frontend testing strategies |
 
 ### Data Engineering Skills
 
 Skills for data processing, pipelines, and cloud infrastructure.
 
+Located in `data/skills/`.
+
 | Skill | Purpose |
 |-------|---------|
-| [data-python/](./data-python/) | Python for data processing (pandas, polars, pyspark) |
-| [data-sql/](./data-sql/) | Query optimization, window functions, schema design |
-| [data-pipelines/](./data-pipelines/) | ETL patterns, orchestration, idempotency, data quality |
-| [data-aws/](./data-aws/) | AWS data services (Glue, Lambda, S3, Athena, Redshift) |
-| [data-iac/](./data-iac/) | Infrastructure as Code (Terraform, CDK, CloudFormation) |
+| [data-python](../../data/skills/data-python/) | Python for data processing (pandas, polars, pyspark) |
+| [data-sql](../../data/skills/data-sql/) | Query optimization, window functions, schema design |
+| [data-pipelines](../../data/skills/data-pipelines/) | ETL patterns, orchestration, idempotency, data quality |
+| [data-aws](../../data/skills/data-aws/) | AWS data services (Glue, Lambda, S3, Athena, Redshift) |
+| [data-iac](../../data/skills/data-iac/) | Infrastructure as Code (Terraform, CDK, CloudFormation) |
 
 ### Unity & VRChat Skills
 
@@ -47,10 +49,10 @@ Skills for Unity game development and VRChat content creation. Located in `world
 
 | Skill | Purpose |
 |-------|---------|
-| unity-csharp | Unity C# scripting, MonoBehaviour patterns, VR/mobile performance |
-| vrc-udon | Udon/UdonSharp for VRChat worlds, networking |
-| vrc-worlds | VRChat world building, lighting, optimization |
-| vrc-avatars | VRChat avatars, expressions, PhysBones, performance limits |
+| [unity-csharp](../../world-building/Unity/skills/unity-csharp/) | Unity C# scripting, MonoBehaviour patterns, VR/mobile performance |
+| [vrc-udon](../../world-building/VR%20Chat/skills/vrc-udon/) | Udon/UdonSharp for VRChat worlds, networking |
+| [vrc-worlds](../../world-building/VR%20Chat/skills/vrc-worlds/) | VRChat world building, lighting, optimization |
+| [vrc-avatars](../../world-building/VR%20Chat/skills/vrc-avatars/) | VRChat avatars, expressions, PhysBones, performance limits |
 
 ## Skill Relationships
 
