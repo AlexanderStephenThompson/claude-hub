@@ -49,10 +49,10 @@ Skills for Unity game development and VRChat content creation. Located in `world
 
 | Skill | Purpose |
 |-------|---------|
-| [unity-csharp](../../world-building/Unity/skills/unity-csharp/) | Unity C# scripting, MonoBehaviour patterns, VR/mobile performance |
-| [vrc-udon](../../world-building/VR%20Chat/skills/vrc-udon/) | Udon/UdonSharp for VRChat worlds, networking |
-| [vrc-worlds](../../world-building/VR%20Chat/skills/vrc-worlds/) | VRChat world building, lighting, optimization |
-| [vrc-avatars](../../world-building/VR%20Chat/skills/vrc-avatars/) | VRChat avatars, expressions, PhysBones, performance limits |
+| [unity-csharp](../../world-building/unity/skills/unity-csharp/) | Unity C# scripting, MonoBehaviour patterns, VR/mobile performance |
+| [vrc-udon](../../world-building/vr-chat/skills/vrc-udon/) | Udon/UdonSharp for VRChat worlds, networking |
+| [vrc-worlds](../../world-building/vr-chat/skills/vrc-worlds/) | VRChat world building, lighting, optimization |
+| [vrc-avatars](../../world-building/vr-chat/skills/vrc-avatars/) | VRChat avatars, expressions, PhysBones, performance limits |
 
 ## Skill Relationships
 

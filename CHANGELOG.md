@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **code-quality v2.0** — Absorbed code-standards. Conventions, formatting, and language references consolidated.
 - **architecture v3.0** — Absorbed project-structures. Project type profiles and structure evaluation consolidated.
 - **unity-csharp v2.0** — Absorbed unity-performance. VR performance targets and profiling consolidated.
-- **world-building reorganized** — Skills moved into sub-categories (`Unity/`, `VR Chat/`). Sync updated for recursive discovery.
+- **world-building reorganized** — Skills moved into sub-categories (`unity/`, `vr-chat/`). Sync updated for recursive discovery.
 - Moved implement-team from `web/teams/` to `core/teams/` (universal, not web-specific)
 - Voice quality pass across all skills, agents, and commands — instructions explain the pain they prevent, not just what to do
 

@@ -84,7 +84,7 @@ Remove-Item 'C:\Users\Alexa\.claude\commands\*.md' -Force -ErrorAction SilentlyC
 
 #### Step 2: Copy fresh files from all domain folders
 
-The repo uses domain folders (`core/`, `web/`, `world-building/`, `data/`). Deploy flattens everything into `~/.claude/`. Skills are discovered recursively (supports nested sub-categories like `world-building/Unity/skills/`).
+The repo uses domain folders (`core/`, `web/`, `world-building/`, `data/`). Deploy flattens everything into `~/.claude/`. Skills are discovered recursively (supports nested sub-categories like `world-building/unity/skills/`).
 
 ```powershell
 $repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub'
