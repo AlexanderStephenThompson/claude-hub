@@ -22,8 +22,11 @@ import re
 import sys
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import List, Set, Dict, Optional
+from typing import List, Set, Dict
 from collections import defaultdict
+
+
+MIN_COMMENTED_BLOCK_LINES = 2
 
 
 @dataclass
@@ -307,7 +310,7 @@ def find_commented_code(filepath: str, content: str) -> List[CommentedCode]:
                     break
             
             # Only report if it's a significant block (3+ lines)
-            if end_line - start_line >= 2:
+            if end_line - start_line >= MIN_COMMENTED_BLOCK_LINES:
                 preview = lines[i].strip()[:60]
                 if len(lines[i].strip()) > 60:
                     preview += '...'

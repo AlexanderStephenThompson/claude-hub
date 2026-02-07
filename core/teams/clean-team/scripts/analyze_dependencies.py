@@ -24,7 +24,7 @@ import sys
 from collections import defaultdict
 from dataclasses import dataclass, asdict, field
 from pathlib import Path
-from typing import List, Set, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional
 
 
 @dataclass
@@ -47,6 +47,10 @@ class CircularDependency:
         return ' → '.join(self.cycle + [self.cycle[0]])
 
 
+HIGH_COUPLING_THRESHOLD = 5
+TOTAL_COUPLING_THRESHOLD = 10
+
+
 @dataclass
 class CouplingIssue:
     """A module with high coupling."""
@@ -54,11 +58,11 @@ class CouplingIssue:
     incoming: int  # modules that import this
     outgoing: int  # modules this imports
     total: int
-    
+
     @property
     def is_hub(self) -> bool:
         """High incoming AND outgoing - potential god module."""
-        return self.incoming > 5 and self.outgoing > 5
+        return self.incoming > HIGH_COUPLING_THRESHOLD and self.outgoing > HIGH_COUPLING_THRESHOLD
 
 
 @dataclass 
@@ -263,7 +267,7 @@ def analyze_coupling(modules: Dict[str, ModuleInfo]) -> List[CouplingIssue]:
         total = incoming + outgoing
         
         # Flag if total coupling is high
-        if total > 10 or (incoming > 5 and outgoing > 5):
+        if total > TOTAL_COUPLING_THRESHOLD or (incoming > HIGH_COUPLING_THRESHOLD and outgoing > HIGH_COUPLING_THRESHOLD):
             issues.append(CouplingIssue(
                 module=path,
                 incoming=incoming,

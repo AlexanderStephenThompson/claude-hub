@@ -18,7 +18,7 @@ import sys
 import json
 import argparse
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, Optional
+from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, field
 
 # Naming patterns

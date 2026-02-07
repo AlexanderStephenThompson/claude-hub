@@ -28,6 +28,9 @@ class Issue(NamedTuple):
     severity: str  # "error", "warning", "info"
 
 
+MIN_FONT_SIZE_PX = 12
+MIN_FONT_SIZE_PT = 9
+
 # Void elements (no closing tag)
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input",
@@ -254,9 +257,7 @@ class AccessibilityParser(HTMLParser):
             ))
 
     def _check_form(self, attrs: dict, line: int):
-        """Check form accessibility."""
-        # Reset input tracking for this form
-        pass
+        """Check form accessibility. Placeholder for future form-level checks."""
 
     def _check_table(self, attrs: dict, line: int):
         """Flag tables for manual review."""
@@ -317,7 +318,7 @@ def check_css_accessibility(file_path: Path) -> list[Issue]:
         if size_match:
             size = int(size_match.group(1))
             unit = size_match.group(2)
-            if (unit == "px" and size < 12) or (unit == "pt" and size < 9):
+            if (unit == "px" and size < MIN_FONT_SIZE_PX) or (unit == "pt" and size < MIN_FONT_SIZE_PT):
                 issues.append(Issue(
                     file=str(file_path),
                     line=line_num,

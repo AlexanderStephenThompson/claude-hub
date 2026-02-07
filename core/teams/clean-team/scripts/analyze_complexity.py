@@ -21,7 +21,14 @@ import re
 import sys
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict
+
+
+MAX_FUNCTION_LINES = 40
+MAX_CYCLOMATIC_COMPLEXITY = 10
+MAX_NESTING_DEPTH = 3
+MAX_PARAMETER_COUNT = 5
+LINES_PER_COMPLEXITY_POINT = 100
 
 
 @dataclass
@@ -34,14 +41,14 @@ class FunctionMetrics:
     cyclomatic_complexity: int
     nesting_depth: int
     parameter_count: int
-    
+
     @property
     def needs_attention(self) -> bool:
         return (
-            self.line_count > 40 or
-            self.cyclomatic_complexity > 10 or
-            self.nesting_depth > 3 or
-            self.parameter_count > 5
+            self.line_count > MAX_FUNCTION_LINES or
+            self.cyclomatic_complexity > MAX_CYCLOMATIC_COMPLEXITY or
+            self.nesting_depth > MAX_NESTING_DEPTH or
+            self.parameter_count > MAX_PARAMETER_COUNT
         )
 
 
@@ -67,7 +74,7 @@ class FileMetrics:
         if not self.functions:
             return 0
         avg_complexity = sum(f.cyclomatic_complexity for f in self.functions) / len(self.functions)
-        return int(avg_complexity * len(self.hotspot_functions) + self.total_lines / 100)
+        return int(avg_complexity * len(self.hotspot_functions) + self.total_lines / LINES_PER_COMPLEXITY_POINT)
 
 
 def count_cyclomatic_complexity(code: str) -> int:
@@ -352,13 +359,13 @@ def format_text_report(files: List[FileMetrics], threshold: int = 10) -> str:
         all_hotspots.sort(key=lambda x: x[1].line_count, reverse=True)
         for path, func in all_hotspots[:20]:
             issues = []
-            if func.line_count > 40:
+            if func.line_count > MAX_FUNCTION_LINES:
                 issues.append(f"{func.line_count} lines")
-            if func.cyclomatic_complexity > 10:
+            if func.cyclomatic_complexity > MAX_CYCLOMATIC_COMPLEXITY:
                 issues.append(f"complexity {func.cyclomatic_complexity}")
-            if func.nesting_depth > 3:
+            if func.nesting_depth > MAX_NESTING_DEPTH:
                 issues.append(f"nesting {func.nesting_depth}")
-            if func.parameter_count > 5:
+            if func.parameter_count > MAX_PARAMETER_COUNT:
                 issues.append(f"{func.parameter_count} params")
             
             output.append(f"{path}:{func.start_line} {func.name}()")

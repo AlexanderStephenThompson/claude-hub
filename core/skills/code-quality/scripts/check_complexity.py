@@ -17,7 +17,7 @@ import sys
 import json
 import argparse
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 from dataclasses import dataclass, field
 
 
