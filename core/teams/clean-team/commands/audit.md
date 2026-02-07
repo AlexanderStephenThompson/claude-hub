@@ -74,78 +74,21 @@ find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' \
 
 ### Phase 2: Launch Parallel Auditors
 
-**CRITICAL: Launch ALL relevant auditors in parallel using the Task tool.**
+**Read `assets/parallel-audit-roster.md`** for the full sub-agent roster, launch instructions, return format, and consolidation steps.
 
-Use a SINGLE message with MULTIPLE Task tool calls (subagent_type="Explore") to run simultaneously.
+**Always launch the 4 core auditors** with checklists from `assets/audit-checklists/core.md`.
 
-#### Core Auditors (Always Run)
+**If web stack detected, also launch web auditors** with checklists from `assets/audit-checklists/web.md`. Only launch auditors relevant to the detected stack (see roster for mapping).
 
-Read `assets/audit-checklists/core.md` and pass the relevant checklist to each:
+**If focus = `structure`:** Follow the structure focus mode in the roster — replace File Organization Auditor (#1) with 5 specialized structure auditors from `assets/audit-checklists/structure.md`.
 
-```
-1. File Organization Auditor — naming, directory structure, file sizes, index exports
-2. Code Quality Auditor — duplication, dead code, inconsistent patterns, hardcoded values
-3. Scalability Auditor — coupling, abstraction layers, bottlenecks, god objects
-4. Developer Experience Auditor — README, entry points, imports, types, code style
-```
-
-#### Structure Focus Mode (When focus = `structure`)
-
-When the focus is `structure`, **replace** the File Organization Auditor (#1) with 5 specialized structure auditors from `assets/audit-checklists/structure.md`. Still run Code Quality (#2), Scalability (#3), and Developer Experience (#4).
-
-```
-1a. Root & Config Auditor
-1b. Folder Structure Auditor
-1c. File Organization Auditor (expanded)
-1d. Naming Conventions Auditor
-1e. Documentation Placement Auditor
-```
-
-#### Web Auditors (If Web Stack Detected)
-
-Read `assets/audit-checklists/web.md` and launch additional auditors using those checklists:
-
-```
-5. CSS/Styling Auditor (if CSS files present)
-6. Semantic HTML Auditor (if HTML/JSX files present)
-7. Accessibility Auditor (any web project)
-8. React/Component Auditor (if React detected)
-9. GraphQL/API Auditor (if Apollo detected)
-10. Data Layer Auditor (if Prisma detected)
-11. Performance Auditor (any web project)
-```
-
-#### Sub-Agent Return Format
-
-Each auditor should return findings in this format:
-
-```markdown
-## [Category] Audit Findings
-
-### Critical Issues
-- Issue 1: [description] | Location: [path] | Effort: Low/Med/High
-
-### High Priority
-- ...
-
-### Medium Priority
-- ...
-
-### Low Priority
-- ...
-```
+**If a focus area was specified:** All auditors still run, but give extra depth to the focus area and prioritize its findings higher in the final report.
 
 ---
 
 ### Phase 3: Consolidate Reports
 
-After ALL parallel auditors complete:
-
-1. Collect all auditor outputs
-2. Deduplicate overlapping findings
-3. Re-prioritize across all categories (some "high" from one auditor may be "critical" overall)
-4. Assign sequential AUDIT-NNN IDs across all priority levels
-5. Generate the final consolidated report
+Follow the consolidation instructions in `assets/parallel-audit-roster.md`: collect all sub-agent outputs, deduplicate, re-prioritize, assign AUDIT-NNN IDs, and generate the final report.
 
 ---
 

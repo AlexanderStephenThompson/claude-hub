@@ -1,7 +1,7 @@
 ---
 description: Run the 3-agent clean phase — organize, format, then audit
 argument-hint: [scope — e.g., "src/" or leave empty for full project]
-allowed-tools: Read, Grep, Glob, Bash, Write, Edit
+allowed-tools: Read, Grep, Glob, Bash, Write, Edit, Task
 ---
 
 # /clean-team:clean
