@@ -138,7 +138,34 @@ If a team isn't installed yet, the uninstall will fail silently — just install
 
 ---
 
-### 5. Verify & Report
+### 5. Sync Global CLAUDE.md
+
+The global `~/.claude/CLAUDE.md` references deployed skills by name. After deploy, verify it only references skills that actually exist:
+
+```powershell
+# Get deployed skill names
+$deployedSkills = Get-ChildItem 'C:\Users\Alexa\.claude\skills' -Directory | Select-Object -ExpandProperty Name
+
+# Check CLAUDE.md for skill references that don't exist
+$claudeMd = Get-Content 'C:\Users\Alexa\.claude\CLAUDE.md' -Raw
+```
+
+If `~/.claude/CLAUDE.md` references a skill that wasn't deployed (e.g., a skill removed from the repo), remove that reference. The repo's `CLAUDE.md` is the source of truth for the skill list.
+
+---
+
+### 6. Clean Stale Plugin References
+
+Check `~/.claude/settings.json` for `enabledPlugins` entries that reference teams no longer in the repo. Compare against teams discovered in Step 4 — remove any entries for teams that don't exist.
+
+```powershell
+# Read settings.json and check enabledPlugins keys
+# Remove any <name>@claude-hub entries where <name> is not a discovered team
+```
+
+---
+
+### 7. Verify & Report
 
 ```powershell
 Get-ChildItem 'C:\Users\Alexa\.claude\skills' -Directory | Select-Object Name
@@ -151,5 +178,6 @@ Report what was synced:
 - Number of agents deployed
 - Number of commands deployed
 - Team plugins reinstalled
+- Stale references cleaned (from CLAUDE.md or settings.json)
 - Any files that were cleaned up (existed before but not in repo)
 - Git status (if push/pull mode)

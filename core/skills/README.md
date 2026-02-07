@@ -41,14 +41,6 @@ Skills for data processing, pipelines, and cloud infrastructure.
 | [data-aws/](./data-aws/) | AWS data services (Glue, Lambda, S3, Athena, Redshift) |
 | [data-iac/](./data-iac/) | Infrastructure as Code (Terraform, CDK, CloudFormation) |
 
-### Productivity Skills
-
-Skills for personal and professional organization.
-
-| Skill | Purpose |
-|-------|---------|
-| [organization/](./organization/) | L1/L2/L3 cognitive-phase folder organization for drives |
-
 ### Unity & VRChat Skills
 
 Skills for Unity game development and VRChat content creation. Located in `world-building/`.
@@ -79,9 +71,9 @@ Skills have defined boundaries to avoid duplication. See each skill's "Scope and
     │                      DOMAIN SKILLS                       │
     └─────────────────────────────────────────────────────────┘
 
-    Web Stack              Data Engineering        Unity/VRChat       Productivity
-    ──────────             ────────────────        ────────────       ────────────
-    design ─────┐          data-python             unity-csharp       organization
+    Web Stack              Data Engineering        Unity/VRChat
+    ──────────             ────────────────        ────────────
+    design ─────┐          data-python             unity-csharp
     web-css ◄───┤          data-sql                vrc-udon
     web-a11y ◄──┘          data-pipelines          vrc-worlds
     web-react              data-aws                vrc-avatars

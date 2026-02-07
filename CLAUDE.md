@@ -105,6 +105,10 @@ claude plugin uninstall <team-name> && claude plugin install <team-name>
 
 Note: `claude plugin marketplace update` updates the cache, not installed plugins. New teams are picked up automatically via `.claude-plugin/marketplace.json`.
 
+**Post-deploy checks** (the `/sync` command handles these automatically):
+- Verify `~/.claude/CLAUDE.md` only references skills that were deployed (remove stale refs)
+- Verify `~/.claude/settings.json` `enabledPlugins` only lists installed teams (remove stale refs)
+
 ### Analysis Scripts (refactor-team)
 ```bash
 python core/teams/refactor-team/scripts/analyze_complexity.py <path>     # High-complexity functions

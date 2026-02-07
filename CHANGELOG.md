@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Audit checklist assets (`core.md`, `structure.md`, `web.md`) in `refactor-team/assets/audit-checklists/`
 - Cleaning profiles for Formatter agent (`web.md`, `unity.md`, `python.md`, `data.md`)
 - Data engineering skills: data-python, data-sql, data-pipelines, data-aws, data-iac
-- Organization skill v1.0 — L1/L2/L3 cognitive-phase folder organization for drives
 - `/ui-audit` command — Audit HTML semantics and CSS for consolidation (5-file CSS enforcement)
 - `/orient` command — Orient yourself to this project before starting work
 - Skill inheritance for implement-team and diagnose-team agents
