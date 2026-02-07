@@ -4,22 +4,22 @@ argument-hint: [focus — e.g., "structure", "css", "a11y", "perf", or leave emp
 allowed-tools: Read, Grep, Glob, Bash, Task
 ---
 
-# /refactor-team:audit
+# /clean-team:audit
 
-A standalone audit doesn't clean or refactor — it tells you the truth about your codebase so you can decide what to do next. Without an honest inventory, you're guessing about where the debt is, how bad it is, and what to fix first. The audit produces specific findings with IDs, locations, and prioritized recommendations. This report becomes the input for `/refactor-team:refactor`, so the audit work directly drives the next phase of improvement.
+A standalone audit doesn't clean or refactor — it tells you the truth about your codebase so you can decide what to do next. Without an honest inventory, you're guessing about where the debt is, how bad it is, and what to fix first. The audit produces specific findings with IDs, locations, and prioritized recommendations. This report becomes the input for `/clean-team:refactor`, so the audit work directly drives the next phase of improvement.
 
 This command uses **parallel sub-agents** for deep, focused analysis. Instead of one agent trying to cover everything, it spawns specialized auditors that run simultaneously — each doing a dedicated deep dive on their domain, then consolidating into one prioritized report.
 
 ## Usage
 
 ```
-/refactor-team:audit              → Full scan across all categories
-/refactor-team:audit css          → Focus on CSS/styling issues
-/refactor-team:audit a11y         → Focus on accessibility
-/refactor-team:audit perf         → Focus on performance
-/refactor-team:audit structure    → Focus on file organization (expands to 5 sub-auditors)
-/refactor-team:audit security     → Focus on security patterns
-/refactor-team:audit testing      → Focus on test coverage and patterns
+/clean-team:audit              → Full scan across all categories
+/clean-team:audit css          → Focus on CSS/styling issues
+/clean-team:audit a11y         → Focus on accessibility
+/clean-team:audit perf         → Focus on performance
+/clean-team:audit structure    → Focus on file organization (expands to 5 sub-auditors)
+/clean-team:audit security     → Focus on security patterns
+/clean-team:audit testing      → Focus on test coverage and patterns
 ```
 
 ---
@@ -153,7 +153,7 @@ After ALL parallel auditors complete:
 
 Save the report to: `./AUDIT-REPORT-[YYYY-MM-DD].md`
 
-**CRITICAL:** Every finding MUST have a unique `AUDIT-NNN` ID. These IDs enable the refactor-team Phase 2 agents to reference, track, and report remediation status.
+**CRITICAL:** Every finding MUST have a unique `AUDIT-NNN` ID. These IDs enable the clean-team Phase 2 agents to reference, track, and report remediation status.
 
 ```markdown
 # Project Audit Report
@@ -269,7 +269,7 @@ Items that need human decision before Phase 2:
 
 1. Review this report
 2. Address any flagged items above
-3. Run `/refactor-team:refactor [path] [focus]` to begin Phase 2
+3. Run `/clean-team:refactor [path] [focus]` to begin Phase 2
 
 ## Appendix: Full File List
 [Collapsible section with complete file tree]
@@ -280,7 +280,7 @@ Items that need human decision before Phase 2:
 ## Flow Diagram
 
 ```
-/refactor-team:audit [focus]
+/clean-team:audit [focus]
          |
          v
 +-----------------+
@@ -306,7 +306,7 @@ Items that need human decision before Phase 2:
     User reviews
          |
          v
-  /refactor-team:refactor (Phase 2)
+  /clean-team:refactor (Phase 2)
 ```
 
 ---
@@ -317,6 +317,6 @@ Items that need human decision before Phase 2:
 2. **Prioritize ruthlessly** — Focus on changes with the highest impact-to-effort ratio.
 3. **Respect existing patterns** — Recommend extending conventions, not replacing them.
 4. **Consider the team** — Only recommend changes that genuinely help.
-5. **No implementation** — Analysis only. The refactor-team handles execution.
+5. **No implementation** — Analysis only. The clean-team handles execution.
 6. **Check for context** — Look for ARCHITECTURE.md, CONTRIBUTING.md, or similar docs that explain intentional decisions.
 7. **Do NOT delete the report** — It's a deliverable the user expects to keep, not a temporary artifact.

@@ -4,9 +4,9 @@ argument-hint: [path] [focus area or guidance]
 allowed-tools: Read, Grep, Glob, Write, Edit, Bash
 ---
 
-# /refactor-team:refactor
+# /clean-team:refactor
 
-Run the 5-agent refactor phase. This is Phase 2 of the refactor-team pipeline — it uses AUDIT-REPORT.md as its primary input.
+Run the 5-agent refactor phase. This is Phase 2 of the clean-team pipeline — it uses AUDIT-REPORT.md as its primary input.
 
 **Target path:** If no path is provided, use the current working directory (`.`).
 
@@ -40,7 +40,7 @@ Found AUDIT-REPORT.md — proceeding with Phase 2.
 No AUDIT-REPORT.md found.
 
 Phase 2 requires the audit report from Phase 1. Run:
-  /refactor-team:clean [scope]
+  /clean-team:clean [scope]
 first to generate the audit report.
 ```
 **STOP.** Do not proceed without the audit report.

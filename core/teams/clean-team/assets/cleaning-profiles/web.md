@@ -121,12 +121,13 @@ Look for rule sets that are 80%+ identical but differ in small ways. These are t
 2. **Search for raw values** — Search for common hardcoded values (`16px`, `#fff`, `8px`, `1rem`). Every hit is a potential variant that should be a token.
 3. **Check property clusters** — If 3+ selectors share the same `border-radius` + `box-shadow` + `padding` pattern, they're variants of the same design intent.
 
-### Exact Duplicate Removal
+### Exact Duplicate & Unused CSS Removal
 
 After consolidation, scan for:
 - Identical rule sets in different locations → keep one, delete the rest
 - Properties repeated within the same selector → keep the last declaration
-- Selectors that are never matched by any HTML element → remove entirely
+- Selectors with no matching HTML elements anywhere in the project → remove entirely
+- Classes defined in CSS but never applied in any HTML/JSX file → remove entirely
 
 ### Value Normalization
 
@@ -191,7 +192,11 @@ If the project already has a token system, use its naming. Only create new token
 
 ---
 
-## HTML Semantic Fixes
+## HTML: Lean Markup
+
+HTML should describe structure, not style. When HTML is clean, you can read it and understand what things *are* without decoding what they *look like*. The CSS handles appearance. The moment HTML starts accumulating classes to control layout, spacing, colors, or states, you've mixed concerns — and now every visual change requires editing HTML instead of just updating a CSS rule or token.
+
+**The goal:** Each element has 1–2 semantic class names that describe *what it is*, and CSS rules handle the rest. If you're reading HTML and see `class="flex items-center gap-4 p-6 rounded-lg bg-white shadow-md border border-gray-200"`, that's not HTML — that's CSS written in the wrong file.
 
 ### Element Replacements
 
@@ -206,10 +211,13 @@ If the project already has a token system, use its naming. Only create new token
 | `<div class="section">` | `<section>` |
 | `<div onclick="...">` | `<button type="button" onclick="...">` |
 | `<div class="list">` | `<ul>` or `<ol>` |
+| `<div class="table">` (or divs styled as grid data) | `<table>` with `<thead>`, `<tbody>`, `<th>`, `<td>` |
 
 ### Heading Hierarchy
 
-Ensure hierarchy: h1 → h2 → h3 in order. No skipping h2 to go straight to h3.
+- Ensure hierarchy: h1 → h2 → h3 in order. No skipping h2 to go straight to h3.
+- Exactly one `<h1>` per page/view.
+- Headings are for document structure only. Flag any `<h1>`–`<h6>` used purely for font size/weight — style with CSS classes instead.
 
 ### Form Labels
 
@@ -228,21 +236,79 @@ All `<button>` elements need explicit `type="button"` or `type="submit"`.
 
 ### Image Alt Text
 
-All `<img>` elements need meaningful `alt` attributes.
+- All `<img>` elements need meaningful `alt` attributes (not empty, not "image").
+- Decorative images get `alt=""` explicitly — this tells screen readers to skip them.
 
-### Inline Style Removal
+### Class Discipline
+
+Classes name *what something is*, not how it looks. CSS rules handle the styling. This keeps HTML readable and means visual changes happen in one place (CSS) instead of scattered across every template.
+
+**Target: 1–3 classes per element.** More than that is a smell.
 
 ```html
-<!-- Before -->
-<div style="margin-top: 20px; color: blue;">
+<!-- BLOATED — styling logic leaked into HTML -->
+<div class="flex items-center gap-4 p-6 rounded-lg bg-white shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
+  <img class="w-12 h-12 rounded-full object-cover ring-2 ring-blue-500" src="avatar.jpg" alt="User avatar">
+  <div class="flex flex-col gap-1">
+    <span class="text-lg font-semibold text-gray-900 leading-tight">Jane Smith</span>
+    <span class="text-sm text-gray-500 font-normal tracking-wide">Engineer</span>
+  </div>
+</div>
 
-<!-- After (add class to CSS) -->
-<div class="section-intro">
+<!-- LEAN — HTML says what it is, CSS says how it looks -->
+<article class="user-card">
+  <img class="user-card__avatar" src="avatar.jpg" alt="Jane Smith">
+  <div class="user-card__info">
+    <span class="user-card__name">Jane Smith</span>
+    <span class="user-card__role">Engineer</span>
+  </div>
+</article>
 ```
 
-### Class Bloat
+The lean version is half the size, instantly readable, and every visual property lives in CSS where tokens can control it.
 
-Elements with 5+ classes should consolidate into a semantic class name.
+**What to fix:**
+
+| Pattern | Problem | Action |
+|---------|---------|--------|
+| 4+ classes on one element | Styling leaked into HTML | Consolidate into 1–2 semantic classes |
+| Utility class chains | Layout decisions embedded in markup | Extract to a named CSS rule |
+| Redundant classes | `class="mt-4 mt-8"` — which wins? | Remove the conflicting one |
+| Presentational class names | `.blue-text`, `.large-padding`, `.float-left` | Rename to describe purpose, not appearance |
+| Repeated class patterns | Same 5-class combo on 10 elements | Extract to one semantic class |
+
+**Note:** If the project uses Tailwind or a utility-first framework, this is the architecture — don't fight it. But *within* that paradigm, still extract repeated patterns into `@apply` components or custom classes when the same utility chain appears 3+ times.
+
+### Attribute Hygiene
+
+- **Inline styles** → move to CSS classes. Only exception: truly dynamic values computed at runtime (e.g., `style={{ width: calculatedWidth }}`). Even then, prefer CSS custom properties.
+- **Excessive `data-*` attributes** (4+ on one element) → flag for review. Often signals logic that belongs in JS state, not DOM attributes.
+- **Redundant boolean attributes** → clean up. `disabled="disabled"` is just `disabled`. `hidden="true"` is just `hidden`.
+- **Empty or meaningless attributes** → remove. `class=""`, `id=""`, `title=""` with no value add noise.
+
+---
+
+## Component State Coverage
+
+Interactive elements without complete state coverage create inconsistent UX — buttons that don't look clickable, inputs that lose focus rings, disabled elements that still look active. Every interactive element needs all 5 states defined.
+
+### Required States
+
+| State | Selector | Purpose |
+|-------|----------|---------|
+| Default | (base selector) | Base appearance |
+| Hover | `:hover` | Visual feedback on mouse over |
+| Active | `:active` | Visual feedback when pressed |
+| Focus | `:focus-visible` | Keyboard navigation indicator |
+| Disabled | `:disabled`, `[disabled]`, `.is-disabled` | Non-interactive appearance |
+
+### What to Check
+
+- Are there interactive elements (buttons, links, inputs, selects) missing any of the 5 states?
+- Do similar components have matching state treatments? (All buttons should hover the same way)
+- Are hover/focus transitions consistent across the UI?
+- Do disabled states use consistent opacity/color treatment?
+- Are focus indicators visible and meet contrast requirements?
 
 ---
 

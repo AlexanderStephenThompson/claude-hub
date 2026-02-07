@@ -1,5 +1,5 @@
 ---
-name: codebase-scout
+name: new-codebase-scout
 description: "Explore and document unfamiliar codebases. Use for onboarding, creating/updating CLAUDE.md files, mapping architecture, or understanding project structure."
 model: opus
 color: blue

@@ -4,7 +4,7 @@ argument-hint: [scope — e.g., "src/" or leave empty for full project]
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
-# /refactor-team:clean
+# /clean-team:clean
 
 Run the 3-agent clean phase to organize structure, clean code, and produce an audit report.
 
@@ -83,7 +83,7 @@ Invoke the **Auditor** agent to:
 ## Flow Diagram
 
 ```
-/refactor-team:clean [scope]
+/clean-team:clean [scope]
          │
          ▼
 ┌─────────────────┐
@@ -109,7 +109,7 @@ Invoke the **Auditor** agent to:
    User reviews AUDIT-REPORT.md
          │
          ▼
-   /refactor-team:refactor (Phase 2)
+   /clean-team:refactor (Phase 2)
 ```
 
 ---
@@ -145,11 +145,11 @@ The workflow produces:
 
 ```bash
 # Full project cleanup and audit
-/refactor-team:clean
+/clean-team:clean
 
 # Scope to src/ directory
-/refactor-team:clean src/
+/clean-team:clean src/
 
 # Scope to specific feature
-/refactor-team:clean src/features/auth/
+/clean-team:clean src/features/auth/
 ```

@@ -13,12 +13,6 @@ Slash commands stored in `~/.claude/commands/`. Invoked directly with `/command-
 | [/commit](./commit.md) | Stage all changes and create a conventional commit | Git commit |
 | [/orient](./orient.md) | Orient yourself to this project before starting work | Context summary |
 
-### Quality & Analysis
-
-| Command | Description | Output |
-|---------|-------------|--------|
-| [/ui-audit](../../web/commands/ui-audit.md) | Audit HTML semantics and CSS for consolidation | UI code findings |
-
 ### Repo Management
 
 | Command | Description | Output |
@@ -27,17 +21,7 @@ Slash commands stored in `~/.claude/commands/`. Invoked directly with `/command-
 
 > **Note:** `/sync` is a [project-level command](../../.claude/commands/sync.md) — always available in this repo, not deployed.
 
-> **Note:** `/refactor-team:audit` produces reports that `/refactor-team:refactor` can consume automatically.
-
----
-
-## Web Commands
-
-Additional commands in `web/commands/`:
-
-| Command | Description |
-|---------|-------------|
-| [/clean-parallel](../../web/commands/clean-parallel.md) | Run refactor-team Phase 1 using experimental parallel agent teams |
+> **Note:** `/clean-team:audit` produces reports that `/clean-team:refactor` can consume automatically.
 
 ---
 

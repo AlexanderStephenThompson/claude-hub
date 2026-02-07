@@ -20,8 +20,8 @@ description: Architecture principles, module boundaries, folder structure, and p
 
 **Relationship to other skills:**
 - Works alongside `code-quality` (file-level conventions) and `documentation` (docs standards)
-- Consumed by refactor-team `:audit` command (with focus: `structure`)
-- Referenced by refactor-team, implement-team, and diagnose-team agents
+- Consumed by clean-team `:audit` command (with focus: `structure`)
+- Referenced by clean-team, implement-team, and diagnose-team agents
 
 ---
 

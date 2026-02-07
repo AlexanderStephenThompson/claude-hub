@@ -151,5 +151,5 @@ Items that need human decision before Phase 2:
 
 1. Review this report
 2. Address any flagged items above
-3. Run `/refactor-team:refactor [path] [focus]` to begin Phase 2
+3. Run `/clean-team:refactor [path] [focus]` to begin Phase 2
 ```

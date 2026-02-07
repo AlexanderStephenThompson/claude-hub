@@ -33,7 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Team | Agents | Workflow |
 |------|--------|----------|
-| refactor-team | 8 | **Phase 1 — Clean:** Organizer → Formatter → Auditor → AUDIT-REPORT.md |
+| clean-team | 8 | **Phase 1 — Clean:** Organizer → Formatter → Auditor → AUDIT-REPORT.md |
 | | | **Phase 2 — Refactor:** Tester → Planner → Challenger → Refactorer → Verifier |
 | implement-team | 5 | Planner → Challenger → Implementor → Security → Refactorer |
 | diagnose-team | 5 | Clarifier → Investigator → Hypothesizer → Resolver → Validator |
@@ -42,12 +42,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Situation | Team | Command |
 |-----------|------|---------|
-| Quick codebase health check | refactor-team | `/refactor-team:audit` |
-| Focused audit (CSS, a11y, perf, structure) | refactor-team | `/refactor-team:audit [focus]` |
-| Quick codebase tidying | refactor-team | `/refactor-team:clean` |
-| CSS file sprawl (>5 files) | refactor-team | `/refactor-team:clean` |
-| Existing codebase needs deep refactoring | refactor-team | `/refactor-team:clean` then `/refactor-team:refactor` |
-| Legacy code modernization | refactor-team | `/refactor-team:clean` then `/refactor-team:refactor` |
+| Quick codebase health check | clean-team | `/clean-team:audit` |
+| Focused audit (CSS, a11y, perf, structure) | clean-team | `/clean-team:audit [focus]` |
+| Quick codebase tidying | clean-team | `/clean-team:clean` |
+| CSS file sprawl (>5 files) | clean-team | `/clean-team:clean` |
+| Existing codebase needs deep refactoring | clean-team | `/clean-team:clean` then `/clean-team:refactor` |
+| Legacy code modernization | clean-team | `/clean-team:clean` then `/clean-team:refactor` |
 | New feature implementation | implement-team | `/implement-team:implement` |
 | Bug fix with design decisions | implement-team | `/implement-team:implement` |
 | Security-sensitive features | implement-team | triggers Security agent |
@@ -57,13 +57,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Audit → Clean → Refactor Pipeline
 
-The refactor-team has three entry points. All produce or consume AUDIT-REPORT.md:
+The clean-team has three entry points. All produce or consume AUDIT-REPORT.md:
 
 ```
-/refactor-team:audit [focus]    → Standalone audit (parallel sub-agents, focus modes)
-/refactor-team:clean [scope]    → Full pipeline Phase 1 (Organizer → Formatter → Auditor)
+/clean-team:audit [focus]    → Standalone audit (parallel sub-agents, focus modes)
+/clean-team:clean [scope]    → Full pipeline Phase 1 (Organizer → Formatter → Auditor)
   (user reviews AUDIT-REPORT.md)
-/refactor-team:refactor [path]  → Phase 2 (consumes AUDIT-REPORT.md automatically)
+/clean-team:refactor [path]  → Phase 2 (consumes AUDIT-REPORT.md automatically)
 ```
 
 ## Common Commands
@@ -109,11 +109,12 @@ Note: `claude plugin marketplace update` updates the cache, not installed plugin
 - Verify `~/.claude/CLAUDE.md` only references skills that were deployed (remove stale refs)
 - Verify `~/.claude/settings.json` `enabledPlugins` only lists installed teams (remove stale refs)
 
-### Analysis Scripts (refactor-team)
+### Analysis Scripts (clean-team)
 ```bash
-python core/teams/refactor-team/scripts/analyze_complexity.py <path>     # High-complexity functions
-python core/teams/refactor-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
-python core/teams/refactor-team/scripts/detect_dead_code.py <path>       # Unused code
+python core/teams/clean-team/scripts/analyze_complexity.py <path>     # High-complexity functions
+python core/teams/clean-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
+python core/teams/clean-team/scripts/detect_dead_code.py <path>       # Unused code
+node core/teams/clean-team/scripts/check.js                           # Design system compliance (31 rules)
 ```
 
 ## Development
@@ -136,7 +137,7 @@ python core/teams/refactor-team/scripts/detect_dead_code.py <path>       # Unuse
 ## File Conventions
 
 - Commands: lowercase (`commit.md`, `audit.md`)
-- Agents: kebab-case (`codebase-scout.md`)
+- Agents: kebab-case (`new-codebase-scout.md`)
 - Skills: `<domain>/skills/<name>/SKILL.md` as main file
 - Audit reports: `AUDIT-REPORT-[YYYY-MM-DD].md`
 - Domain folders: lowercase with hyphens (`core`, `web`, `world-building`, `data`)

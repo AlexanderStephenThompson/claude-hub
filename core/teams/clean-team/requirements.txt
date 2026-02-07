@@ -1,4 +1,4 @@
-# Python dependencies for refactor-team analysis scripts
+# Python dependencies for clean-team analysis scripts
 #
 # All scripts use Python 3.8+ standard library only.
 # No external dependencies required.

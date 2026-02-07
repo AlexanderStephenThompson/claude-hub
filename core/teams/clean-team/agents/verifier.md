@@ -69,6 +69,12 @@ npm test  # or equivalent
 - Key user workflow 1: Works?
 - Key user workflow 2: Works?
 
+**Design system compliance (for web projects with CSS/HTML/JS):**
+```bash
+node scripts/check.js
+```
+If check.js reports new errors that weren't present before refactoring, route back. Warnings are informational — don't block on them.
+
 ### Step 2: Verify Semantic Clarity Improved
 
 **Naming Clarity:**

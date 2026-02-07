@@ -5,12 +5,12 @@ An 8-agent refactoring team in two phases: **CLEAN** (safe iterative fixes + aud
 ## Two Phases, One Pipeline
 
 ```
-Phase 1 — CLEAN (/refactor-team:clean)
+Phase 1 — CLEAN (/clean-team:clean)
   Organizer → Formatter → Auditor → AUDIT-REPORT.md
 
                     ↓ User reviews report ↓
 
-Phase 2 — REFACTOR (/refactor-team:refactor)
+Phase 2 — REFACTOR (/clean-team:refactor)
   Tester → Planner → Challenger → Refactorer → Verifier
 ```
 
@@ -46,26 +46,26 @@ Planned refactoring driven by the audit report. Requires AUDIT-REPORT.md.
 
 ```bash
 # Phase 1: Clean and audit
-/refactor-team:clean [scope]
+/clean-team:clean [scope]
 
 # Phase 2: Refactor from audit report
-/refactor-team:refactor [path] [focus]
+/clean-team:refactor [path] [focus]
 ```
 
 ### Examples
 
 ```bash
 # Full project clean + audit
-/refactor-team:clean
+/clean-team:clean
 
 # Clean only src/
-/refactor-team:clean src/
+/clean-team:clean src/
 
 # Refactor with focus on naming
-/refactor-team:refactor src/ focus on naming
+/clean-team:refactor src/ focus on naming
 
 # Refactor the auth module
-/refactor-team:refactor src/auth/
+/clean-team:refactor src/auth/
 ```
 
 ---
@@ -105,10 +105,10 @@ python scripts/detect_dead_code.py <path>       # Unused code
 
 | Before (v2.0) | After (v3.0) | After (v3.1) |
 |----------------|--------------|--------------|
-| clean-team (4 agents) + refactor-team (7 agents) | One team, 9 agents, 2 phases | 8 agents, 2 phases |
+| clean-team (4 agents) + clean-team (7 agents) | One team, 9 agents, 2 phases | 8 agents, 2 phases |
 | Two separate installations | One installation | — |
 | CLEANUP-REPORT.md (metrics only) | AUDIT-REPORT.md (metrics + architecture + gaps + findings) | — |
 | Explorer + Researcher (2 analysis agents) | Auditor (1 agent, deeper analysis) | — |
 | Manual handoff between teams | Audit report bridges phases automatically | — |
-| `/clean-team:clean` | `/refactor-team:clean` | — |
+| `/clean-team:clean` | `/clean-team:clean` | — |
 | — | Stylist (web-only) + Polisher | Formatter (universal + type-specific profiles) |

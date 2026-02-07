@@ -12,9 +12,9 @@ Universal tools that apply to any project.
 
 | Command | Agents | Workflow |
 |---------|--------|----------|
-| `/refactor-team:audit [focus]` | parallel | Standalone audit with parallel sub-agents → AUDIT-REPORT.md |
-| `/refactor-team:clean [scope]` | 3 | Organizer → Formatter → Auditor → AUDIT-REPORT.md |
-| `/refactor-team:refactor [path]` | 5 | Tester → Planner → Challenger → Refactorer → Verifier |
+| `/clean-team:audit [focus]` | parallel | Standalone audit with parallel sub-agents → AUDIT-REPORT.md |
+| `/clean-team:clean [scope]` | 3 | Organizer → Formatter → Auditor → AUDIT-REPORT.md |
+| `/clean-team:refactor [path]` | 5 | Tester → Planner → Challenger → Refactorer → Verifier |
 | `/implement-team:implement <feature>` | 5 | Plan → Challenge → Implement (TDD) → Security → Refactor |
 | `/diagnose-team:diagnose <problem>` | 5 | Clarify → Investigate → Hypothesize → Resolve → Validate |
 
@@ -29,7 +29,7 @@ Universal tools that apply to any project.
 
 | Agent | What It Does |
 |-------|--------------|
-| [codebase-scout](core/agents/codebase-scout.md) | Explore and document unfamiliar codebases, generate CLAUDE.md |
+| [new-codebase-scout](core/agents/new-codebase-scout.md) | Explore and document unfamiliar codebases, generate CLAUDE.md |
 
 Skills: architecture, code-quality, documentation, security
 
@@ -38,13 +38,6 @@ Skills: architecture, code-quality, documentation, security
 ## Web
 
 Web development tools — CSS, HTML, accessibility, React, and frontend testing.
-
-### Commands
-
-| Command | What It Does |
-|---------|--------------|
-| `/ui-audit [hint]` | Audit HTML semantics and CSS for consolidation |
-| `/clean-parallel` | Run refactor-team Phase 1 as agent team sessions (experimental) |
 
 Skills: design, web-accessibility, web-css, web-react, web-graphql, web-performance, web-testing
 
@@ -74,7 +67,7 @@ Skills: data-python, data-sql, data-pipelines, data-aws, data-iac
 
 # Install team plugins (one-time)
 claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
-claude plugin install refactor-team implement-team diagnose-team
+claude plugin install clean-team implement-team diagnose-team
 ```
 
 Skills are the single source of truth. Teams reference `~/.claude/skills/`, not embedded copies. Updating a skill and running `/sync deploy` propagates the change everywhere.

@@ -8,7 +8,7 @@ Multi-agent workflows that coordinate specialized agents to accomplish complex t
 
 | Team | Agents | Commands | Purpose |
 |------|--------|----------|---------|
-| [refactor-team](./refactor-team) | 8 | `/refactor-team:clean`, `/refactor-team:refactor` | Two-phase cleanup and refactoring |
+| [clean-team](./clean-team) | 8 | `/clean-team:clean`, `/clean-team:refactor` | Two-phase cleanup and refactoring |
 | [implement-team](./implement-team) | 5 | `/implement-team:implement <feature>` | TDD feature implementation |
 | [diagnose-team](./diagnose-team) | 5 | `/diagnose-team:diagnose <problem>` | Stubborn bugs and intent-reality gaps |
 
@@ -21,12 +21,12 @@ A two-phase workflow: **CLEAN** (safe iterative fixes + audit) then **REFACTOR**
 ### Workflow
 
 ```
-Phase 1 — CLEAN (/refactor-team:clean):
+Phase 1 — CLEAN (/clean-team:clean):
   Organizer → Formatter → Auditor → AUDIT-REPORT.md
 
                   ↓ User reviews report ↓
 
-Phase 2 — REFACTOR (/refactor-team:refactor):
+Phase 2 — REFACTOR (/clean-team:refactor):
   Tester → Planner → Challenger → Refactorer → Verifier
                                       ↑              ↓
                                    (Gate 1)      (Gate 2)
@@ -173,7 +173,7 @@ Both types benefit from the same workflow — closing the intent-reality gap.
 claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
 
 # Install teams
-claude plugin install refactor-team
+claude plugin install clean-team
 claude plugin install implement-team
 claude plugin install diagnose-team
 ```
@@ -182,10 +182,10 @@ claude plugin install diagnose-team
 
 ```bash
 # Phase 1: Clean and audit
-/refactor-team:clean src/
+/clean-team:clean src/
 
 # Phase 2: Refactor from audit report
-/refactor-team:refactor src/
+/clean-team:refactor src/
 
 # TDD implementation
 /implement-team:implement "Add user authentication with OAuth2"
@@ -200,10 +200,10 @@ claude plugin install diagnose-team
 
 | Situation | Team |
 |-----------|------|
-| Quick codebase tidying | refactor-team (clean phase) |
-| CSS file sprawl (>5 files) | refactor-team (clean phase) |
-| Existing codebase needs deep refactoring | refactor-team (both phases) |
-| Legacy code modernization | refactor-team (both phases) |
+| Quick codebase tidying | clean-team (clean phase) |
+| CSS file sprawl (>5 files) | clean-team (clean phase) |
+| Existing codebase needs deep refactoring | clean-team (both phases) |
+| Legacy code modernization | clean-team (both phases) |
 | New feature implementation | implement-team |
 | Bug fix with design decisions | implement-team |
 | Security-sensitive features | implement-team (triggers Security agent) |

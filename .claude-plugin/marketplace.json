@@ -8,10 +8,10 @@
   },
   "plugins": [
     {
-      "name": "refactor-team",
+      "name": "clean-team",
       "version": "3.2.0",
       "description": "An 8-agent refactoring team with 3 entry points: AUDIT (standalone parallel analysis), CLEAN (organize, format, audit pipeline), REFACTOR (test, plan, challenge, execute, verify)",
-      "source": "./core/teams/refactor-team"
+      "source": "./core/teams/clean-team"
     },
     {
       "name": "implement-team",

@@ -8,7 +8,7 @@ Reference documentation for Claude Code agents stored in `~/.claude/agents/`. Un
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| [codebase-scout](./codebase-scout.md) | Opus | Explore and document unfamiliar codebases |
+| [new-codebase-scout](./new-codebase-scout.md) | Opus | Explore and document unfamiliar codebases |
 
 ---
 
@@ -122,7 +122,7 @@ Agents are stored in `~/.claude/agents/`. To install:
 mkdir -p ~/.claude/agents
 
 # Copy agent file
-cp codebase-scout.md ~/.claude/agents/
+cp new-codebase-scout.md ~/.claude/agents/
 ```
 
 Agents become available immediately after placing the `.md` file in the directory.
