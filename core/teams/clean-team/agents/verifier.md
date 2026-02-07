@@ -1,5 +1,5 @@
 ---
-name: verifier
+name: Verifier
 description: >
   Final quality gate. Validates completed refactoring: confirms behavior unchanged
   (tests prove this), measures semantic clarity improvement (naming, docs, organization),

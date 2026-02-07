@@ -1,5 +1,5 @@
 ---
-name: tester
+name: Tester
 description: >
   Assesses test coverage and establishes safety net for refactoring. Identifies
   areas with insufficient coverage and writes characterization tests or basic unit

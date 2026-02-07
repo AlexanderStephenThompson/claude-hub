@@ -1,5 +1,5 @@
 ---
-name: challenger
+name: Challenger
 description: >
   Quality gate before execution. Reviews the refactoring roadmap for feasibility
   (can it be executed?) and semantic correctness (will it improve clarity?).

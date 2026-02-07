@@ -1,6 +1,6 @@
-# Refactor Team v3.1
+# Clean-Team v3.3.0
 
-An 8-agent refactoring team in two phases: **CLEAN** (safe iterative fixes + audit) then **REFACTOR** (planned deeper changes from the audit).
+An 8-agent cleaning team in two phases: **CLEAN** (safe iterative fixes + parallel audit) then **REFACTOR** (planned deeper changes from the audit).
 
 ## Two Phases, One Pipeline
 
@@ -16,6 +16,8 @@ Phase 2 — REFACTOR (/clean-team:refactor)
 
 The **AUDIT-REPORT.md** is the bridge between phases. Phase 1 produces it, the user reviews it, and Phase 2 consumes it.
 
+There is also a standalone audit command (`/clean-team:audit`) that skips cleaning and produces the report directly using parallel sub-agents.
+
 ---
 
 ## Phase 1: Clean (3 Agents)
@@ -26,7 +28,9 @@ Safe, iterative cleanup that ends with a deep analysis report.
 |---|-------|-----|--------|
 | 1 | **Organizer** | File moves, renames, folder organization | git commit |
 | 2 | **Formatter** | Universal cleaning + project-type-specific conventions | git commit |
-| 3 | **Auditor** | Deep analysis: architecture, best practices, metrics, findings | AUDIT-REPORT.md |
+| 3 | **Auditor** | Parallel sub-agents for deep analysis: architecture, best practices, metrics, findings | AUDIT-REPORT.md |
+
+The Auditor launches 4-11 parallel sub-agents (core + web, depending on stack) using the shared roster at `assets/parallel-audit-roster.md`.
 
 ## Phase 2: Refactor (5 Agents)
 
@@ -34,17 +38,20 @@ Planned refactoring driven by the audit report. Requires AUDIT-REPORT.md.
 
 | # | Agent | Job | Output |
 |---|-------|-----|--------|
-| 5 | **Tester** | Coverage assessment, writes safety tests | Coverage report |
-| 6 | **Planner** | Phased roadmap from audit findings | Roadmap |
-| 7 | **Challenger** | Gate 1: reviews plan feasibility | Approve/Revise/Block |
-| 8 | **Refactorer** | Executes approved slices | git commits |
-| 9 | **Verifier** | Gate 2: validates behavior + clarity | Approve/Route back/Block |
+| 4 | **Tester** | Coverage assessment, writes safety tests | Coverage report |
+| 5 | **Planner** | Phased roadmap from audit findings | Roadmap |
+| 6 | **Challenger** | Gate 1: reviews plan feasibility | Approve/Revise/Block |
+| 7 | **Refactorer** | Executes approved slices | git commits |
+| 8 | **Verifier** | Gate 2: validates behavior + clarity | Approve/Route back/Block |
 
 ---
 
 ## Commands
 
 ```bash
+# Standalone audit (parallel sub-agents, optional focus)
+/clean-team:audit [focus]
+
 # Phase 1: Clean and audit
 /clean-team:clean [scope]
 
@@ -60,6 +67,12 @@ Planned refactoring driven by the audit report. Requires AUDIT-REPORT.md.
 
 # Clean only src/
 /clean-team:clean src/
+
+# Standalone audit focused on CSS
+/clean-team:audit css
+
+# Standalone audit focused on structure (expands to 5 sub-auditors)
+/clean-team:audit structure
 
 # Refactor with focus on naming
 /clean-team:refactor src/ focus on naming
@@ -79,7 +92,23 @@ Agents inherit shared skills from `~/.claude/skills/`:
 | code-quality | All agents |
 | architecture | Organizer, Auditor, Planner, Challenger |
 | security | Planner, Challenger |
+| design | Refactorer |
 | documentation | Verifier |
+
+---
+
+## Assets
+
+| Asset | Purpose |
+|-------|---------|
+| `assets/parallel-audit-roster.md` | Shared sub-agent definitions for parallel audit |
+| `assets/audit-report-template.md` | AUDIT-REPORT.md generation template |
+| `assets/audit-checklists/core.md` | 4 core auditor checklists (always run) |
+| `assets/audit-checklists/structure.md` | 5 structure-focus auditor checklists |
+| `assets/audit-checklists/web.md` | 7 web auditor checklists (conditional) |
+| `assets/cleaning-profiles/*.md` | Project-type-specific cleaning rules (web, unity, python, data) |
+| `assets/refactor-checklist.md` | User-facing refactor checklists |
+| `assets/commit-templates.md` | Commit message templates |
 
 ---
 
@@ -97,18 +126,16 @@ Agents inherit shared skills from `~/.claude/skills/`:
 python scripts/analyze_complexity.py <path>     # High-complexity functions
 python scripts/analyze_dependencies.py <path>   # Circular dependencies
 python scripts/detect_dead_code.py <path>       # Unused code
+node scripts/check.js                           # Design system compliance (31 rules)
 ```
 
 ---
 
-## What Changed from v2.0
+## Version History
 
-| Before (v2.0) | After (v3.0) | After (v3.1) |
-|----------------|--------------|--------------|
-| clean-team (4 agents) + clean-team (7 agents) | One team, 9 agents, 2 phases | 8 agents, 2 phases |
-| Two separate installations | One installation | — |
-| CLEANUP-REPORT.md (metrics only) | AUDIT-REPORT.md (metrics + architecture + gaps + findings) | — |
-| Explorer + Researcher (2 analysis agents) | Auditor (1 agent, deeper analysis) | — |
-| Manual handoff between teams | Audit report bridges phases automatically | — |
-| `/clean-team:clean` | `/clean-team:clean` | — |
-| — | Stylist (web-only) + Polisher | Formatter (universal + type-specific profiles) |
+| Version | Changes |
+|---------|---------|
+| v3.3.0 | Parallelized Auditor with shared sub-agent roster, added check.js (31 rules) |
+| v3.2.0 | Absorbed improvement-auditor + web-auditor into `/clean-team:audit` command |
+| v3.1.0 | Formatter replaced Stylist + Polisher with universal + type-specific profiles |
+| v3.0.0 | Merged old clean-team into refactor-team as Phase 1. Added Auditor (merged Explorer + Researcher). Renamed to clean-team. |

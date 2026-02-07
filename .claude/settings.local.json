@@ -20,7 +20,9 @@
       "Bash(xcopy:*)",
       "Bash(git mv:*)",
       "Bash(test:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(python:*)",
+      "Bash(echo:*)"
     ]
   }
 }

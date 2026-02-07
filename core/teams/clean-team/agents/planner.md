@@ -1,5 +1,5 @@
 ---
-name: planner
+name: Planner
 description: >
   Creates comprehensive, prioritized refactoring roadmap. Synthesizes the AUDIT-REPORT.md
   findings and Tester's coverage assessment. Builds detailed roadmap organized into

@@ -1,5 +1,5 @@
 ---
-name: refactorer
+name: Refactorer
 description: >
   Executes the approved refactoring roadmap with discipline. Follows slices in order,
   commits per strategy, tests after each slice, maintains clean git history. Autonomously

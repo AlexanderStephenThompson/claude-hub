@@ -10,8 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Domain | Contents |
 |--------|----------|
-| `core/` | Universal skills, 3 teams (refactor, implement, diagnose), most commands, agents, scripts, templates |
-| `web/` | Web skills, web commands |
+| `core/` | Universal skills, 3 teams (clean, implement, diagnose), commands, agents, scripts, templates |
+| `web/` | Web skills (7) |
 | `world-building/` | Unity + VRChat skills |
 | `data/` | Data engineering skills (Python, SQL, pipelines, AWS, IaC) |
 
@@ -127,7 +127,7 @@ node core/teams/clean-team/scripts/check.js                           # Design s
 | Data skills | `data/skills/<skill>/` | `/sync deploy` |
 | Teams | `*/teams/<team>/` | Update `.claude-plugin/marketplace.json`, `/sync push` |
 | Agents | `core/agents/` | `/sync deploy` |
-| Commands | `core/commands/` or `web/commands/` | `/sync deploy` |
+| Commands | `core/commands/` | `/sync deploy` |
 | Templates | `*/templates/<name>/` | Copy to new project directory |
 
 **New teams require two registrations:**

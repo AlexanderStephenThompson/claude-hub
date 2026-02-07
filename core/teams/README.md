@@ -8,13 +8,13 @@ Multi-agent workflows that coordinate specialized agents to accomplish complex t
 
 | Team | Agents | Commands | Purpose |
 |------|--------|----------|---------|
-| [clean-team](./clean-team) | 8 | `/clean-team:clean`, `/clean-team:refactor` | Two-phase cleanup and refactoring |
+| [clean-team](./clean-team) | 8 | `/clean-team:audit`, `/clean-team:clean`, `/clean-team:refactor` | Audit, cleanup, and refactoring |
 | [implement-team](./implement-team) | 5 | `/implement-team:implement <feature>` | TDD feature implementation |
 | [diagnose-team](./diagnose-team) | 5 | `/diagnose-team:diagnose <problem>` | Stubborn bugs and intent-reality gaps |
 
 ---
 
-## Refactor Team (8 Agents)
+## Clean-Team (8 Agents)
 
 A two-phase workflow: **CLEAN** (safe iterative fixes + audit) then **REFACTOR** (planned deeper changes from the audit).
 
@@ -51,7 +51,10 @@ Phase 2 — REFACTOR (/clean-team:refactor):
 - **AUDIT-REPORT.md**: Bridge artifact between phases, consumed by both humans and agents
 - **Universal Formatter**: Detects project type, applies universal cleaning + type-specific profiles (web, unity, python, data)
 - **Gated execution**: Challenger reviews plans, Verifier validates results
+- **Parallel audit**: Auditor launches 4-11 sub-agents simultaneously via shared roster
+- **Standalone audit**: `/clean-team:audit [focus]` with focus modes (css, a11y, perf, structure, etc.)
 - **Analysis scripts**: Python scripts for complexity, dependency, and dead code analysis
+- **Design system checker**: 31-rule linter for CSS, HTML, and JS
 
 ### Analysis Scripts
 
@@ -59,6 +62,7 @@ Phase 2 — REFACTOR (/clean-team:refactor):
 python scripts/analyze_complexity.py <path>     # Find high-complexity functions
 python scripts/analyze_dependencies.py <path>   # Map circular dependencies
 python scripts/detect_dead_code.py <path>       # Find unused code
+node scripts/check.js                           # Design system compliance (31 rules)
 ```
 
 ---
