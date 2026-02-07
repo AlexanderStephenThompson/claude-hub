@@ -1,0 +1,155 @@
+# Audit Report Template
+
+Use this template when generating AUDIT-REPORT.md. The Auditor agent fills in each section during the clean phase.
+
+---
+
+```markdown
+# AUDIT-REPORT.md
+
+**Generated:** [timestamp]
+**Scope:** [full project or specified path]
+**Phase:** Clean phase complete — ready for user review
+
+---
+
+## Executive Summary
+
+[2-3 sentence summary for humans. What was cleaned, what was found, what's recommended.]
+
+**Clean Phase Status:** [Complete / Complete with issues]
+**Findings:** [count] total ([critical] critical, [high] high, [medium] medium, [low] low)
+**Recommendation:** [Proceed to Phase 2 / Address issues first / No refactoring needed]
+
+---
+
+## Clean Phase Results
+
+### Agent Summary
+
+| Agent | Changes | Commit |
+|-------|---------|--------|
+| Organizer | [X files moved, Y renamed, Z deleted] | [hash] |
+| Formatter | [N dead code removals, M constants extracted, type-specific changes] | [hash] |
+
+### Test Results
+
+[✅ PASS / ❌ FAIL / ⚠️ NO TESTS]
+
+[If failed, list which tests and likely cause]
+
+### Metrics Comparison
+
+| Metric | Before | After | Change |
+|--------|--------|-------|--------|
+| Total files | X | Y | -Z |
+| CSS files | X | Y | -Z |
+| Dead imports removed | - | N | N |
+| Debug statements removed | - | N | N |
+| Constants extracted | - | N | N |
+
+---
+
+## Codebase Understanding
+
+### Overview
+[What the project does, tech stack, purpose]
+
+### Architecture
+[Folder structure diagram, how modules relate]
+
+### Key Modules
+[Description of each major module: purpose, dependencies, exports]
+
+### Data Flow
+[How data moves through the system — trace key user journeys]
+
+### Patterns & Conventions
+[Naming conventions, code patterns, testing patterns observed]
+
+---
+
+## Best Practices Analysis
+
+### Project Type
+[React SPA / Node API / Python service / CLI / etc.]
+
+### Standards Applied
+- **Universal:** code-quality skill standards
+- **Project-specific:** [framework/language conventions]
+
+### Gap Analysis
+
+| Area | Standard | Current State | Gap |
+|------|----------|---------------|-----|
+| Naming | [expected] | [observed] | [difference] |
+| Organization | [expected] | [observed] | [difference] |
+| Documentation | [expected] | [observed] | [difference] |
+| Testing | [expected] | [observed] | [difference] |
+| Error Handling | [expected] | [observed] | [difference] |
+
+---
+
+## Findings
+
+### AUDIT-001: [Short descriptive name]
+
+- **Priority:** Critical / High / Medium / Low
+- **Category:** Naming / Structure / Testing / Documentation / Error Handling / Performance / Security
+- **Location:** path/to/file.ext:line
+- **Problem:** [What's wrong — specific]
+- **Recommendation:** [What to do — actionable]
+- **Effort:** Low / Medium / High
+- **Risk:** Low / Medium / High
+
+### AUDIT-002: [Short descriptive name]
+...
+
+### AUDIT-NNN: [Short descriptive name]
+...
+
+---
+
+## Critical Paths
+
+**For Tester consumption in Phase 2.**
+
+Areas that MUST have test coverage before refactoring:
+
+1. [Module/function — why it's critical]
+2. [Module/function — why it's critical]
+3. [Module/function — why it's critical]
+
+---
+
+## Prioritized Recommendations
+
+**For Planner consumption in Phase 2.**
+
+### High Priority
+1. [Most important improvement with reasoning]
+2. [Second most important]
+
+### Medium Priority
+1. [Moderate impact improvement]
+
+### Low Priority
+1. [Nice-to-have]
+
+---
+
+## Flagged for User Review
+
+Items that need human decision before Phase 2:
+
+- [ ] [Item 1 — why it needs user input]
+- [ ] [Item 2 — why it needs user input]
+
+---
+
+## Next Steps
+
+1. Review this report
+2. Address any flagged items above
+3. Run `/refactor-team:refactor [path] [focus]` to begin Phase 2
+```

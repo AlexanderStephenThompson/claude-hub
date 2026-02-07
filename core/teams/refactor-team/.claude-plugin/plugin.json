@@ -1,0 +1,15 @@
+{
+  "name": "refactor-team",
+  "version": "3.2.0",
+  "description": "An 8-agent refactoring team with 3 entry points: AUDIT (standalone parallel analysis), CLEAN (organize, format, audit pipeline), REFACTOR (test, plan, challenge, execute, verify). The audit report bridges all workflows.",
+  "agents": [
+    "./agents/organizer.md",
+    "./agents/formatter.md",
+    "./agents/auditor.md",
+    "./agents/tester.md",
+    "./agents/planner.md",
+    "./agents/challenger.md",
+    "./agents/refactorer.md",
+    "./agents/verifier.md"
+  ]
+}

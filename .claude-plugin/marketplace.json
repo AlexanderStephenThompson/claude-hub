@@ -8,28 +8,22 @@
   },
   "plugins": [
     {
-      "name": "clean-team",
-      "version": "1.0.0",
-      "description": "A 4-agent codebase hygiene workflow: organize → style → polish → verify",
-      "source": "./teams/clean-team"
-    },
-    {
       "name": "refactor-team",
-      "version": "2.0.0",
-      "description": "A 7-agent refactoring team that explores, researches, tests, plans, challenges, executes, and verifies code improvements",
-      "source": "./teams/refactor-team"
+      "version": "3.2.0",
+      "description": "An 8-agent refactoring team with 3 entry points: AUDIT (standalone parallel analysis), CLEAN (organize, format, audit pipeline), REFACTOR (test, plan, challenge, execute, verify)",
+      "source": "./core/teams/refactor-team"
     },
     {
       "name": "implement-team",
       "version": "1.0.0",
       "description": "A 5-agent implementation team: plan → challenge → implement (strict TDD) → security → refactor",
-      "source": "./teams/implement-team"
+      "source": "./core/teams/implement-team"
     },
     {
       "name": "diagnose-team",
       "version": "1.0.0",
       "description": "A 5-agent diagnostic team for stubborn bugs and implementation mismatches: clarify → investigate → hypothesize → resolve → validate",
-      "source": "./teams/diagnose-team"
+      "source": "./core/teams/diagnose-team"
     }
   ]
 }

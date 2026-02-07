@@ -82,22 +82,48 @@ Remove-Item 'C:\Users\Alexa\.claude\agents\*.md' -Force -ErrorAction SilentlyCon
 Remove-Item 'C:\Users\Alexa\.claude\commands\*.md' -Force -ErrorAction SilentlyContinue
 ```
 
-#### Step 2: Copy fresh files from repo
+#### Step 2: Copy fresh files from all domain folders
+
+The repo uses domain folders (`core/`, `web/`, `world-building/`, `data/`). Deploy flattens everything into `~/.claude/`. Skills are discovered recursively (supports nested sub-categories like `world-building/Unity/skills/`).
 
 ```powershell
-Copy-Item -Path 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\skills\*' -Destination 'C:\Users\Alexa\.claude\skills\' -Recurse -Force
-Copy-Item -Path 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\agents\*.md' -Destination 'C:\Users\Alexa\.claude\agents\' -Force
-Copy-Item -Path 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\commands\*.md' -Destination 'C:\Users\Alexa\.claude\commands\' -Force
+$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub'
+$domains = @('core', 'web', 'world-building', 'data')
+
+foreach ($domain in $domains) {
+    # Skills: recursive discovery (finds skills/ at any depth within the domain)
+    Get-ChildItem -Path (Join-Path $repo $domain) -Directory -Recurse |
+        Where-Object { $_.Name -eq 'skills' } |
+        ForEach-Object {
+            Copy-Item -Path "$($_.FullName)\*" -Destination 'C:\Users\Alexa\.claude\skills\' -Recurse -Force
+        }
+
+    # Agents: flat discovery
+    $agentsPath = Join-Path $repo "$domain\agents"
+    if (Test-Path $agentsPath) {
+        Get-ChildItem "$agentsPath\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination 'C:\Users\Alexa\.claude\agents\' -Force
+    }
+
+    # Commands: flat discovery
+    $commandsPath = Join-Path $repo "$domain\commands"
+    if (Test-Path $commandsPath) {
+        Get-ChildItem "$commandsPath\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination 'C:\Users\Alexa\.claude\commands\' -Force
+    }
+
+}
 ```
 
 ---
 
 ### 4. Reinstall Team Plugins
 
-Discover all teams dynamically from the `teams/` directory and reinstall each one. This ensures new teams are always picked up without editing this file.
+Discover all teams dynamically by scanning for `.claude-plugin/plugin.json` under any domain folder. This ensures new teams are always picked up without editing this file.
 
 ```powershell
-Get-ChildItem 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub\teams' -Directory | ForEach-Object { $_.Name }
+$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub'
+Get-ChildItem $repo -Directory -Recurse | Where-Object {
+    Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json')
+} | ForEach-Object { $_.Name }
 ```
 
 For each team found, uninstall then install:
