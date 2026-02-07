@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Domain | Contents |
 |--------|----------|
 | `core/` | Universal skills, 3 teams (refactor, implement, diagnose), most commands, agents, scripts, templates |
-| `web/` | Web skills, web commands, project templates |
+| `web/` | Web skills, web commands |
 | `world-building/` | Unity + VRChat skills |
 | `data/` | Data engineering skills (Python, SQL, pipelines, AWS, IaC) |
 

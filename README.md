@@ -33,6 +33,8 @@ Universal tools that apply to any project.
 |-------|--------------|
 | [codebase-scout](core/agents/codebase-scout.md) | Explore and document unfamiliar codebases, generate CLAUDE.md |
 
+Skills: architecture, code-quality, documentation, security
+
 ---
 
 ## Web
