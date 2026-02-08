@@ -8,11 +8,12 @@ A starting structure for a personal computer or home drive using the L1/L2/L3 fr
 
 ```
 Home/
-├── Work/               # Professional life (if no separate work drive)
-├── Personal/           # Personal admin, household, life management
-├── Finance/            # Money matters — banking, taxes, investments
-├── Creative/           # Art, music, writing, side projects
-├── Learning/           # Courses, books, certifications, research
+├── Career/             # Professional life — education, job search, current role
+├── Finances/           # Money matters — bills, taxes, banking
+├── Hobbies/            # One subfolder per hobby as needed
+├── Home/               # Housing — lease, utilities, maintenance
+├── Media/              # Photos, videos, music, screenshots
+├── Personal/           # Life stuff that doesn't fit above
 └── Archive/            # Cold storage for completed life chapters
 ```
 
@@ -20,57 +21,78 @@ Home/
 
 ## L2: Outcomes (per arena)
 
-### Work/
+### Career/
 
 ```
-Work/
-├── Projects/           # Active work projects
-├── Career/             # Resume, portfolio, job search, networking
-├── Admin/              # Timesheets, expense reports, HR docs
-└── Reference/          # Policies, handbooks, templates you refer to
+Career/
+├── Education/
+│   ├── Degrees & Transcripts/
+│   ├── Certifications & Licenses/
+│   └── Continuing Education/
+├── Job Search/
+│   ├── Resumes & Cover Letters/
+│   ├── Applications/
+│   ├── Interview Prep/
+│   └── Portfolio & Samples/
+└── Current Job/
+    ├── Pay & Income/
+    ├── Benefits/
+    ├── Reviews & Evaluations/
+    ├── Policies & Handbooks/
+    ├── Training/
+    └── Clients/                # Remove if not applicable
+```
+
+### Finances/
+
+```
+Finances/
+├── Bills & Payments/
+├── Taxes/                      # Subfolders by year (2025/, 2026/)
+├── Bank Statements/
+├── Investments/                # Brokerage statements, research
+└── Insurance/                  # Policies, claims
+```
+
+### Hobbies/
+
+```
+Hobbies/
+├── Photography/                # One subfolder per hobby
+├── Gaming/
+└── Woodworking/
+```
+
+### Home/
+
+```
+Home/
+├── Lease & Mortgage/
+├── Utilities/
+├── Repairs & Maintenance/
+├── Insurance/                  # Renter's or homeowner's
+└── Warranties & Manuals/
+```
+
+### Media/
+
+```
+Media/
+├── Photos/
+├── Videos/
+├── Music/
+└── Screenshots/
 ```
 
 ### Personal/
 
 ```
 Personal/
-├── Household/          # Leases, insurance, warranties, manuals
-├── Health/             # Medical records, prescriptions, fitness logs
-├── Travel/             # Itineraries, bookings, packing lists
-├── Identity/           # Passport scans, licenses, vital records
-└── Pets/               # Vet records, registrations
-```
-
-### Finance/
-
-```
-Finance/
-├── Banking/            # Statements, account info
-├── Taxes/              # Returns by year (2024/, 2025/)
-├── Investments/        # Brokerage statements, research
-├── Insurance/          # Policies, claims
-└── Budgeting/          # Spreadsheets, receipts
-```
-
-### Creative/
-
-```
-Creative/
-├── Writing/            # Stories, blog posts, journals
-├── Art/                # Digital art, photos, design files
-├── Music/              # Compositions, recordings, stems
-├── Code/               # Side projects, experiments, repos
-└── Ideas/              # Brainstorms, mood boards, concepts
-```
-
-### Learning/
-
-```
-Learning/
-├── Courses/            # Organized by course name
-├── Books/              # Notes, highlights, summaries
-├── Certifications/     # Study materials, certificates earned
-└── Research/           # Topic-based deep dives
+├── Recipes/
+├── Travel/                     # Itineraries, bookings, packing lists
+├── Health/                     # Medical records, prescriptions, fitness
+├── Identity/                   # Passport scans, licenses, vital records
+└── Pets/                       # Vet records, registrations
 ```
 
 ---
@@ -78,7 +100,7 @@ Learning/
 ## L3: Artifacts (examples)
 
 ```
-Finance/
+Finances/
 └── Taxes/
     └── 2025/
         ├── W2-Employer.pdf
@@ -94,7 +116,7 @@ Finance/
 
 ## Customization Notes
 
-- **Adjust L1 arenas** to match your actual life domains. If you don't do creative work, drop `Creative/` and add whatever fits.
+- **Adjust L1 arenas** to match your actual life domains. Drop what doesn't apply, add what does.
 - **L2 will vary** based on what you actually do. Don't create empty folders for hypothetical outcomes.
 - **L3 emerges naturally** — don't pre-build it. Let structure follow work.
-- **Archive at L2** — when a project or tax year is done, move it to `_Archive/` within its arena.
+- **Archive at L2** — when a project or tax year is done, move it to `Archive/` within its arena.
