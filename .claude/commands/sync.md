@@ -15,7 +15,7 @@ Sync customizations between this repo and Claude's local config directory.
 
 | Name | Path |
 |------|------|
-| Repository | `c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub` |
+| Repository | `c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub` |
 | Claude Home | `C:\Users\Alexa\.claude` |
 
 ---
@@ -36,7 +36,7 @@ Check `$ARGUMENTS`:
 #### Push Mode (default)
 
 ```bash
-cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub"
+cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub"
 git add -A
 git status
 ```
@@ -60,7 +60,7 @@ Skip git operations. Proceed directly to deploy.
 #### Pull Mode
 
 ```bash
-cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub"
+cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub"
 git pull
 ```
 
@@ -87,7 +87,7 @@ Remove-Item 'C:\Users\Alexa\.claude\commands\*.md' -Force -ErrorAction SilentlyC
 The repo uses domain folders (`core/`, `web/`, `world-building/`, `data/`). Deploy flattens everything into `~/.claude/`. Skills are discovered recursively (supports nested sub-categories like `world-building/unity/skills/`).
 
 ```powershell
-$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub'
+$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
 $domains = @('core', 'web', 'world-building', 'data')
 
 foreach ($domain in $domains) {
@@ -120,7 +120,7 @@ foreach ($domain in $domains) {
 Discover all teams dynamically by scanning for `.claude-plugin/plugin.json` under any domain folder. This ensures new teams are always picked up without editing this file.
 
 ```powershell
-$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub'
+$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
 Get-ChildItem $repo -Directory -Recurse | Where-Object {
     Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json')
 } | ForEach-Object { $_.Name }

@@ -77,7 +77,7 @@ git pull
 ```
 
 ```powershell
-$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\claude-hub'
+$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
 $domains = @('core', 'web', 'world-building', 'data')
 
 # Clean stale files
