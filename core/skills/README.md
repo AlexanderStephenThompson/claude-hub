@@ -13,6 +13,7 @@ Fully developed skills with comprehensive standards, examples, and checklists.
 | [architecture](./architecture/) | Architecture principles, module boundaries, design patterns, project structure profiles | Complete |
 | [code-quality](./code-quality/) | TDD, naming, conventions, docstrings, 3-tier structure, language references | Complete |
 | [documentation](./documentation/) | SemVer, changelog, feature specs, module templates | Complete |
+| [organize](./organize/) | Folder organization, L1/L2/L3 cognitive-phase framework, drive cleanup | Complete |
 | [security](./security/) | OWASP Top 10, input validation, auth patterns | Complete |
 
 ### Web Skills
