@@ -63,9 +63,15 @@ project-root/
     fixtures/                        #   Shared test data
     helpers/                         #   Shared test utilities
   public/                            # Static files served directly (favicon, manifest)
-  Documentation/                     # Project docs
-    setup.md                         #   Getting started guide
-    architecture.md                  #   Architecture decisions
+  Documentation/                     # Project docs (see Project Infrastructure below)
+    project-roadmap.md               #   Milestones, releases, progress tracking
+    changelog.md                     #   Version history (Keep a Changelog format)
+    decisions/                       #   Architecture Decision Records
+    features/                        #   Feature specifications by program/module
+      {program}/
+        {module}/
+          _{module}.md               #     Module explainer (underscore sorts first)
+          {feature-name}.md          #     Feature specification
 ```
 
 **Key principles:**
@@ -83,6 +89,41 @@ project-root/
 02-logic → 01-presentation               (blocked — logic doesn't know about UI)
 01-presentation → 03-data                (blocked — UI never touches persistence directly)
 ```
+
+### Project Infrastructure
+
+Cross-cutting folders that live alongside the tiers. These are not part of the dependency flow — any tier can reference them.
+
+```
+project-root/
+  ...01-presentation/, 02-logic/, 03-data/, config/, tests/, public/...
+  Documentation/                     # Project planning and feature specs
+    project-roadmap.md               #   Living roadmap: milestones, releases, progress
+    changelog.md                     #   Keep a Changelog format (Added, Changed, Fixed, Removed)
+    decisions/                       #   Architecture Decision Records (ADR-NNN.md)
+    features/                        #   Feature specs organized by program/module
+      {program}/
+        {module}/
+          _{module}.md               #     Module explainer (what it does, why it matters)
+          {feature-name}.md          #     Individual feature specification
+  .claude/                           # AI tooling and automation
+    commands/                        #   Slash commands for workflows
+    validators/                      #   Automated standards enforcement
+```
+
+**Why Documentation lives at the root:** It is cross-cutting — it describes the project, not any single tier. Placing it inside a tier would imply ownership by that layer.
+
+### Recommended Validators
+
+Automated enforcement prevents drift. These validators run in pre-commit hooks or CI:
+
+| Validator | What It Checks | Blocks On |
+|-----------|---------------|-----------|
+| `validate:arch` | Import direction follows 01 -> 02 -> 03 | Reverse or layer-skipping imports |
+| `validate:tokens` | CSS values reference variables, not hardcoded | Hardcoded colors, spacing, typography |
+| `validate:naming` | Files follow type-specific naming conventions | Mixed casing, non-semantic names |
+
+Run all validators before feature completion: `npm run validate`
 
 ---
 

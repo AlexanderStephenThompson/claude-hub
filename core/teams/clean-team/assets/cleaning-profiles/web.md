@@ -312,6 +312,31 @@ Interactive elements without complete state coverage create inconsistent UX — 
 
 ---
 
+## Tier Architecture (Flag Only)
+
+The Formatter does not move files between tiers — that is a structural change owned by the Organizer (Phase 1) and the Refactorer (Phase 2). However, the Formatter SHOULD flag tier violations encountered during code cleaning so the Auditor can include them in the audit report.
+
+### What to Flag
+
+While cleaning code, note these patterns in the "Flagged for Auditor" section of your handoff:
+
+| Pattern | Tier Violation | Correct Location |
+|---------|---------------|-----------------|
+| API calls in React components | Presentation doing data work | `02-logic/api/` or custom hooks |
+| Business logic in components (validation, calculations, formatting) | Presentation doing logic work | `02-logic/services/` or `02-logic/validators/` |
+| Direct database access outside `03-data/` | Data layer bypass | `03-data/repositories/` |
+| UI concerns in service files (JSX, CSS class manipulation, rendering) | Logic doing presentation work | `01-presentation/` |
+| Import direction violations (data importing from logic, logic from presentation) | Reverse dependency | Refactor import chain |
+
+### What NOT to Do
+
+- Do NOT move files between tiers (Organizer/Refactorer scope)
+- Do NOT refactor imports to fix tier violations (Refactorer scope)
+- Do NOT introduce new tier folders (Organizer scope)
+- Do NOT block on tier violations — flag them and continue cleaning
+
+---
+
 ## Anti-Patterns
 
 - **Don't change visual appearance** — Consolidation should be invisible to users

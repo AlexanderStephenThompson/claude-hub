@@ -1,7 +1,7 @@
 ---
 description: Run a standalone codebase audit with parallel sub-agents and optional focus area
 argument-hint: [focus — e.g., "structure", "css", "a11y", "perf", or leave empty for full scan]
-allowed-tools: Read, Grep, Glob, Bash, Task
+allowed-tools: Read, Grep, Glob, Bash, Task, Write
 ---
 
 # /clean-team:audit
@@ -93,6 +93,8 @@ Follow the consolidation instructions in `assets/parallel-audit-roster.md`: coll
 ---
 
 ## Report Template
+
+**CRITICAL:** Use the **Write tool** to create the report file. Never use Bash heredocs (`cat <<EOF`), shell redirects, or Python scripts — these fail on Windows paths with spaces.
 
 Save the report to: `./AUDIT-REPORT-[YYYY-MM-DD].md`
 

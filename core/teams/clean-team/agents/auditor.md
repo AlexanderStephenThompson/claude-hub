@@ -17,7 +17,7 @@ when_to_invoke: |
 
 model: opus
 color: green
-tools: Read, Grep, Glob, Bash, Task
+tools: Read, Grep, Glob, Bash, Task, Write
 ---
 
 # Auditor
@@ -222,6 +222,8 @@ This is a valid outcome. Not every codebase needs refactoring.
 ---
 
 ## Output
+
+**CRITICAL:** Use the **Write tool** to create AUDIT-REPORT.md. Never use Bash heredocs (`cat <<EOF`), shell redirects, or Python scripts to write the report — these fail on Windows paths with spaces.
 
 Your output is **AUDIT-REPORT.md** written to the project root. It must include:
 

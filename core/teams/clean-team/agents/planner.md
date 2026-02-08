@@ -124,6 +124,25 @@ Order slices so:
 - Major restructuring
 - Commit strategy: Many commits per slice
 
+**Tier Migration Rules (Web Projects):**
+
+If AUDIT-REPORT contains tier architecture violations (misplaced files, import direction violations, missing tier structure), apply these rules:
+
+1. **Create migration slices** — each slice moves files from one wrong tier to the correct one. Sequence: Data tier first, then Logic, then Presentation (foundation before dependents).
+
+2. **Each migration slice must specify:**
+   - Which files move and to where (e.g., `components/api.ts` -> `02-logic/api/`)
+   - Which imports need updating (direction must flow 01 -> 02 -> 03 after migration)
+   - Which tests need path updates
+   - Reference: `~/.claude/skills/architecture/references/web.md`
+
+3. **If no tier structure exists yet**, create a dedicated "Introduce 3-Tier Architecture" slice:
+   - This is a Phase 3 Large Refactor (high risk, many commits)
+   - Requires characterization tests before execution (Tester must cover critical paths)
+   - Sequence: create folders -> move Data layer files -> move Logic layer files -> move Presentation layer files -> update all imports -> verify
+
+4. **Import direction is a stop-condition** — if any slice would create a reverse import (data -> logic, logic -> presentation, presentation -> data directly), reject the slice and re-sequence.
+
 ### Step 5: Define Slices
 
 Each slice specifies:

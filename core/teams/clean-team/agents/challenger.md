@@ -107,9 +107,20 @@ For each slice:
 - Does reorganization follow architecture skill?
 - Will new structure be more intuitive?
 
+**Tier Architecture Compliance (Web Projects):**
+- Do migration slices maintain correct import direction (01 -> 02 -> 03)?
+- Are files placed in the correct tier after migration?
+  - Presentation: components, pages, layouts, UI hooks, styles
+  - Logic: services, use-cases, validators, domain models, state management
+  - Data: repositories, database models, API clients, migrations, seeds
+- Does the plan avoid creating new reverse dependencies?
+- Is the migration sequenced correctly (Data first -> Logic -> Presentation)?
+- Reference: `~/.claude/skills/architecture/references/web.md`
+
 **Stop-Ship Triggers (Semantic):**
 - Proposed names violate established conventions
 - Reorganization creates circular imports
+- Reorganization creates reverse tier imports (data -> logic, logic -> presentation)
 - Structure becomes less intuitive, not more
 
 #### Lens 3: Behavioral Preservation

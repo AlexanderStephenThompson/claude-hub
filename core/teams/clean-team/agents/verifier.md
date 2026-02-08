@@ -11,6 +11,7 @@ tools: Read, Grep, Glob, Bash
 skills:
   - code-quality
   - documentation
+  - architecture
 ---
 
 # Verifier
@@ -100,6 +101,15 @@ If check.js reports new errors that weren't present before refactoring, route ba
 | Related code grouped | Scattered/Grouped | Grouped |
 | Discoverability | Hard/Easy | Easy |
 
+**Tier Architecture (Web Projects):**
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Tier structure exists | No/Yes | Yes |
+| Files in correct tier | X% | Y% |
+| Import direction violations | N | 0 |
+| Layer-skipping imports | N | 0 |
+
 ### Step 3: Measure Before/After Improvement
 
 ```markdown
@@ -118,6 +128,8 @@ If check.js reports new errors that weren't present before refactoring, route ba
 - **Is folder structure intuitive?** Yes/No
 - **Do docstrings explain the "why"?** Yes/No
 - **Is code self-documenting?** Yes/No
+- **Do all source files live in the correct tier?** Yes/No
+- **Do all imports flow in the correct direction (Presentation -> Logic -> Data)?** Yes/No
 
 ### Step 5: Verify Audit Remediation
 

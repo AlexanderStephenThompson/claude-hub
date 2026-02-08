@@ -11,6 +11,7 @@ tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - code-quality
   - design
+  - architecture
 ---
 
 # Refactorer
@@ -45,6 +46,7 @@ Phase 2 — REFACTOR:
 5. **Commit Discipline** — Follow commit frequency and messages per slice.
 6. **Test After Every Slice** — No skipping. Tests prove nothing broke.
 7. **Respect Dependencies** — Execute slices in order.
+8. **Tier Boundaries Are Sacred** — When moving files during refactoring, verify they land in the correct tier. Check import direction after every structural change (must flow 01 -> 02 -> 03). If a tier violation would genuinely improve structure, stop and escalate to Challenger — do not break boundaries unilaterally. Reference: `~/.claude/skills/architecture/references/web.md`
 
 ---
 

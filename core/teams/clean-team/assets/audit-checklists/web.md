@@ -8,12 +8,52 @@ Checklists for web-specific auditors. Launched when web technologies are detecte
 
 | Indicator | Auditors to Launch |
 |-----------|-------------------|
+| Any web project | Layer Architecture, Accessibility, Performance |
 | CSS files present | CSS/Styling |
 | HTML/JSX files present | Semantic HTML |
-| Any web project | Accessibility, Performance |
 | `react` in dependencies | React Components |
 | `@apollo/client` or `@apollo/server` | GraphQL/API |
 | `prisma` in dependencies | Data Layer |
+
+---
+
+## Layer Architecture Auditor
+
+Architecture boundary violations are structural problems that affect every other audit category. A project with logic in the presentation layer will also have testing gaps, performance issues, and maintainability problems. Check structure first.
+
+Reference: `~/.claude/skills/architecture/references/web.md`
+
+**Tier Structure:**
+- [ ] Three tiers exist and are named clearly (`01-presentation/` / `02-logic/` / `03-data/` or equivalent separation)
+- [ ] Each tier has a clear, exclusive responsibility (UI / business logic / data access)
+- [ ] Cross-cutting config lives outside the tiers (`config/`, env files)
+- [ ] Styles live within the presentation tier (`01-presentation/styles/`), not as a separate root folder
+- [ ] No orphan source files outside the tier structure (stray `.ts`/`.tsx` in the project root)
+
+**Dependency Direction:**
+- [ ] No imports from data tier into logic tier (`03-data` -> `02-logic`)
+- [ ] No imports from logic tier into presentation tier (`02-logic` -> `01-presentation`)
+- [ ] No imports from presentation directly into data (`01-presentation` -> `03-data`, skipping logic)
+- [ ] Shared types/interfaces defined at tier boundaries, not deep cross-tier coupling
+- [ ] Path aliases configured to clarify tier boundaries (`@presentation/`, `@logic/`, `@data/`)
+
+**Layer Purity:**
+- [ ] No API calls or data fetching in presentation-tier components
+- [ ] No business logic (validation, calculations, formatting) in React components
+- [ ] No UI concerns (rendering, JSX, CSS class manipulation) in logic-tier services
+- [ ] No business rules in data-tier repositories (pure data access only)
+- [ ] State management centralized in logic tier (`02-logic/state/`), not scattered across components
+
+**File Placement:**
+- [ ] Components, pages, layouts, UI hooks live in presentation tier
+- [ ] Services, use cases, validators, domain models live in logic tier
+- [ ] Repositories, database models, API clients, migrations live in data tier
+- [ ] No "god files" that span multiple tiers in a single module
+
+**Module Boundaries:**
+- [ ] Each module has a single entry point (index file or barrel export)
+- [ ] Internal module files not imported directly from outside the module
+- [ ] No circular dependencies between modules across tiers
 
 ---
 

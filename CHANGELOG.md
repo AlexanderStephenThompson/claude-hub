@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-02-07
+
+### Added
+- **Layer Architecture Auditor** — New parallel sub-agent for web projects. Checks tier structure, dependency direction, layer purity, file placement, and module boundaries. Registered in parallel-audit-roster (#5, launches for any web project).
+- **Tier Architecture section** in audit report template — Import direction analysis, misplaced files table, migration recommendations for web projects.
+- **Tier Migration Rules** in Planner Phase 3 — Concrete rules for creating migration slices when audit report identifies tier violations. Sequences Data -> Logic -> Presentation.
+- **Tier Architecture Compliance** checks in Challenger Lens 2 — Import direction, file placement, reverse dependency prevention, migration sequencing. Stop-ship trigger for reverse tier imports.
+- **Tier Architecture (Flag Only)** section in web cleaning profile — Formatter flags violations during cleaning without acting on them.
+- **Web project template** at `web/templates/web-project/` — Project roadmap template + README referencing architecture skill.
+- **Project Infrastructure** section in `architecture/references/web.md` — Documentation/, validators, and getting-started patterns absorbed from Project-Structure.md.
+
+### Changed
+- **clean-team v3.3.0 -> v3.4.0** — 3-tier architecture enforcement for web projects across all pipeline agents.
+- **Organizer** — Folder Structure dimension now detects tier structure in web projects. Tier introduction and file migration routed through Restructuring (ask-user-first).
+- **Refactorer** — Added `architecture` skill dependency. New Core Principle #8: "Tier Boundaries Are Sacred."
+- **Verifier** — Added `architecture` skill dependency. New Tier Architecture metrics table and qualitative checks.
+- **architecture skill `references/web.md`** — Now the single source of truth for web project structure. Absorbed Project Infrastructure content from Project-Structure.md.
+- **audit-checklists/web.md** — Now has 8 auditor sections (was 7). Layer Architecture Auditor added first.
+- **parallel-audit-roster.md** — Now has 12 web auditors (was 11). Layer Architecture Auditor listed first with priority note.
+- **Project-Structure.md** — Deprecated. Replaced with pointer to `architecture/references/web.md`.
+- **project-roadmap-template.md** — Moved to `web/templates/web-project/project-roadmap.md`.
+
+---
+
 ## [3.0.0] - 2026-02-05
 
 ### Added

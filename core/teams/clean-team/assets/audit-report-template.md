@@ -90,6 +90,38 @@ Use this template when generating AUDIT-REPORT.md. The Auditor agent fills in ea
 
 ---
 
+## Tier Architecture (Web Projects)
+
+_Skip this section if the project is not a web application._
+
+### Current Structure
+
+[Does the project use `01-presentation/` / `02-logic/` / `03-data/`? If so, diagram the tier layout. If not, describe what structure exists and whether it has implicit layer separation.]
+
+### Import Direction Analysis
+
+| Source Tier | Target Tier | Count | Status |
+|-------------|-------------|-------|--------|
+| Presentation -> Logic | [count] | Valid |
+| Logic -> Data | [count] | Valid |
+| Data -> Logic | [count] | VIOLATION |
+| Logic -> Presentation | [count] | VIOLATION |
+| Presentation -> Data | [count] | VIOLATION (layer skip) |
+
+### Misplaced Files
+
+| File | Current Location | Correct Tier | Reason |
+|------|-----------------|--------------|--------|
+| [file path] | [current folder] | [01-presentation / 02-logic / 03-data] | [why it belongs there] |
+
+### Tier Recommendations
+
+[Specific migration plan, or "Tier architecture is correctly implemented — no changes needed."]
+
+Reference: `~/.claude/skills/architecture/references/web.md`
+
+---
+
 ## Findings
 
 ### AUDIT-001: [Short descriptive name]

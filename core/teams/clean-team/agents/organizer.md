@@ -67,6 +67,10 @@ Examine the project structure across 5 dimensions:
 - Are related files co-located?
 - Is nesting depth reasonable? (No deeply nested single-file folders)
 - Are top-level folders balanced?
+- **[Web projects]** Does the project use 3-tier separation (`01-presentation/` / `02-logic/` / `03-data/`)?
+  - If tiers exist: are all source files placed within the correct tier?
+  - If tiers do not exist but the project is a web app: flag as a Restructuring proposal (ask user first)
+  - Reference: `~/.claude/skills/architecture/references/web.md`
 
 ### 3. File Organization
 - Is every file in the most logical folder?
@@ -107,6 +111,8 @@ Sort every finding into one of three categories:
 - Major folder hierarchy changes
 - Creating new top-level directories
 - Changing the project's organizing principle
+- Introducing 3-tier architecture (`01-presentation/` / `02-logic/` / `03-data/`) where none exists
+- Migrating source files between tiers when they are in the wrong layer
 - If restructuring is needed, **STOP and ask the user** before proceeding
 
 ---

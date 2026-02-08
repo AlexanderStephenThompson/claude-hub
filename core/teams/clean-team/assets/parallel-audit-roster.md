@@ -50,13 +50,16 @@ Launch when CSS, HTML, JSX, React, Apollo, or Prisma are detected. Read `assets/
 
 | # | Sub-Agent | Launch When |
 |---|-----------|-------------|
-| 5 | CSS/Styling Auditor | CSS files present |
-| 6 | Semantic HTML Auditor | HTML or JSX files present |
-| 7 | Accessibility Auditor | Any web project |
-| 8 | React/Component Auditor | `react` in dependencies |
-| 9 | GraphQL/API Auditor | `@apollo/client` or `@apollo/server` in dependencies |
-| 10 | Data Layer Auditor | `prisma` in dependencies |
-| 11 | Performance Auditor | Any web project |
+| 5 | Layer Architecture Auditor | Any web project |
+| 6 | CSS/Styling Auditor | CSS files present |
+| 7 | Semantic HTML Auditor | HTML or JSX files present |
+| 8 | Accessibility Auditor | Any web project |
+| 9 | React/Component Auditor | `react` in dependencies |
+| 10 | GraphQL/API Auditor | `@apollo/client` or `@apollo/server` in dependencies |
+| 11 | Data Layer Auditor | `prisma` in dependencies |
+| 12 | Performance Auditor | Any web project |
+
+**Priority note:** The Layer Architecture Auditor should be listed first in the final report. Architecture boundary violations are structural problems that affect every other audit category — fixing them often resolves CSS, component, and performance issues downstream.
 
 ---
 

@@ -1,4 +1,4 @@
-# Clean-Team v3.3.0
+# Clean-Team v3.4.0
 
 An 8-agent cleaning team in two phases: **CLEAN** (safe iterative fixes + parallel audit) then **REFACTOR** (planned deeper changes from the audit).
 
@@ -90,10 +90,12 @@ Agents inherit shared skills from `~/.claude/skills/`:
 | Skill | Used By |
 |-------|---------|
 | code-quality | All agents |
-| architecture | Organizer, Auditor, Planner, Challenger |
+| architecture | Organizer, Auditor, Planner, Challenger, Refactorer, Verifier |
 | security | Planner, Challenger |
 | design | Refactorer |
 | documentation | Verifier |
+
+**Web project tier enforcement:** When a web project is detected, the Auditor launches a Layer Architecture Auditor sub-agent that checks tier structure, import direction, layer purity, and file placement. Violations flow through the full pipeline: Planner creates migration slices (Data -> Logic -> Presentation), Challenger verifies import direction compliance, Refactorer executes moves with tier boundary awareness, and Verifier confirms all imports flow correctly after refactoring.
 
 ---
 
@@ -105,7 +107,7 @@ Agents inherit shared skills from `~/.claude/skills/`:
 | `assets/audit-report-template.md` | AUDIT-REPORT.md generation template |
 | `assets/audit-checklists/core.md` | 4 core auditor checklists (always run) |
 | `assets/audit-checklists/structure.md` | 5 structure-focus auditor checklists |
-| `assets/audit-checklists/web.md` | 7 web auditor checklists (conditional) |
+| `assets/audit-checklists/web.md` | 8 web auditor checklists (conditional) |
 | `assets/cleaning-profiles/*.md` | Project-type-specific cleaning rules (web, unity, python, data) |
 | `assets/refactor-checklist.md` | User-facing refactor checklists |
 | `assets/commit-templates.md` | Commit message templates |
