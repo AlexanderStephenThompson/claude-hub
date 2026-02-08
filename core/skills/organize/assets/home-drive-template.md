@@ -114,6 +114,29 @@ Finances/
 
 ---
 
+## Where Does This Go?
+
+Common items that feel ambiguous:
+
+| Item | Goes in | Why |
+|------|---------|-----|
+| Car insurance policy | Finances/Insurance/ | It's a financial product |
+| Home insurance policy | Home/Insurance/ | Tied to the dwelling |
+| Medical bills | Finances/Bills & Payments/ | Money is Finances, even for health costs |
+| Doctor visit records | Personal/Health/ | Medical history, not a bill |
+| Tax receipts | Finances/Taxes/{Year}/ | Tax-related always goes to Taxes |
+| Vacation photos | Media/Photos/ | Media owns all photos |
+| Travel itinerary | Personal/Travel/ | Planning docs, not media |
+| College diploma scan | Career/Education/Degrees/ | Career credential |
+| Student loan statement | Finances/Bills & Payments/ | It's a financial obligation |
+| Hobby purchase receipt | Finances/Bills & Payments/ | Money is always Finances |
+| Pet vet bill | Finances/Bills & Payments/ | Money goes to Finances |
+| Pet vaccination record | Personal/Pets/ | Health record, not a bill |
+
+**Rule of thumb:** If it involves money, it goes in Finances. If it's a record about something, it goes in the arena that something belongs to.
+
+---
+
 ## Customization Notes
 
 - **Adjust L1 arenas** to match your actual life domains. Drop what doesn't apply, add what does.

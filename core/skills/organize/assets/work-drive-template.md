@@ -1,122 +1,165 @@
 # Work Drive Template
 
-A starting structure for a professional or team work drive using the L1/L2/L3 framework.
+A starting structure for a business or team work drive using the L1/L2/L3 framework, organized around three mindsets:
+
+- **Fulfill** — What do we do? (Delivering the promise)
+- **Maintain** — What keeps it running? (Money, tools, legal, systems, people)
+- **Grow** — What moves it forward? (Strategy, product evolution, marketing, sales, retention)
 
 ---
 
 ## L1: Arenas
 
 ```
-Work-Drive/
-├── Engineering/        # Product development, technical work
-├── Design/             # UI/UX, brand, visual assets
-├── Marketing/          # Campaigns, content, analytics
-├── Operations/         # Processes, vendor management, logistics
-├── Finance/            # Budgets, invoicing, reporting
-├── People/             # HR, hiring, onboarding, culture
-└── Leadership/         # Strategy, planning, board materials
+Business/
+├── Fulfill/            # Delivering value — clients, projects, products
+├── Maintain/           # Keeping it running — finance, legal, ops, people
+└── Grow/               # Moving it forward — strategy, attract, convert, retain
 ```
 
 ---
 
 ## L2: Outcomes (per arena)
 
-### Engineering/
+### Fulfill/
 
 ```
-Engineering/
-├── Ship/               # Active product releases and features
-├── Maintain/           # Bug fixes, tech debt, infrastructure
-├── Plan/               # Roadmaps, RFCs, architecture decisions
-├── Tooling/            # Dev environment, CI/CD, internal tools
-└── Reference/          # Standards, runbooks, postmortems
+Fulfill/
+├── Clients/
+│   └── {Client Name}/
+├── Projects/
+├── Products & Services/
+├── Deliverables/
+└── Quality & Feedback/
 ```
 
-### Design/
+### Maintain/
 
 ```
-Design/
-├── Brand/              # Logos, guidelines, typography, color
-├── Product/            # UI mockups, prototypes, user flows
-├── Research/           # User interviews, surveys, personas
-└── Assets/             # Final exported assets, icon sets, templates
+Maintain/
+├── Finance/
+│   ├── Invoices & Billing/
+│   ├── Expenses & Receipts/
+│   ├── Taxes/
+│   │   └── {Year}/
+│   ├── Payroll/
+│   └── Reports & Statements/
+├── Legal/
+│   ├── Contracts & Agreements/
+│   ├── Business Registration/
+│   ├── Insurance/
+│   └── Compliance/
+├── People/
+│   ├── Hiring/
+│   ├── Onboarding/
+│   ├── Policies & Handbooks/
+│   ├── Team Records/
+│   └── Contractors/
+└── Operations/
+    ├── Systems & Tools/
+    ├── Processes & SOPs/
+    └── Office & Facilities/
 ```
 
-### Marketing/
+### Grow/
 
 ```
-Marketing/
-├── Campaign/           # Organized by campaign name or quarter
-├── Content/            # Blog posts, social media, newsletters
-├── Analytics/          # Reports, dashboards, attribution
-├── Brand/              # Messaging, positioning, press kits
-└── Events/             # Conferences, webinars, sponsorships
-```
-
-### Operations/
-
-```
-Operations/
-├── Processes/          # SOPs, workflows, checklists
-├── Vendors/            # Contracts, evaluations, contacts
-├── Facilities/         # Office management, equipment
-└── Compliance/         # Audits, certifications, policies
-```
-
-### Finance/
-
-```
-Finance/
-├── Budgeting/          # Annual budgets, forecasts, actuals
-├── Invoicing/          # AR/AP, organized by vendor or client
-├── Reporting/          # Monthly/quarterly financial reports
-├── Payroll/            # Payroll records, benefits admin
-└── Procurement/        # Purchase orders, approvals
-```
-
-### People/
-
-```
-People/
-├── Hiring/             # Job descriptions, candidates, offers
-├── Onboarding/         # New hire packets, training schedules
-├── Performance/        # Reviews, feedback, development plans
-├── Culture/            # Team events, surveys, recognition
-└── Policies/           # Employee handbook, leave policies
-```
-
-### Leadership/
-
-```
-Leadership/
-├── Strategy/           # Vision docs, OKRs, annual plans
-├── Board/              # Board decks, meeting minutes
-├── Partnerships/       # Strategic partnerships, M&A
-└── Communications/     # All-hands materials, internal memos
+Grow/
+├── Strategy & Planning/           # Vision, roadmaps, OKRs, annual plans
+├── Product Development/           # New features, prototypes, R&D
+├── Attract/
+│   ├── Brand Assets/              # Logo, colors, guidelines
+│   ├── Content/                   # Blog posts, social, newsletters
+│   ├── Campaigns/
+│   │   └── {Campaign Name}/
+│   ├── Analytics/
+│   └── Partnerships & Outreach/
+├── Convert/
+│   ├── Leads & Pipeline/
+│   ├── Proposals & Pitches/
+│   ├── Pricing & Packages/
+│   └── Testimonials & Case Studies/
+└── Retain/
+    ├── Customer Success/          # Welcome kits, onboarding sequences
+    ├── Communication/             # Check-ins, newsletters, updates
+    ├── Loyalty & Rewards/
+    ├── Upsells & Renewals/
+    └── Feedback & Surveys/
 ```
 
 ---
 
 ## L3: Artifacts (examples)
 
+### Fulfill
+
 ```
-Marketing/
-└── Campaign/
-    └── Q1-2025-Product-Launch/
-        ├── Brief.docx
-        ├── Timeline.xlsx
-        ├── Budget.xlsx
-        ├── Assets/
-        │   ├── Hero-Banner-1200x628.png
-        │   ├── Social-Square-1080x1080.png
-        │   └── Email-Header-600x200.png
-        ├── Copy/
-        │   ├── Landing-Page-v2.docx
-        │   └── Email-Sequence.docx
-        └── Results/
-            ├── Analytics-Report.pdf
-            └── Retrospective.docx
+Fulfill/
+└── Clients/
+    └── Acme-Corp/
+        ├── Contract-2025.pdf
+        ├── SOW-Phase-2.docx
+        ├── Deliverables/
+        │   ├── 2025-01_Monthly-Report.pdf
+        │   └── 2025-02_Monthly-Report.pdf
+        └── Communication/
+            ├── Kickoff-Notes.docx
+            └── Change-Request-001.docx
 ```
+
+### Maintain
+
+```
+Maintain/
+├── Finance/
+│   └── Taxes/
+│       └── 2025/
+│           ├── W2-Employer.pdf
+│           ├── 1099-Freelance.pdf
+│           └── Return-Federal-2025.pdf
+└── Legal/
+    └── Contracts & Agreements/
+        ├── Lease-Office-2024-2026.pdf
+        └── SaaS-Vendor-Agreement.pdf
+```
+
+### Grow
+
+```
+Grow/
+└── Attract/
+    └── Campaigns/
+        └── Q1-2025-Product-Launch/
+            ├── Brief.docx
+            ├── Timeline.xlsx
+            ├── Assets/
+            │   ├── Hero-Banner-1200x628.png
+            │   └── Social-Square-1080x1080.png
+            └── Results/
+                └── Analytics-Report.pdf
+```
+
+---
+
+## Where Does This Go?
+
+Common items that feel ambiguous:
+
+| Item | Goes in | Why |
+|------|---------|-----|
+| Client contract | Fulfill/Clients/{Name}/ | Part of the delivery relationship |
+| Vendor contract | Maintain/Legal/Contracts/ | Keeping operations running |
+| Invoice (sent or received) | Maintain/Finance/Invoices/ | Money is always Maintain |
+| Brand guidelines | Grow/Attract/Brand Assets/ | How you present to market |
+| Employee handbook | Maintain/People/Policies/ | People operations |
+| Product roadmap | Grow/Strategy & Planning/ | Forward-looking |
+| Blog post draft | Grow/Attract/Content/ | Marketing content |
+| Internal SOP | Maintain/Operations/Processes/ | How the machine runs |
+| Pitch deck | Grow/Convert/Proposals/ | Sales material |
+| Company logo files | Grow/Attract/Brand Assets/ | Marketing assets |
+| Meeting notes | _Shared/Meeting Notes/ | Cross-functional |
+
+**Rule of thumb:** Ask "is this about delivering, running, or growing?" If still unclear, ask "who needs this most?" and file it in their arena.
 
 ---
 
@@ -125,12 +168,12 @@ Marketing/
 For cross-functional work that doesn't belong to a single arena:
 
 ```
-Work-Drive/
+Business/
 ├── ...arenas above...
 └── _Shared/
     ├── Templates/          # Company-wide templates
     ├── Cross-Team/         # Multi-department projects
-    └── Meeting-Notes/      # All-hands, leadership syncs
+    └── Meeting Notes/      # All-hands, leadership syncs
 ```
 
 **Rule:** `_Shared/` is not a dumping ground. Every file there should have a clear reason it can't live in a single arena.
@@ -139,23 +182,52 @@ Work-Drive/
 
 ## Access Control Alignment
 
-Map L1 arenas to access permissions:
+Map L1/L2 to access permissions:
 
-| Arena | Access |
-|-------|--------|
-| Engineering/ | Engineering team |
-| Finance/ | Finance team + leadership |
-| People/ | HR team only (sensitive data) |
-| Leadership/ | Leadership + board |
+| Path | Access |
+|------|--------|
+| Fulfill/ | Delivery team, project managers |
+| Maintain/Finance/ | Finance team + leadership |
+| Maintain/Legal/ | Legal + leadership |
+| Maintain/People/ | HR only (sensitive data) |
+| Grow/ | Marketing, sales, leadership |
 | _Shared/ | All staff |
 
-This keeps permissions simple and predictable. If someone asks "who can see this?", the L1 folder answers the question.
+This keeps permissions simple and predictable. If someone asks "who can see this?", the folder path answers the question.
+
+---
+
+## Scaling Guide
+
+Not every business needs every folder. Start with what you use and expand as needed:
+
+**Solo / Freelancer:**
+```
+Business/
+├── Fulfill/
+│   └── Clients/
+├── Maintain/
+│   └── Finance/
+└── Grow/
+    └── Attract/
+```
+
+**Small Team (2-10):**
+```
+Business/
+├── Fulfill/            # + Projects/, Products & Services/
+├── Maintain/           # + Legal/, People/, Operations/
+└── Grow/               # + Convert/, Retain/
+```
+
+**Established Org:** Use the full template. Add L2 folders as departments form around them.
 
 ---
 
 ## Customization Notes
 
-- **Adapt arenas to your org** — a startup might combine several arenas; an enterprise might split them further.
+- **Scale to your size** — don't create folders for departments that don't exist yet.
 - **Don't pre-build L3** — let teams create their own artifact structures within L2.
-- **Archive completed projects** — use `_Archive/` within each L2 outcome.
+- **Archive completed work** — use `_Archive/` within each L2 outcome.
 - **Enforce naming conventions** — agree on casing and date formats across the org.
+- **{Placeholders}** indicate folders created per instance (per client, per year, per campaign).

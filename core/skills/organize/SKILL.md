@@ -22,6 +22,22 @@ description: Folder organization system using the L1/L2/L3 cognitive-phase frame
 
 ---
 
+## Quick Start
+
+Already know what you need? Start here:
+
+| I want to... | Go to |
+|--------------|-------|
+| Organize my personal/home drive | `assets/home-drive-template.md` — pick arenas, build L2, let L3 emerge |
+| Organize a business/team drive | `assets/work-drive-template.md` — Fulfill/Maintain/Grow framework |
+| Reorganize a messy existing drive | `references/migration-guide.md` — phase-by-phase migration |
+| Name files and folders correctly | `references/naming-patterns.md` — conventions by layer |
+| Audit a drive for structural issues | `scripts/audit_structure.py <path>` — automated health check |
+
+For the full framework explanation, read on.
+
+---
+
 ## The L1/L2/L3 Framework
 
 Folder navigation is three cognitive phases. Each phase answers a different question, and folder names should match the type of thinking you're doing at that level.
@@ -32,7 +48,7 @@ Folder navigation is three cognitive phases. Each phase answers a different ques
 
 **Brain mode:** Wayfinding. You're orienting yourself to a domain before doing any work.
 
-**Folder names are nouns** — broad arenas of activity:
+**Folder names are typically nouns** — broad arenas of activity. Mindset-based verbs (e.g., `Fulfill`, `Maintain`, `Grow`) are valid when they trigger the same wayfinding shift:
 
 ```
 Drive/
@@ -589,8 +605,8 @@ Marketing/
 
 | Scale | L1 Maps To | L2 Emphasis | Key Consideration |
 |-------|-----------|-------------|-------------------|
-| **Personal** (one person) | Life domains: `Work`, `Personal`, `Creative`, `Finance` | Lightweight — project names or simple outcomes | L3 is where most files live |
-| **Team** (small group) | Functions: `Engineering`, `Design`, `Marketing`, `Operations` | Structured — processes, projects, time periods | Decide who owns each L1 arena |
+| **Personal** (one person) | Life domains: `Career`, `Finances`, `Home`, `Media`, `Personal` | Lightweight — project names or simple outcomes | L3 is where most files live |
+| **Team** (small group) | Mindsets: `Fulfill`, `Maintain`, `Grow` | Structured — processes, projects, time periods | Decide who owns each L1 arena |
 | **Organization** (company) | Departments or business units | Enforced naming conventions across teams | Align access controls with L1 boundaries |
 
 ---

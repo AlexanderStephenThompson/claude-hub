@@ -28,7 +28,7 @@ Write down every top-level folder. For each one, classify it:
 | `2024/` | Date-based | Should be L2 or L3, not L1 |
 | `Work/` | Valid L1 arena | Keep, but audit contents |
 | `New Folder (3)/` | Junk | Delete or sort contents |
-| `Photos/` | Valid L1 arena | Rename to `Creative` if it fits |
+| `Photos/` | Valid L1 arena | Rename to `Media` if it fits |
 
 ### Step 2: Identify Your Real Arenas
 
@@ -179,6 +179,21 @@ When saving a new file: if you can put it in the right place in under 2 minutes,
 3. Each owner designs their L2 outcomes
 4. Migrate one arena at a time, starting with the most-used
 5. Agree on naming conventions before starting (see `references/naming-patterns.md`)
+
+### Scenario: "Business drive with department folders"
+
+The Fulfill/Maintain/Grow model often replaces scattered department folders:
+
+1. Map existing folders to the three mindsets:
+   - `Sales/`, `Marketing/`, `Outreach/` → **Grow/** (Attract + Convert)
+   - `Finance/`, `Legal/`, `HR/`, `IT/`, `Admin/` → **Maintain/**
+   - `Projects/`, `Clients/`, `Production/`, `Deliverables/` → **Fulfill/**
+2. Create the three L1 arenas with their L2 structure (see `assets/work-drive-template.md`)
+3. Move files from each old department folder into the matching mindset arena
+4. Former department names often become L2 folders: `Marketing/` becomes `Grow/Attract/`, `Finance/` becomes `Maintain/Finance/`
+5. Delete empty department folders once drained
+
+**The mindset test:** For any file, ask "is this about delivering, running, or growing?" That answers L1 immediately.
 
 ### Scenario: "I have 10,000+ files"
 

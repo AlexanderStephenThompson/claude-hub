@@ -12,7 +12,13 @@ Scans a directory tree and reports:
 Usage:
     python audit_structure.py <path>
     python audit_structure.py <path> --depth 3
+    python audit_structure.py <path> --context personal
     python audit_structure.py <path> --json
+
+Context modes:
+    code      Strict naming: no spaces, no special characters (default)
+    personal  Relaxed naming: spaces are OK, only flag special characters
+    team      Match team convention: spaces flagged as warnings, not errors
 """
 
 import argparse
@@ -40,6 +46,8 @@ PROBLEM_CHARACTERS = re.compile(r"[#%&'\"\(\)@\[\]\{\}!;,=\+]")
 SPACE_PATTERN = re.compile(r"\s")
 NON_ASCII_PATTERN = re.compile(r"[^\x00-\x7F]")
 
+VALID_CONTEXTS = {"code", "personal", "team"}
+
 MAX_ITEMS_PER_FOLDER = 30
 MAX_DEPTH = 4
 IDEAL_L1_MIN = 5
@@ -47,10 +55,18 @@ IDEAL_L1_MAX = 8
 L1_ABSOLUTE_MAX = 12
 
 
-def scan_directory(root_path, max_scan_depth=6):
-    """Walk the directory tree and collect statistics."""
+def scan_directory(root_path, max_scan_depth=6, context="code"):
+    """Walk the directory tree and collect statistics.
+
+    Args:
+        root_path: Root directory to audit.
+        max_scan_depth: Maximum depth to scan.
+        context: Naming context - "code" (strict), "personal" (spaces OK),
+                 or "team" (spaces warned).
+    """
     findings = {
         "root": str(root_path),
+        "context": context,
         "total_folders": 0,
         "total_files": 0,
         "max_depth": 0,
@@ -125,10 +141,10 @@ def scan_directory(root_path, max_scan_depth=6):
         if folder_name.startswith(TRANSIT_PREFIX):
             check_transit(current, current.relative_to(root), depth, findings)
 
-        check_naming(folder_name, current.relative_to(root), depth, findings)
+        check_naming(folder_name, current.relative_to(root), depth, findings, context)
 
         for fname in filenames:
-            check_naming(fname, current.relative_to(root) / fname, depth, findings)
+            check_naming(fname, current.relative_to(root) / fname, depth, findings, context)
 
     return findings
 
@@ -169,11 +185,16 @@ def check_transit(abs_path, relative_path, depth, findings):
     })
 
 
-def check_naming(name, relative_path, depth, findings):
+def check_naming(name, relative_path, depth, findings, context="code"):
     """Check a file or folder name for convention violations.
 
     Skips tilde in transit-prefixed folder names since ~ is a valid
     semantic prefix (see SKILL.md Transit Folders).
+
+    Context controls space handling:
+        code:     Spaces are flagged as issues (breaks scripts, URLs, CLI).
+        personal: Spaces are allowed (readability matters more).
+        team:     Spaces are flagged as warnings (depends on team convention).
     """
     if name.startswith(TRANSIT_PREFIX) or name.startswith("_"):
         return
@@ -181,7 +202,11 @@ def check_naming(name, relative_path, depth, findings):
     issues = []
 
     if SPACE_PATTERN.search(name):
-        issues.append("contains spaces")
+        if context == "code":
+            issues.append("contains spaces")
+        elif context == "team":
+            issues.append("contains spaces (check team convention)")
+        # personal: spaces are fine, don't flag
 
     if PROBLEM_CHARACTERS.search(name):
         issues.append("contains special characters")
@@ -324,13 +349,17 @@ def main():
         help="Maximum depth to scan (default: 6)"
     )
     parser.add_argument(
+        "--context", choices=["code", "personal", "team"], default="code",
+        help="Naming context: code (strict, default), personal (spaces OK), team (spaces warned)"
+    )
+    parser.add_argument(
         "--json", action="store_true",
         help="Output findings as JSON instead of human-readable report"
     )
 
     args = parser.parse_args()
 
-    findings = scan_directory(args.path, max_scan_depth=args.depth)
+    findings = scan_directory(args.path, max_scan_depth=args.depth, context=args.context)
 
     if args.json:
         print(json.dumps(findings, indent=2))

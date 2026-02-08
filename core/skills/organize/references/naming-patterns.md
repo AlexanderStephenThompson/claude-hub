@@ -12,25 +12,25 @@ L1 names should feel like rooms in a building — broad, stable, immediately rec
 
 | Good | Bad | Why |
 |------|-----|-----|
-| `Finance` | `Money-Stuff` | Professional, scannable |
-| `Creative` | `My-Projects` | Describes the domain, not ownership |
-| `Learning` | `School` | Broader — covers courses, books, research |
+| `Career` | `Job` | Encompasses education, job search, and current role |
+| `Finances` | `Money-Stuff` | Professional, scannable |
+| `Home` | `House-Stuff` | Specific domain — housing, utilities, maintenance |
+| `Media` | `My-Files` | Describes content type, not ownership |
 | `Personal` | `Misc` | Has clear scope; misc has none |
-| `Work` | `Job` | More professional, encompasses career scope |
 
 ### Work Drive Arenas
 
+Work drives can use **mindset-based names** instead of nouns when the business has a clear deliver/sustain/expand pattern. The cognitive test still applies: does the name trigger wayfinding ("which mode am I in?")?
+
 | Good | Bad | Why |
 |------|-----|-----|
-| `Engineering` | `Dev` | Full word, no ambiguity |
-| `Marketing` | `Mktg` | Don't abbreviate L1 names |
-| `People` | `HR` | More human, less bureaucratic |
-| `Operations` | `Ops` | Spell it out at the top level |
-| `Leadership` | `Management` | Signals strategic focus |
+| `Fulfill` | `Delivery` | Action-oriented — answers "what do we do?" |
+| `Maintain` | `Admin` | Encompasses finance, legal, ops, people under one intent |
+| `Grow` | `Sales-Marketing` | Broader — covers strategy through retention |
 
 ### Rules for L1 Names
 
-1. **Always nouns** — never verbs, never dates
+1. **Typically nouns** — dates never belong at L1. Verbs are OK when they represent mindsets (e.g., `Fulfill`, `Maintain`, `Grow`) that trigger the same wayfinding shift as nouns
 2. **Title Case** — `Finance`, not `finance` or `FINANCE`
 3. **Singular or plural, but consistent** — pick one convention
 4. **No abbreviations** — L1 names are read hundreds of times, clarity matters
@@ -42,24 +42,25 @@ L1 names should feel like rooms in a building — broad, stable, immediately rec
 
 L2 names should answer "what do I do here?" — they're the verbs and goals within an arena.
 
-### Verb-Based L2 Names
+### Outcome-Based L2 Names (Work Drive)
+
+Under the Fulfill/Maintain/Grow model, L2 names describe what each mindset produces or manages:
 
 | Arena | Good L2 Names | Pattern |
 |-------|---------------|---------|
-| Marketing | `Launch`, `Grow`, `Analyze`, `Campaign` | Action verbs |
-| Engineering | `Ship`, `Maintain`, `Plan`, `Tooling` | Work modes |
-| Finance | `Budget`, `Invoice`, `Report`, `Audit` | Process names |
-| People | `Hire`, `Onboard`, `Review`, `Develop` | HR lifecycle verbs |
+| Fulfill | `Clients`, `Projects`, `Products & Services`, `Deliverables` | What we produce |
+| Maintain | `Finance`, `Legal`, `People`, `Operations` | What keeps it running |
+| Grow | `Attract`, `Convert`, `Retain`, `Strategy & Planning` | How we expand |
 
 ### Process-Based L2 Names
 
-When verbs feel forced, use process nouns:
+Within Maintain, L2 folders often break down further into process areas:
 
-| Arena | Good L2 Names | Pattern |
-|-------|---------------|---------|
-| Legal | `Contracts`, `Compliance`, `IP`, `Disputes` | Legal domains |
-| Design | `Brand`, `Product`, `Research`, `Assets` | Design domains |
-| Operations | `Vendors`, `Facilities`, `Processes` | Operational areas |
+| L2 Folder | Good L3 Groups | Pattern |
+|-----------|----------------|---------|
+| Finance | `Invoices & Billing`, `Expenses & Receipts`, `Taxes`, `Payroll` | Financial processes |
+| Legal | `Contracts & Agreements`, `Business Registration`, `Compliance` | Legal domains |
+| Operations | `Systems & Tools`, `Processes & SOPs`, `Office & Facilities` | Operational areas |
 
 ### Time-Scoped L2 Names
 
