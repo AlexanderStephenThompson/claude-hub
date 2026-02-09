@@ -62,7 +62,7 @@ Before starting the clean phase:
 
 ## Pre-Refactor Assessment
 
-Before starting Phase 2:
+Before starting refactoring:
 
 ```markdown
 ## Pre-Refactor Checklist

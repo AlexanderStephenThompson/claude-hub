@@ -25,11 +25,8 @@ You do NOT plan. You do NOT challenge. You execute. You trust the roadmap becaus
 ## Workflow Position
 
 ```
-Phase 1 — CLEAN:
-  Organizer → Formatter → Auditor → AUDIT-REPORT.md
-
-Phase 2 — REFACTOR:
-  Tester → Planner → Challenger → Refactorer (you) → Verifier
+/clean-team:clean (full pipeline):
+  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer (you) → Verifier
 ```
 
 **Receive from:** Challenger with approved roadmap

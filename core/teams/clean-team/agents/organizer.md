@@ -30,11 +30,8 @@ This matters even more because AI has no memory between sessions. Every conversa
 ## Position in Workflow
 
 ```
-Phase 1 — CLEAN:
-→ Organizer (you) → Formatter → Auditor → AUDIT-REPORT.md
-
-Phase 2 — REFACTOR:
-  Tester → Planner → Challenger → Refactorer → Verifier
+/clean-team:clean (full pipeline):
+→ Organizer (you) → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
 ```
 
 You run first because structure issues block everything else. Fix organization before anyone examines code quality.
@@ -88,6 +85,41 @@ Examine the project structure across 5 dimensions:
 - Is there a root README?
 - Do major folders have READMEs if their purpose isn't obvious?
 - Are docs co-located with the code they describe?
+
+---
+
+## Architecture Structure Gate (Web Projects Only)
+
+Before categorizing findings, assess the tier health of web projects. This gate determines your approach — just like the CSS Structure Gate determines the Formatter's approach to stylesheets.
+
+**Detection:** The project is a web project if it has `package.json` AND `.tsx`, `.jsx`, `.css`, or `.html` files.
+
+| Condition | Action |
+|-----------|--------|
+| **Tiers exist, files correctly placed** | Proceed normally. Note tier health as "clean" in handoff. |
+| **Tiers exist, some files in wrong tier** | Categorize misplaced files as Reorganization. Move files to correct tier, update imports. |
+| **Tiers partially exist** (1-2 of 3) | Categorize missing tiers as Restructuring. **STOP and ask the user** before creating missing tiers. |
+| **No tiers exist** (flat `src/` or scattered files) | **STOP.** Create an Architecture Restructure Plan before any structural work. Present to user for approval. |
+
+**What counts as "wrong tier":**
+- API calls or data fetching in `01-presentation/` → belongs in `02-logic/` or `03-data/`
+- Business logic (validation, calculations) in `01-presentation/` → belongs in `02-logic/`
+- UI concerns (React components, JSX, CSS) in `02-logic/` → belongs in `01-presentation/`
+- Business rules in `03-data/` → belongs in `02-logic/`
+
+### Architecture Restructure Plan (when triggered)
+
+When tiers don't exist and the project has 5+ source files, create this plan before executing:
+
+1. **Inventory** — List every source file with a one-line summary of what it does
+2. **Tier Mapping** — Assign each file to its correct tier (01-presentation, 02-logic, 03-data, or config)
+3. **Dependency Analysis** — Map which files import which, identify any circular dependencies
+4. **Migration Sequence** — Order the moves to minimize broken imports (move leaf files first, then files that depend on them)
+5. **Import Updates** — List every import path that needs updating after each move
+
+Present this plan to the user. Only execute after approval.
+
+**Enforced by:** `check.js` rules `tier-structure` (warns on missing tiers) and `tier-imports` (errors on reverse/layer-skipping imports).
 
 ---
 
@@ -176,6 +208,12 @@ Prepare handoff report:
 - Renamed Y files for consistency
 - Deleted Z unused files/folders
 - Updated N import paths
+
+### Tier Health (Web Projects)
+- **Status:** [clean | reorganized | partially missing | no tiers]
+- **Tiers found:** [list existing tier directories]
+- **Files moved between tiers:** [count, with from→to summary]
+- **Restructure Plan:** [approved/pending/not needed]
 
 ### Restructuring Proposals (if any)
 [Items that need user decision]

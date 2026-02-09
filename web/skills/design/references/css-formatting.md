@@ -14,14 +14,14 @@ All CSS lives in exactly 5 files. This structure mirrors the cascade intentional
 
 ```
 styles/
-├── tokens.css      # CSS variables only (:root)
-├── base.css        # Reset + element defaults
+├── reset.css       # Browser normalization — clean slate
+├── global.css      # Design tokens (:root) + element defaults
 ├── layouts.css     # Page scaffolding, grids, containers
 ├── components.css  # All component styles (BEM)
-└── utilities.css   # Single-purpose helpers
+└── overrides.css   # Exceptions — one-offs, page-specific, utilities
 ```
 
-**Import order:** tokens → base → layouts → components → utilities
+**Import order:** reset → global → layouts → components → overrides
 
 ### Within Each File
 
@@ -67,18 +67,13 @@ Use consistent section headers for major sections:
 
 ## Property Order
 
-Order properties logically by category. This makes it easy to find and understand what a rule does.
+Order properties by group. 5 groups, always in this order. This makes it easy to find and understand what a rule does.
 
 ### Recommended Order
 
 ```css
 .component {
-  /* 1. Layout */
-  display: flex;
-  flex-direction: column;
-  grid-template-columns: 1fr 1fr;
-
-  /* 2. Position */
+  /* 1. Positioning */
   position: absolute;
   top: 0;
   right: 0;
@@ -86,14 +81,19 @@ Order properties logically by category. This makes it easy to find and understan
   left: 0;
   z-index: var(--z-modal);
 
-  /* 3. Box Model */
+  /* 2. Box Model */
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: 1fr 1fr;
   width: 100%;
   max-width: var(--container-md);
   height: auto;
   margin: var(--space-md);
   padding: var(--space-lg);
+  overflow: hidden;
+  box-sizing: border-box;
 
-  /* 4. Typography */
+  /* 3. Typography */
   font-family: var(--font-family-body);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-normal);
@@ -101,21 +101,21 @@ Order properties logically by category. This makes it easy to find and understan
   text-align: left;
   color: var(--color-text);
 
-  /* 5. Visual */
+  /* 4. Visual */
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   opacity: 1;
-
-  /* 6. Animation */
-  transition: all var(--duration-fast) var(--easing-standard);
-  animation: fade-in var(--duration-normal);
-
-  /* 7. Misc */
+  transform: translateY(0);
   cursor: pointer;
   pointer-events: auto;
-  overflow: hidden;
+  visibility: visible;
+
+  /* 5. Animation */
+  transition: all var(--duration-fast) var(--easing-standard);
+  animation: fade-in var(--duration-normal);
+  will-change: transform;
 }
 ```
 
@@ -123,13 +123,13 @@ Order properties logically by category. This makes it easy to find and understan
 
 | Category | Properties |
 |----------|-----------|
-| **Layout** | display, flex-*, grid-*, gap, align-*, justify-* |
-| **Position** | position, top, right, bottom, left, z-index |
-| **Box Model** | width, height, margin, padding, box-sizing |
-| **Typography** | font-*, text-*, line-height, color, letter-spacing |
-| **Visual** | background, border, border-radius, box-shadow, opacity |
-| **Animation** | transition, animation, transform |
-| **Misc** | cursor, pointer-events, overflow, visibility |
+| **Positioning** | position, top, right, bottom, left, z-index, float, clear, inset |
+| **Box Model** | display, flex-*, grid-*, gap, align-*, justify-*, width, height, min/max-*, margin, padding, overflow, box-sizing |
+| **Typography** | font-*, text-*, line-height, color, letter-spacing, white-space, word-break |
+| **Visual** | background, border, border-radius, box-shadow, outline, opacity, transform, cursor, pointer-events, visibility |
+| **Animation** | transition, animation, will-change |
+
+**Enforced by:** `check.js` rule `css-property-order` (warn).
 
 ---
 

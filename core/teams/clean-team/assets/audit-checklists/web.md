@@ -23,6 +23,8 @@ Architecture boundary violations are structural problems that affect every other
 
 Reference: `~/.claude/skills/architecture/references/web.md`
 
+**Automated checks (run first):** `node check.js` detects `tier-structure` (missing/incomplete tier directories) and `tier-imports` (reverse or layer-skipping imports). Start with these results, then verify the items below that automation can't catch.
+
 **Tier Structure:**
 - [ ] Three tiers exist and are named clearly (`01-presentation/` / `02-logic/` / `03-data/` or equivalent separation)
 - [ ] Each tier has a clear, exclusive responsibility (UI / business logic / data access)
@@ -59,8 +61,10 @@ Reference: `~/.claude/skills/architecture/references/web.md`
 
 ## CSS/Styling Auditor
 
+**Automated checks (run first):** `node check.js` detects `css-file-count` (file sprawl), `css-file-names` (non-canonical names), `css-import-order` (wrong cascade order), `css-property-order` (group ordering), and all hardcoded value rules. Start with these results, then verify the items below that automation can't catch.
+
 **Design System & Single Source of Truth:**
-- [ ] No foundational CSS file (should have one `main.css`, `tokens.css`, or `design-system.css`)
+- [ ] No foundational CSS file (should have one `global.css` with tokens and element defaults)
 - [ ] Design tokens scattered across multiple files instead of one `:root` block
 - [ ] Hardcoded hex colors instead of CSS variables
 - [ ] Hardcoded pixel values for spacing (should use spacing scale)
@@ -73,7 +77,7 @@ Reference: `~/.claude/skills/architecture/references/web.md`
 **Organization & File Structure:**
 - [ ] Too many CSS files (consolidate into fewer foundational files)
 - [ ] CSS not colocated with components (scattered styles)
-- [ ] No clear import order (tokens → reset → base → components)
+- [ ] No clear import order (reset → global → layouts → components → overrides)
 - [ ] Missing a base/reset CSS file
 - [ ] Inconsistent naming convention (BEM vs camelCase vs random)
 - [ ] Deeply nested selectors (> 3 levels deep)
@@ -114,7 +118,8 @@ Reference: `~/.claude/skills/architecture/references/web.md`
 - [ ] Hardcoded colors that break in dark mode
 
 **Property Order & Consistency:**
-- [ ] Inconsistent property ordering across files
+- [ ] Properties not following 5-group convention: Positioning → Box Model → Typography → Visual → Animation
+- [ ] Inconsistent property ordering across files (run `check.js` for `css-property-order` warnings)
 - [ ] Mixed shorthand and longhand properties
 - [ ] Vendor prefixes that should use autoprefixer
 

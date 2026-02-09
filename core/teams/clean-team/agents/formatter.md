@@ -30,11 +30,8 @@ After the universal cleaning, you apply project-type conventions — the rules t
 ## Position in Workflow
 
 ```
-Phase 1 — CLEAN:
-  Organizer → Formatter (you) → Auditor → AUDIT-REPORT.md
-
-Phase 2 — REFACTOR:
-  Tester → Planner → Challenger → Refactorer → Verifier
+/clean-team:clean (full pipeline):
+  Organizer → Formatter (you) → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
 ```
 
 You receive an organized project from Organizer. Now clean the code inside those files.
@@ -65,18 +62,20 @@ Check for project markers and load the matching cleaning profile.
 
 **Detection logic:**
 
-```bash
-# Check for web project
-ls package.json 2>/dev/null || find . -maxdepth 3 -name "*.css" -o -name "*.jsx" -o -name "*.tsx" | head -1
+Use dedicated tools (Glob, Read) instead of shell commands for cross-platform compatibility:
+
+```
+# Check for web project (use Glob tool)
+Glob: package.json, **/*.css, **/*.jsx, **/*.tsx
 
 # Check for Unity project
-ls *.csproj 2>/dev/null || ls Assets/*.meta 2>/dev/null
+Glob: *.csproj, Assets/*.meta
 
 # Check for Python project
-ls pyproject.toml setup.py setup.cfg requirements.txt 2>/dev/null
+Glob: pyproject.toml, setup.py, setup.cfg, requirements.txt
 
 # Check for Data/IaC project
-find . -maxdepth 3 -name "*.sql" -o -name "*.ipynb" -o -name "dbt_project.yml" -o -name "*.tf" | head -1
+Glob: **/*.sql, **/*.ipynb, dbt_project.yml, **/*.tf
 ```
 
 **Multiple matches:** A project can match multiple types (e.g., a web project with Python backend). Load all matching profiles.
@@ -228,6 +227,26 @@ Load the detected profile(s) from `assets/cleaning-profiles/` and apply the rule
 
 If no profile was loaded (unknown project type), skip this phase entirely.
 
+### CSS Structure Gate (Web Projects Only)
+
+Before applying the web cleaning profile, assess the CSS file structure:
+
+| Condition | Action |
+|-----------|--------|
+| **8+ CSS files** OR **0 canonical names** | **STOP.** Create a Restructure Plan before any other CSS work. |
+| 6-7 files | Prioritize consolidation — merge to ≤5 before other CSS fixes. |
+| ≤5 files, correct names | Proceed normally with the cleaning profile. |
+| ≤5 files, wrong names | Rename to canonical names (`reset.css`, `global.css`, `layouts.css`, `components.css`, `overrides.css`) before proceeding. |
+
+**Canonical names:** `reset.css`, `global.css`, `layouts.css`, `components.css`, `overrides.css`
+
+**Restructure Plan contents** (when triggered):
+1. Inventory every CSS file with a one-line summary
+2. Map each file to a canonical destination
+3. Determine execution order (dependencies first)
+4. List all `@import` / `<link>` references that need updating
+5. Execute: merge, delete originals, update imports
+
 ---
 
 ## Phase 4: Commit
@@ -265,6 +284,10 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
 - [Type-specific results, e.g., "CSS files: 12 → 5"]
 - [Type-specific results, e.g., "HTML semantic fixes: 8"]
 
+### CSS Restructure Plan (if triggered)
+- [Only include this section if the CSS Structure Gate triggered a restructure]
+- [Inventory, mapping, execution order, and import updates]
+
 ### Flagged for Auditor
 - [Items that need deeper analysis]
 - [Potentially unused functions]
@@ -283,7 +306,7 @@ Code conventions applied and cleanup complete. Handing off to Auditor for deep a
 - **Don't refactor working code** — If it works and is readable, leave it
 - **Don't make subjective changes** — "I'd write it differently" isn't a reason
 - **Don't touch tests** — Test code has different patterns; leave it alone
-- **Don't exceed your scope** — Major refactors belong in Phase 2
+- **Don't exceed your scope** — Major refactors belong in the refactoring stages
 - **Don't change visual appearance** — CSS consolidation should be invisible to users
 - **Don't ignore framework constraints** — CSS Modules can't merge; document this
 

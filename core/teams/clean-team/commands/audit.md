@@ -50,20 +50,16 @@ $ARGUMENTS
 
 **Map the project and detect the tech stack:**
 
-```bash
-# Get directory tree (excluding noise)
-find . -type f \
-  -not -path '*/node_modules/*' \
-  -not -path '*/.git/*' \
-  -not -path '*/dist/*' \
-  -not -path '*/build/*' \
-  -not -path '*/__pycache__/*' \
-  -not -path '*/.venv/*' \
-  | head -500
+Use dedicated tools (Glob, Grep, Read) instead of shell commands for cross-platform compatibility:
 
-# Count files by extension
-find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' \
-  | sed 's/.*\.//' | sort | uniq -c | sort -rn
+```
+# Map the project structure (use Glob tool)
+Glob: **/*  → review top-level folders and file types
+
+# Count files by type (use Glob tool with specific patterns)
+Glob: **/*.js, **/*.ts, **/*.tsx, **/*.jsx
+Glob: **/*.css, **/*.html
+Glob: **/*.py, **/*.cs
 ```
 
 **Project type detection:** Read `~/.claude/skills/architecture/SKILL.md` to find available profiles under "Project Type Profiles." Match detected files against detection hints, then load the matching profile from `~/.claude/skills/architecture/references/`.
@@ -98,7 +94,7 @@ Follow the consolidation instructions in `assets/parallel-audit-roster.md`: coll
 
 Save the report to: `./AUDIT-REPORT-[YYYY-MM-DD].md`
 
-**CRITICAL:** Every finding MUST have a unique `AUDIT-NNN` ID. These IDs enable the clean-team Phase 2 agents to reference, track, and report remediation status.
+**CRITICAL:** Every finding MUST have a unique `AUDIT-NNN` ID. These IDs enable the clean-team refactoring agents to reference, track, and report remediation status.
 
 ```markdown
 # Project Audit Report
@@ -184,14 +180,14 @@ Project: [name from package.json or folder]
 ---
 
 ## Critical Paths
-**For Tester consumption in Phase 2.**
+**For Tester consumption.**
 
 Areas that MUST have test coverage before refactoring:
 1. [Module/function — why it's critical]
 2. [Module/function — why it's critical]
 
 ## Prioritized Recommendations
-**For Planner consumption in Phase 2.**
+**For Planner consumption.**
 
 ### High Priority
 1. [Most important improvement with reasoning]
@@ -204,7 +200,7 @@ Areas that MUST have test coverage before refactoring:
 
 ## Flagged for User Review
 
-Items that need human decision before Phase 2:
+Items that need human decision before refactoring:
 - [ ] [Item 1 — why it needs user input]
 - [ ] [Item 2 — why it needs user input]
 
@@ -214,7 +210,7 @@ Items that need human decision before Phase 2:
 
 1. Review this report
 2. Address any flagged items above
-3. Run `/clean-team:refactor [path] [focus]` to begin Phase 2
+3. Run `/clean-team:clean` for the full pipeline, or `/clean-team:refactor [path] [focus]` to refactor
 
 ## Appendix: Full File List
 [Collapsible section with complete file tree]
@@ -235,7 +231,7 @@ Items that need human decision before Phase 2:
          |
          v
 +-----------------+
-| Launch Parallel |  4 core + up to 5 structure + up to 7 web auditors
+| Launch Parallel |  4 core + up to 5 structure + up to 8 web auditors
 |   Sub-Agents    |  (all running simultaneously)
 +--------+--------+
          |
@@ -251,7 +247,7 @@ Items that need human decision before Phase 2:
     User reviews
          |
          v
-  /clean-team:refactor (Phase 2)
+  /clean-team:clean or /clean-team:refactor
 ```
 
 ---

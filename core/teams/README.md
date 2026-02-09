@@ -16,45 +16,46 @@ Multi-agent workflows that coordinate specialized agents to accomplish complex t
 
 ## Clean-Team (8 Agents)
 
-A two-phase workflow: **CLEAN** (safe iterative fixes + audit) then **REFACTOR** (planned deeper changes from the audit).
+A single continuous pipeline: **clean** (organize, format, audit), **checkpoint** (user confirms), then **refactor** (test, plan, execute, verify).
 
 ### Workflow
 
 ```
-Phase 1 — CLEAN (/clean-team:clean):
-  Organizer → Formatter → Auditor → AUDIT-REPORT.md
+/clean-team:clean [scope]:
+  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
+                                         ↑                                  ↑              ↑
+                                    User confirms                       (Gate 1)       (Gate 2)
 
-                  ↓ User reviews report ↓
-
-Phase 2 — REFACTOR (/clean-team:refactor):
+/clean-team:refactor [path]:  Resume from existing AUDIT-REPORT.md
   Tester → Planner → Challenger → Refactorer → Verifier
-                                      ↑              ↓
-                                   (Gate 1)      (Gate 2)
+
+/clean-team:audit [focus]:    Standalone parallel audit
+  4-11 sub-agents → AUDIT-REPORT.md
 ```
 
 ### Agents
 
-| Agent | Phase | Role | Model |
-|-------|-------|------|-------|
-| **Organizer** | Clean | Audits and fixes project structure (moves, renames, deletes) | Opus |
-| **Formatter** | Clean | Universal code cleaning + project-type-specific conventions | Opus |
-| **Auditor** | Clean | Deep analysis: architecture, best practices, metrics → AUDIT-REPORT.md | Opus |
-| **Tester** | Refactor | Assesses coverage, writes safety tests using audit critical paths | Opus |
-| **Planner** | Refactor | Creates prioritized roadmap from audit findings | Opus |
-| **Challenger** | Refactor | Reviews roadmap (Gate 1) — Approve / Revise / Block | Opus |
-| **Refactorer** | Refactor | Executes roadmap slice-by-slice with disciplined commits | Opus |
-| **Verifier** | Refactor | Validates results (Gate 2) — Approve / Route back / Block | Opus |
+| Agent | Role | Model |
+|-------|------|-------|
+| **Organizer** | Audits and fixes project structure (moves, renames, deletes) | Opus |
+| **Formatter** | Universal code cleaning + project-type-specific conventions | Opus |
+| **Auditor** | Deep analysis: architecture, best practices, metrics → AUDIT-REPORT.md | Opus |
+| **Tester** | Assesses coverage, writes safety tests using audit critical paths | Opus |
+| **Planner** | Creates prioritized roadmap from audit findings | Opus |
+| **Challenger** | Reviews roadmap (Gate 1) — Approve / Revise / Block | Opus |
+| **Refactorer** | Executes roadmap slice-by-slice with disciplined commits | Opus |
+| **Verifier** | Validates results (Gate 2) — Approve / Route back / Block | Opus |
 
 ### Key Features
 
-- **Two-phase design**: Clean first, refactor second, with user review in between
-- **AUDIT-REPORT.md**: Bridge artifact between phases, consumed by both humans and agents
+- **Checkpoint after audit**: User reviews findings summary and confirms before refactoring starts
+- **AUDIT-REPORT.md**: Bridge artifact between cleanup and refactoring, consumed by both humans and agents
 - **Universal Formatter**: Detects project type, applies universal cleaning + type-specific profiles (web, unity, python, data)
-- **Gated execution**: Challenger reviews plans, Verifier validates results
-- **Parallel audit**: Auditor launches 4-11 sub-agents simultaneously via shared roster
+- **Gated execution**: Challenger reviews plans (Gate 1), Verifier validates results (Gate 2)
+- **Parallel audit**: Auditor launches 4-12 sub-agents simultaneously via shared roster
 - **Standalone audit**: `/clean-team:audit [focus]` with focus modes (css, a11y, perf, structure, etc.)
 - **Analysis scripts**: Python scripts for complexity, dependency, and dead code analysis
-- **Design system checker**: 31-rule linter for CSS, HTML, and JS
+- **Design system checker**: 36-rule linter for CSS, HTML, and JS
 
 ### Analysis Scripts
 
@@ -62,7 +63,7 @@ Phase 2 — REFACTOR (/clean-team:refactor):
 python scripts/analyze_complexity.py <path>     # Find high-complexity functions
 python scripts/analyze_dependencies.py <path>   # Map circular dependencies
 python scripts/detect_dead_code.py <path>       # Find unused code
-node scripts/check.js                           # Design system compliance (31 rules)
+node scripts/check.js                           # Design system compliance (36 rules)
 ```
 
 ---
@@ -185,11 +186,14 @@ claude plugin install diagnose-team
 ## Usage
 
 ```bash
-# Phase 1: Clean and audit
+# Full pipeline: clean + audit + checkpoint + refactor
 /clean-team:clean src/
 
-# Phase 2: Refactor from audit report
+# Resume refactoring from existing audit report
 /clean-team:refactor src/
+
+# Standalone audit with optional focus
+/clean-team:audit css
 
 # TDD implementation
 /implement-team:implement "Add user authentication with OAuth2"
@@ -204,10 +208,12 @@ claude plugin install diagnose-team
 
 | Situation | Team |
 |-----------|------|
-| Quick codebase tidying | clean-team (clean phase) |
-| CSS file sprawl (>5 files) | clean-team (clean phase) |
-| Existing codebase needs deep refactoring | clean-team (both phases) |
-| Legacy code modernization | clean-team (both phases) |
+| Quick codebase health check | clean-team (`/clean-team:audit`) |
+| Focused audit (CSS, a11y, perf, structure) | clean-team (`/clean-team:audit [focus]`) |
+| Quick codebase tidying | clean-team (`/clean-team:clean`) |
+| CSS file sprawl (>5 files) | clean-team (`/clean-team:clean`) |
+| Existing codebase needs deep refactoring | clean-team (`/clean-team:clean`) |
+| Legacy code modernization | clean-team (`/clean-team:clean`) |
 | New feature implementation | implement-team |
 | Bug fix with design decisions | implement-team |
 | Security-sensitive features | implement-team (triggers Security agent) |

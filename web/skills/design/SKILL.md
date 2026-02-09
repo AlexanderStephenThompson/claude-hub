@@ -53,7 +53,7 @@ user-invocable: false
 ### Critical Rules
 
 1. **ALWAYS use design tokens** — NEVER use hardcoded values
-2. **All values come from `styles/tokens.css`** — Single source of truth for CSS variables
+2. **All values come from `styles/global.css`** — Single source of truth for CSS variables
 3. **No magic numbers** — Every color, spacing, size uses a CSS variable
 
 ### Examples
@@ -182,7 +182,7 @@ HTML describes structure. CSS handles presentation. Keep them separated.
 
 1. One property per line
 2. Use design tokens (CSS variables), not hardcoded values
-3. Logical property order: layout → positioning → box model → typography → visual → animations
+3. Logical property order: positioning → box model → typography → visual → animation
 4. Descriptive class names (BEM or semantic naming)
 5. Generous spacing between rule sets
 6. Comments for complex sections

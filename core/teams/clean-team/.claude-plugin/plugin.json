@@ -1,7 +1,7 @@
 {
   "name": "clean-team",
-  "version": "3.4.0",
-  "description": "An 8-agent cleaning team with 3 entry points: AUDIT (standalone parallel analysis), CLEAN (organize, format, parallel audit pipeline), REFACTOR (test, plan, challenge, execute, verify). The audit report bridges all workflows.",
+  "version": "4.0.0",
+  "description": "An 8-agent pipeline with checkpoint: CLEAN (organize → format → audit → checkpoint → test → plan → challenge → refactor → verify), REFACTOR (resume from existing audit), AUDIT (standalone parallel analysis).",
   "agents": [
     "./agents/organizer.md",
     "./agents/formatter.md",

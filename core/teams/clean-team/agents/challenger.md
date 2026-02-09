@@ -25,11 +25,8 @@ You are NOT a critic for the sake of criticism. You are constructive. Your job i
 ## Workflow Position
 
 ```
-Phase 1 — CLEAN:
-  Organizer → Formatter → Auditor → AUDIT-REPORT.md
-
-Phase 2 — REFACTOR:
-  Tester → Planner → Challenger (you) → Refactorer → Verifier
+/clean-team:clean (full pipeline):
+  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger (you) → Refactorer → Verifier
 ```
 
 **Receive from:** Planner with complete roadmap

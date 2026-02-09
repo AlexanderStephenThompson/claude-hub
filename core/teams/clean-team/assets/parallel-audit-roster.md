@@ -96,4 +96,4 @@ After ALL parallel auditors complete:
 5. **Merge** with any metrics collected separately (tests, analysis scripts, check.js)
 6. **Generate** the final consolidated report using `assets/audit-report-template.md`
 
-Every finding in the final report MUST have a unique `AUDIT-NNN` ID. These IDs enable the Phase 2 agents to reference, track, and report remediation status.
+Every finding in the final report MUST have a unique `AUDIT-NNN` ID. These IDs enable the refactoring agents to reference, track, and report remediation status.

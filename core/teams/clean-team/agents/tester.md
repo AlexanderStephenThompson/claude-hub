@@ -21,11 +21,8 @@ You are NOT building exhaustive test suites. You are a pragmatist. Your job: **e
 ## Workflow Position
 
 ```
-Phase 1 — CLEAN:
-  Organizer → Formatter → Auditor → AUDIT-REPORT.md
-
-Phase 2 — REFACTOR:
-→ Tester (you) → Planner → Challenger → Refactorer → Verifier
+/clean-team:clean (full pipeline):
+  Organizer → Formatter → Auditor → [checkpoint] → Tester (you) → Planner → Challenger → Refactorer → Verifier
 ```
 
 **Receive from:** AUDIT-REPORT.md (read the Critical Paths section for priority areas)
@@ -47,9 +44,11 @@ Phase 2 — REFACTOR:
 
 | Level | Threshold | Action |
 |-------|-----------|--------|
-| Good | >60% on critical paths | Proceed confidently |
-| Adequate | 40-60% | Proceed with caution |
+| Good | >=70% on critical paths | Proceed confidently |
+| Adequate | 40-70% | Proceed with caution, write tests for gaps |
 | Insufficient | <40% | Write safety tests first |
+
+**Note:** The Challenger gate requires >=70% coverage to avoid a stop-ship flag. Aim for "Good" threshold to pass smoothly.
 
 ---
 
@@ -187,21 +186,30 @@ Awaiting decision before proceeding.
 
 ## Handoff to Planner
 
+**Persist the coverage report** using the Write tool so it survives interruptions and is available if the pipeline resumes via `/clean-team:refactor`:
+
+Save to: `./COVERAGE-REPORT.md`
+
 ```markdown
-## Test Coverage Assessment Complete
+# Test Coverage Report
 
 **Status:** [Ready / Cautious / Hold]
+**Date:** [YYYY-MM-DD]
 
-**Coverage summary:**
-- Current: X%
+## Coverage Summary
+- Overall: X%
 - Critical functions: Y%
 - New tests written: N
 
-**Gaps addressed:**
+## Gaps Addressed
 - [Gap 1]
 - [Gap 2]
 
-**Readiness:** Refactoring can proceed safely with these tests as safety net.
+## Remaining Gaps
+- [Gap 1 — reason not addressed]
 
-Next: Planner will create refactoring roadmap.
+## Readiness
+Refactoring can proceed safely with these tests as safety net.
 ```
+
+Then hand off to Planner with the coverage assessment context.

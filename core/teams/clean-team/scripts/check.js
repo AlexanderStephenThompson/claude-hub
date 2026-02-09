@@ -6,13 +6,15 @@
  * Deterministic enforcement of design tokens, HTML quality, and JS hygiene.
  * Works alongside AI skill enforcement (probabilistic) for double coverage.
  *
- * CSS rules (10):
+ * CSS rules (12):
  *   no-hardcoded-color     (error)  Hex, rgb(), hsl(), named colors outside :root
  *   no-hardcoded-spacing   (warn)   Raw px >= 4 on margin/padding/gap
  *   no-hardcoded-font-size (warn)   Raw font-size values
  *   no-hardcoded-radius    (warn)   Raw border-radius values
  *   no-hardcoded-shadow    (warn)   Raw box-shadow/text-shadow values
  *   no-hardcoded-z-index   (warn)   Raw z-index numbers
+ *   css-property-order     (warn)   Property group ordering (Position → Box Model → Type → Visual → Anim)
+ *   css-import-order       (warn)   @import / <link> not in cascade order (reset → global → layouts → components → overrides)
  *   mobile-first           (warn)   max-width media queries
  *   no-important           (warn)   !important usage
  *   no-id-selector         (warn)   #id selectors (specificity wars)
@@ -31,19 +33,22 @@
  *   no-div-as-button       (warn)   <div>/<span> with onclick handler
  *   wiki-page-attr         (warn)   Missing data-wiki-page on <body>
  *
- * JS/JSX/TSX rules (9):
+ * JS/JSX/TSX rules (10):
  *   no-debugger            (error)  debugger statements
  *   no-var                 (error)  var declarations (use const/let)
  *   no-empty-catch         (error)  Empty catch blocks
  *   no-document-write      (error)  document.write() / document.writeln()
  *   no-hardcoded-secrets   (error)  Passwords, API keys, tokens in string literals
+ *   tier-imports           (error)  Reverse or layer-skipping imports across 3-tier boundaries
  *   no-console             (warn)   console.log/warn/error/info/debug/trace/dir/table
  *   no-double-equals       (warn)   == and != (allows == null for nullish check)
  *   no-innerHTML           (warn)   .innerHTML assignments (XSS risk)
  *   no-jsx-inline-style    (warn)   style={{ in JSX
  *
- * Project rules (1):
+ * Project rules (3):
  *   css-file-count         (warn/error)  CSS file sprawl (warn >5, error >7)
+ *   css-file-names         (warn)        No canonical CSS names (reset/global/layouts/components/overrides)
+ *   tier-structure         (warn)        Missing or incomplete 3-tier architecture in web projects
  *
  * Inline suppression:
  *   CSS:  /* check-disable * / check-enable / check-disable-next-line (block comments)
@@ -74,6 +79,10 @@ const MAX_CLASSES = 4;
 const SPACING_PX_THRESHOLD = 4;
 const MAX_CSS_FILES_WARN = 5;
 const MAX_CSS_FILES_ERROR = 7;
+
+/* Canonical CSS import order — index = expected position */
+const CSS_CASCADE_ORDER = ['reset', 'global', 'layouts', 'components', 'overrides'];
+const CSS_CASCADE_MAP = new Map(CSS_CASCADE_ORDER.map((name, i) => [name, i]));
 
 /* Secret detection patterns (key = value with string literal) */
 const SECRET_PATTERNS = [
@@ -154,6 +163,44 @@ const RADIUS_PROP_RE = /^border(-top-left|-top-right|-bottom-left|-bottom-right)
 /* CSS cascade keywords allowed on any property without var() */
 const CASCADE_KEYWORDS = new Set(['inherit', 'initial', 'unset', 'revert', 'revert-layer']);
 
+/* CSS property ordering — group names for error messages */
+const PROPERTY_GROUP_NAMES = {
+    1: 'Positioning',
+    2: 'Box Model',
+    3: 'Typography',
+    4: 'Visual',
+    5: 'Animation',
+};
+
+/**
+ * Map a CSS property to its ordering group.
+ *
+ * Groups: 1=Positioning, 2=Box Model, 3=Typography, 4=Visual, 5=Animation.
+ * Returns 0 for unknown properties (not checked).
+ */
+function getPropertyGroup(prop) {
+    /* Exceptions where prefix matching would assign the wrong group */
+    if (prop === 'text-shadow') return 4;
+    if (prop === 'overflow-wrap') return 3;
+
+    /* Group 1: Positioning */
+    if (/^(position|top|right|bottom|left|z-index|float|clear|inset(-.*)?)$/.test(prop)) return 1;
+
+    /* Group 2: Box Model */
+    if (/^(display|flex(-.+)?|grid(-.+)?|gap|row-gap|column-gap|align-.+|justify-.+|place-.+|order|width|min-width|max-width|height|min-height|max-height|margin(-.+)?|padding(-.+)?|overflow(-.+)?|box-sizing|aspect-ratio)$/.test(prop)) return 2;
+
+    /* Group 3: Typography */
+    if (/^(font(-.+)?|line-height|letter-spacing|word-spacing|text-.+|white-space|word-break|word-wrap|hyphens|tab-size|color|vertical-align|list-style(-.+)?|content|quotes|counter-.+|direction|unicode-bidi|writing-mode)$/.test(prop)) return 3;
+
+    /* Group 4: Visual */
+    if (/^(border(-.+)?|background(-.+)?|box-shadow|outline(-.+)?|opacity|visibility|cursor|pointer-events|user-select|filter|backdrop-filter|mix-blend-mode|clip-path|mask(-.+)?|transform(-.+)?|perspective(-.+)?|appearance|resize|object-.+|table-layout|caption-side|empty-cells|fill|stroke(-.+)?|accent-color|caret-color|scroll-.+|column-count|column-rule(-.+)?|column-width|columns)$/.test(prop)) return 4;
+
+    /* Group 5: Animation */
+    if (/^(transition(-.+)?|animation(-.+)?|will-change)$/.test(prop)) return 5;
+
+    return 0;
+}
+
 /* ── File discovery ─────────────────────────────────────────────────────── */
 
 function findFiles(dir, extensions) {
@@ -191,8 +238,11 @@ function checkCSS(filepath, content) {
     let braceDepth = 0;
     let rootStartDepth = -1;
     let rootPending = false;
+    let lastCascadeIdx = -1;
+    let lastCascadeName = '';
     let disabled = false;
     let skipNextLine = false;
+    let blockOrderStack = [{ lastGroup: 0, lastGroupProp: '', lastGroupLine: 0 }];
 
     for (let i = 0; i < lines.length; i++) {
         const lineNum = i + 1;
@@ -248,9 +298,11 @@ function checkCSS(filepath, content) {
                     rootPending = false;
                 }
                 braceDepth++;
+                blockOrderStack.push({ lastGroup: 0, lastGroupProp: '', lastGroupLine: 0 });
             }
             if (ch === '}') {
                 braceDepth--;
+                if (blockOrderStack.length > 1) blockOrderStack.pop();
                 if (rootStartDepth >= 0 && braceDepth === rootStartDepth) {
                     rootStartDepth = -1;
                 }
@@ -261,6 +313,26 @@ function checkCSS(filepath, content) {
 
         /* Skip checks if suppressed via inline comment */
         if (isSkipped) continue;
+
+        /* ── @import cascade order ── */
+        const importMatch = clean.match(/@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/);
+        if (importMatch) {
+            const importFile = path.basename(importMatch[1], '.css');
+            const idx = CSS_CASCADE_MAP.get(importFile);
+            if (idx !== undefined) {
+                if (idx < lastCascadeIdx) {
+                    issues.push({
+                        line: lineNum,
+                        col: raw.indexOf(importMatch[1]) + 1,
+                        severity: WARN,
+                        message: `'${importFile}.css' imported after '${lastCascadeName}.css' — expected order: reset → global → layouts → components → overrides`,
+                        rule: 'css-import-order',
+                    });
+                }
+                lastCascadeIdx = idx;
+                lastCascadeName = importFile;
+            }
+        }
 
         /* ── ID selector (check before skipping root) ── */
         const idSelectorMatch = clean.match(/(^|[\s,;{}])#([a-zA-Z_][\w-]*)\s*[{,:]/);
@@ -297,6 +369,26 @@ function checkCSS(filepath, content) {
 
         const prop = declMatch[1];
         const value = declMatch[2];
+
+        /* ── Property ordering ── */
+        const group = getPropertyGroup(prop);
+        if (group > 0 && blockOrderStack.length > 0) {
+            const block = blockOrderStack[blockOrderStack.length - 1];
+            if (group < block.lastGroup) {
+                issues.push({
+                    line: lineNum,
+                    col: raw.indexOf(prop) + 1,
+                    severity: WARN,
+                    message: `'${prop}' (${PROPERTY_GROUP_NAMES[group]}) after '${block.lastGroupProp}' (${PROPERTY_GROUP_NAMES[block.lastGroup]}) — expected: Positioning → Box Model → Typography → Visual → Animation`,
+                    rule: 'css-property-order',
+                });
+            }
+            if (group >= block.lastGroup) {
+                block.lastGroup = group;
+                block.lastGroupProp = prop;
+                block.lastGroupLine = lineNum;
+            }
+        }
 
         /* ── !important ── */
         if (value.includes('!important')) {
@@ -493,6 +585,32 @@ function checkHTML(filepath, content) {
         }
 
         if (/<!--\s*check-disable-next-line\s*-->/.test(ln)) skipNext = true;
+    }
+
+    /* ── <link> stylesheet cascade order ── */
+    let lastLinkCascadeIdx = -1;
+    let lastLinkCascadeName = '';
+    const linkRe = /<link\b[^>]*rel\s*=\s*["']stylesheet["'][^>]*href\s*=\s*["']([^"']+)["']|<link\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*rel\s*=\s*["']stylesheet["']/gi;
+    let lm;
+    while ((lm = linkRe.exec(content)) !== null) {
+        const href = lm[1] || lm[2];
+        const line = offsetToLine(content, lm.index);
+        if (suppressed.has(line)) continue;
+        const linkFile = path.basename(href, '.css');
+        const idx = CSS_CASCADE_MAP.get(linkFile);
+        if (idx !== undefined) {
+            if (idx < lastLinkCascadeIdx) {
+                issues.push({
+                    line,
+                    col: offsetToCol(content, lm.index),
+                    severity: WARN,
+                    message: `'${linkFile}.css' linked after '${lastLinkCascadeName}.css' — expected order: reset → global → layouts → components → overrides`,
+                    rule: 'css-import-order',
+                });
+            }
+            lastLinkCascadeIdx = idx;
+            lastLinkCascadeName = linkFile;
+        }
     }
 
     /* ── Inline styles ── */
@@ -825,6 +943,40 @@ function checkJS(filepath, content) {
                 break; /* one report per line is enough */
             }
         }
+
+        /* ── tier-imports (reverse or layer-skipping dependency) ── */
+        const fileTierMatch = filepath.replace(/\\/g, '/').match(/\/(0[1-3])-(?:presentation|logic|data)\//);
+        if (fileTierMatch) {
+            const fileTierNum = parseInt(fileTierMatch[1]);
+            const importMatch = line.match(/(?:import\s+.*?from\s+|require\s*\()['"]([^'"]+)['"]/);
+            if (importMatch) {
+                const importTierMatch = importMatch[1].match(/(0[1-3])-(?:presentation|logic|data)/);
+                if (importTierMatch) {
+                    const importTierNum = parseInt(importTierMatch[1]);
+                    if (importTierNum !== fileTierNum) {
+                        const isReverse = importTierNum < fileTierNum;
+                        const isSkip = importTierNum > fileTierNum + 1;
+                        if (isReverse) {
+                            issues.push({
+                                line: lineNum,
+                                col: raw.indexOf(importMatch[1]) + 1,
+                                severity: ERROR,
+                                message: `Reverse tier import — ${fileTierMatch[0].slice(1, -1)} cannot import from ${importTierMatch[0]}`,
+                                rule: 'tier-imports',
+                            });
+                        } else if (isSkip) {
+                            issues.push({
+                                line: lineNum,
+                                col: raw.indexOf(importMatch[1]) + 1,
+                                severity: ERROR,
+                                message: `Layer-skipping import — ${fileTierMatch[0].slice(1, -1)} cannot import directly from ${importTierMatch[0]} (must go through 02-logic)`,
+                                rule: 'tier-imports',
+                            });
+                        }
+                    }
+                }
+            }
+        }
     }
 
     return issues;
@@ -832,7 +984,7 @@ function checkJS(filepath, content) {
 
 /* ── Project-level checker ─────────────────────────────────────────────── */
 
-function checkProject(cssFiles) {
+function checkProject(cssFiles, jsFiles, htmlFiles) {
     const issues = [];
     const count = cssFiles.length;
 
@@ -841,7 +993,7 @@ function checkProject(cssFiles) {
             line: 0,
             col: 0,
             severity: ERROR,
-            message: `${count} CSS files — 5-file architecture recommends tokens/base/layouts/components/utilities`,
+            message: `${count} CSS files — 5-file architecture recommends reset/global/layouts/components/overrides`,
             rule: 'css-file-count',
         });
     } else if (count > MAX_CSS_FILES_WARN) {
@@ -849,9 +1001,59 @@ function checkProject(cssFiles) {
             line: 0,
             col: 0,
             severity: WARN,
-            message: `${count} CSS files — consider consolidating toward 5-file architecture`,
+            message: `${count} CSS files — consider consolidating toward 5-file architecture (reset/global/layouts/components/overrides)`,
             rule: 'css-file-count',
         });
+    }
+
+    /* ── Canonical file names ── */
+    const CANONICAL_CSS = new Set(['reset.css', 'global.css', 'layouts.css', 'components.css', 'overrides.css']);
+    if (count > 0) {
+        const names = cssFiles.map((f) => path.basename(f));
+        const hasCanonical = names.some((n) => CANONICAL_CSS.has(n));
+        if (!hasCanonical) {
+            issues.push({
+                line: 0,
+                col: 0,
+                severity: WARN,
+                message: `No canonical CSS file names found — expected: reset.css, global.css, layouts.css, components.css, overrides.css`,
+                rule: 'css-file-names',
+            });
+        }
+    }
+
+    /* ── 3-tier architecture (web projects) ── */
+    const hasPackageJson = fs.existsSync(path.join(ROOT, 'package.json'));
+    const hasWebFiles = count > 0
+        || jsFiles.some((f) => /\.(jsx|tsx)$/.test(f))
+        || htmlFiles.length > 0;
+
+    if (hasPackageJson && hasWebFiles) {
+        const TIER_DIRS = ['01-presentation', '02-logic', '03-data'];
+        const existingTiers = TIER_DIRS.filter((t) =>
+            fs.existsSync(path.join(ROOT, t)) || fs.existsSync(path.join(ROOT, 'src', t)),
+        );
+
+        const sourceFileCount = count + jsFiles.length + htmlFiles.length;
+
+        if (existingTiers.length === 0 && sourceFileCount > 5) {
+            issues.push({
+                line: 0,
+                col: 0,
+                severity: WARN,
+                message: `Web project without 3-tier architecture — expected: 01-presentation/, 02-logic/, 03-data/`,
+                rule: 'tier-structure',
+            });
+        } else if (existingTiers.length > 0 && existingTiers.length < 3) {
+            const missing = TIER_DIRS.filter((t) => !existingTiers.includes(t));
+            issues.push({
+                line: 0,
+                col: 0,
+                severity: WARN,
+                message: `Incomplete tier structure: found ${existingTiers.join(', ')} — missing: ${missing.join(', ')}`,
+                rule: 'tier-structure',
+            });
+        }
     }
 
     return issues;
@@ -971,7 +1173,7 @@ function main() {
     }
 
     /* Project-level checks */
-    const projectIssues = checkProject(cssFiles);
+    const projectIssues = checkProject(cssFiles, jsFiles, htmlFiles);
     if (projectIssues.length > 0) {
         results.push({ file: path.join(ROOT, '(project)'), issues: projectIssues });
     }

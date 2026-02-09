@@ -1,12 +1,12 @@
 ---
-description: Run the 5-agent refactor phase. Requires AUDIT-REPORT.md from the clean phase.
+description: Resume refactoring from an existing AUDIT-REPORT.md
 argument-hint: [path] [focus area or guidance]
 allowed-tools: Read, Grep, Glob, Write, Edit, Bash
 ---
 
 # /clean-team:refactor
 
-Run the 5-agent refactor phase. This is Phase 2 of the clean-team pipeline — it uses AUDIT-REPORT.md as its primary input.
+Resume refactoring from an existing AUDIT-REPORT.md. Use this to resume after stopping at a checkpoint during `/clean-team:clean`, or to refactor a previously audited codebase.
 
 **Target path:** If no path is provided, use the current working directory (`.`).
 
@@ -32,14 +32,14 @@ Check if an audit report exists using the Glob tool to search for `AUDIT-REPORT*
 
 **If found:**
 ```
-Found AUDIT-REPORT.md — proceeding with Phase 2.
+Found AUDIT-REPORT.md — proceeding with refactoring.
 ```
 
 **If NOT found:**
 ```
 No AUDIT-REPORT.md found.
 
-Phase 2 requires the audit report from Phase 1. Run:
+Refactoring requires an audit report. Run:
   /clean-team:clean [scope]
 first to generate the audit report.
 ```
@@ -70,8 +70,10 @@ npm test  # or equivalent
 
 Invoke the **@tester** agent.
 
+**If `COVERAGE-REPORT.md` exists** from a previous run, pass it to the Tester as prior context — they may skip re-assessment if coverage hasn't changed.
+
 Tester reads AUDIT-REPORT.md (Critical Paths section) and produces:
-- Test Coverage Report
+- Test Coverage Report (saved to `COVERAGE-REPORT.md`)
 - Gaps identified
 - New tests written (if needed)
 - Readiness status
@@ -84,8 +86,10 @@ Tester reads AUDIT-REPORT.md (Critical Paths section) and produces:
 
 Invoke the **@planner** agent with AUDIT-REPORT.md and Tester's report.
 
+**If `REFACTORING-ROADMAP.md` exists** from a previous run, pass it to the Planner — they may reuse or revise it instead of starting from scratch.
+
 Planner produces:
-- Refactoring Roadmap
+- Refactoring Roadmap (saved to `REFACTORING-ROADMAP.md`)
 - Phases (Small → Medium → Large)
 - Specific slices with commit strategies
 - Audit finding coverage map

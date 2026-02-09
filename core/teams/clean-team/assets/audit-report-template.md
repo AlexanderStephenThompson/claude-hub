@@ -19,7 +19,7 @@ Use this template when generating AUDIT-REPORT.md. The Auditor agent fills in ea
 
 **Clean Phase Status:** [Complete / Complete with issues]
 **Findings:** [count] total ([critical] critical, [high] high, [medium] medium, [low] low)
-**Recommendation:** [Proceed to Phase 2 / Address issues first / No refactoring needed]
+**Recommendation:** [Proceed to refactoring / Address issues first / No refactoring needed]
 
 ---
 
@@ -144,7 +144,7 @@ Reference: `~/.claude/skills/architecture/references/web.md`
 
 ## Critical Paths
 
-**For Tester consumption in Phase 2.**
+**For Tester consumption.**
 
 Areas that MUST have test coverage before refactoring:
 
@@ -156,7 +156,7 @@ Areas that MUST have test coverage before refactoring:
 
 ## Prioritized Recommendations
 
-**For Planner consumption in Phase 2.**
+**For Planner consumption.**
 
 ### High Priority
 1. [Most important improvement with reasoning]
@@ -172,7 +172,7 @@ Areas that MUST have test coverage before refactoring:
 
 ## Flagged for User Review
 
-Items that need human decision before Phase 2:
+Items that need human decision before refactoring:
 
 - [ ] [Item 1 — why it needs user input]
 - [ ] [Item 2 — why it needs user input]
@@ -183,5 +183,5 @@ Items that need human decision before Phase 2:
 
 1. Review this report
 2. Address any flagged items above
-3. Run `/clean-team:refactor [path] [focus]` to begin Phase 2
+3. The pipeline will continue to refactoring, or run `/clean-team:refactor [path] [focus]` to resume later
 ```

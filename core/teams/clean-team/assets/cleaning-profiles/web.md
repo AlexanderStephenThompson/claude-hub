@@ -12,20 +12,39 @@ Project type detection: `package.json` exists, or `.html`/`.css`/`.jsx`/`.tsx` f
 
 ```
 styles/
-├── tokens.css      # CSS variables only
-├── base.css        # Reset + element defaults
+├── reset.css       # Browser normalization — clean slate
+├── global.css      # Design tokens (:root) + element defaults
 ├── layouts.css     # Page scaffolding, grids
 ├── components.css  # All component styles
-└── utilities.css   # Helper classes
+└── overrides.css   # Exceptions — one-offs, page-specific, utilities
 ```
 
 ### Enforcement Rules
 
-| CSS File Count | Action |
-|----------------|--------|
-| ≤5 files | Pass — proceed to other fixes |
+| Condition | Action |
+|-----------|--------|
+| ≤5 files, canonical names | Pass — proceed to other fixes |
+| ≤5 files, wrong names | Rename to canonical names before proceeding |
 | 6-7 files | Merge until ≤5. Document if truly can't. |
-| 8+ files | **MUST consolidate.** This is the primary task. |
+| 8+ files | **STOP.** Create a Restructure Plan (see below) before any other CSS work. |
+| 0 canonical names found | **STOP.** Create a Restructure Plan — the project has no recognizable CSS structure. |
+
+### Restructure Plan (When Structure Is Significantly Wrong)
+
+When the Formatter encounters 8+ CSS files OR zero canonical names (`reset.css`, `global.css`, `layouts.css`, `components.css`, `overrides.css`), **stop all other CSS work** and create a plan:
+
+1. **Inventory** — List every CSS file with a one-line summary of its contents
+2. **Mapping** — For each file, assign it to one of the 5 canonical destinations:
+   - Browser resets → `reset.css`
+   - Variables/tokens + element defaults → `global.css`
+   - Page layouts, grids → `layouts.css`
+   - Component styles → `components.css`
+   - Helpers, one-offs, page-specific → `overrides.css`
+3. **Execution order** — Which files to merge first (dependencies matter)
+4. **Import updates** — Every `@import` or `<link>` that needs updating
+5. **Execute the plan** — Merge files in order, delete originals, update imports
+
+Include the Restructure Plan in the handoff to Auditor.
 
 ### How to Consolidate
 
@@ -33,11 +52,11 @@ For each CSS file beyond the 5 core files:
 
 1. **Identify its contents** — What styles does it contain?
 2. **Determine destination** — Which of the 5 core files should it merge into?
-   - Variables/tokens → `tokens.css`
-   - Resets, typography defaults → `base.css`
+   - Browser resets, normalizations → `reset.css`
+   - Variables/tokens, element defaults → `global.css`
    - Page layouts, grids → `layouts.css`
    - Component styles → `components.css`
-   - Helper classes (.hidden, .flex, .mt-4) → `utilities.css`
+   - Helper classes (.hidden, .flex, .mt-4), one-offs → `overrides.css`
 3. **Merge the content** — Append to destination with a comment showing origin:
    ```css
    /* === Merged from: old-file.css === */
@@ -141,10 +160,42 @@ Before tokenizing, normalize inconsistent representations of the same value:
 ```
 
 **Normalization rules:**
-- Colors: normalize to the format used by `tokens.css` (hex6 preferred: `#3b82f6`)
+- Colors: normalize to the format used by `global.css` (hex6 preferred: `#3b82f6`)
 - Spacing: normalize to `px` or `rem` consistently (match project convention)
 - Zero values: always unit-less (`0` not `0px`)
 - Shorthand: use shorthand where all sides are equal (`margin: 16px` not `margin: 16px 16px 16px 16px`)
+
+### Property Order Normalization
+
+When consolidating or touching CSS rules, normalize property order to match the 5-group convention:
+
+1. **Positioning** — `position`, `top`, `right`, `bottom`, `left`, `z-index`, `float`, `clear`, `inset`
+2. **Box Model** — `display`, `flex-*`, `grid-*`, `gap`, `align-*`, `justify-*`, `width`, `height`, `min/max-*`, `margin`, `padding`, `overflow`, `box-sizing`
+3. **Typography** — `font-*`, `line-height`, `letter-spacing`, `text-*`, `color`, `white-space`, `word-break`
+4. **Visual** — `border-*`, `background-*`, `box-shadow`, `outline`, `opacity`, `transform`, `cursor`, `pointer-events`, `visibility`
+5. **Animation** — `transition-*`, `animation-*`, `will-change`
+
+```css
+/* BEFORE — properties in random order */
+.card {
+  background: var(--color-surface);
+  padding: var(--space-4);
+  position: relative;
+  transition: box-shadow var(--duration-fast);
+  font-size: var(--font-size-base);
+}
+
+/* AFTER — properties grouped by convention */
+.card {
+  position: relative;
+  padding: var(--space-4);
+  font-size: var(--font-size-base);
+  background: var(--color-surface);
+  transition: box-shadow var(--duration-fast);
+}
+```
+
+**Enforcement:** `check.js` rule `css-property-order` warns when properties appear out of group order.
 
 ---
 
@@ -188,7 +239,7 @@ Scan all CSS files for repeated hardcoded values:
 | Shadows | `--shadow-{size}` | `--shadow-sm`, `--shadow-md`, `--shadow-lg` |
 | Z-index | `--z-{name}` | `--z-dropdown`, `--z-modal`, `--z-toast` |
 
-If the project already has a token system, use its naming. Only create new tokens for values that don't have one yet. Add all new tokens to `tokens.css`.
+If the project already has a token system, use its naming. Only create new tokens for values that don't have one yet. Add all new tokens to `global.css`.
 
 ---
 
@@ -314,7 +365,7 @@ Interactive elements without complete state coverage create inconsistent UX — 
 
 ## Tier Architecture (Flag Only)
 
-The Formatter does not move files between tiers — that is a structural change owned by the Organizer (Phase 1) and the Refactorer (Phase 2). However, the Formatter SHOULD flag tier violations encountered during code cleaning so the Auditor can include them in the audit report.
+The Formatter does not move files between tiers — that is a structural change owned by the Organizer and the Refactorer. However, the Formatter SHOULD flag tier violations encountered during code cleaning so the Auditor can include them in the audit report.
 
 ### What to Flag
 

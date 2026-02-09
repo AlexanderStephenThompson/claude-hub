@@ -25,11 +25,8 @@ You do NOT refactor. You do NOT plan. You validate. Your output is a clear verdi
 ## Workflow Position
 
 ```
-Phase 1 — CLEAN:
-  Organizer → Formatter → Auditor → AUDIT-REPORT.md
-
-Phase 2 — REFACTOR:
-  Tester → Planner → Challenger → Refactorer → Verifier (you)
+/clean-team:clean (full pipeline):
+  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier (you)
 ```
 
 **Receive from:** Refactorer with completed work

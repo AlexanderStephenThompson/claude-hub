@@ -1,68 +1,55 @@
-# Clean-Team v3.4.0
+# Clean-Team v4.0.0
 
-An 8-agent cleaning team in two phases: **CLEAN** (safe iterative fixes + parallel audit) then **REFACTOR** (planned deeper changes from the audit).
+An 8-agent pipeline that cleans, audits, and refactors codebases in one continuous flow with a checkpoint after the audit.
 
-## Two Phases, One Pipeline
+## One Pipeline, Eight Agents
 
 ```
-Phase 1 — CLEAN (/clean-team:clean)
-  Organizer → Formatter → Auditor → AUDIT-REPORT.md
-
-                    ↓ User reviews report ↓
-
-Phase 2 — REFACTOR (/clean-team:refactor)
-  Tester → Planner → Challenger → Refactorer → Verifier
+/clean-team:clean [scope]
+  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
 ```
 
-The **AUDIT-REPORT.md** is the bridge between phases. Phase 1 produces it, the user reviews it, and Phase 2 consumes it.
+The **AUDIT-REPORT.md** is the bridge between cleanup and refactoring. The Auditor produces it, presents a checkpoint summary, and the user confirms whether to continue. No more forgetting to run a second command.
 
-There is also a standalone audit command (`/clean-team:audit`) that skips cleaning and produces the report directly using parallel sub-agents.
+There is also a standalone audit command (`/clean-team:audit`) that skips cleaning and produces the report directly using parallel sub-agents, and a resume command (`/clean-team:refactor`) for picking up from an existing audit report.
 
 ---
 
-## Phase 1: Clean (3 Agents)
-
-Safe, iterative cleanup that ends with a deep analysis report.
+## Agents
 
 | # | Agent | Job | Output |
 |---|-------|-----|--------|
 | 1 | **Organizer** | File moves, renames, folder organization | git commit |
 | 2 | **Formatter** | Universal cleaning + project-type-specific conventions | git commit |
-| 3 | **Auditor** | Parallel sub-agents for deep analysis: architecture, best practices, metrics, findings | AUDIT-REPORT.md |
-
-The Auditor launches 4-11 parallel sub-agents (core + web, depending on stack) using the shared roster at `assets/parallel-audit-roster.md`.
-
-## Phase 2: Refactor (5 Agents)
-
-Planned refactoring driven by the audit report. Requires AUDIT-REPORT.md.
-
-| # | Agent | Job | Output |
-|---|-------|-----|--------|
+| 3 | **Auditor** | Parallel sub-agents for deep analysis: architecture, best practices, metrics, findings | AUDIT-REPORT.md + checkpoint summary |
+| — | **Checkpoint** | User confirms: continue / stop / review full report | — |
 | 4 | **Tester** | Coverage assessment, writes safety tests | Coverage report |
 | 5 | **Planner** | Phased roadmap from audit findings | Roadmap |
 | 6 | **Challenger** | Gate 1: reviews plan feasibility | Approve/Revise/Block |
 | 7 | **Refactorer** | Executes approved slices | git commits |
 | 8 | **Verifier** | Gate 2: validates behavior + clarity | Approve/Route back/Block |
 
+The Auditor launches 4-12 parallel sub-agents (4 core + up to 8 web, depending on stack) using the shared roster at `assets/parallel-audit-roster.md`.
+
 ---
 
 ## Commands
 
 ```bash
-# Standalone audit (parallel sub-agents, optional focus)
-/clean-team:audit [focus]
-
-# Phase 1: Clean and audit
+# Full pipeline: clean + audit + checkpoint + refactor
 /clean-team:clean [scope]
 
-# Phase 2: Refactor from audit report
+# Resume refactoring from existing AUDIT-REPORT.md
 /clean-team:refactor [path] [focus]
+
+# Standalone audit (parallel sub-agents, optional focus)
+/clean-team:audit [focus]
 ```
 
 ### Examples
 
 ```bash
-# Full project clean + audit
+# Full project clean + audit + refactor
 /clean-team:clean
 
 # Clean only src/
@@ -74,10 +61,10 @@ Planned refactoring driven by the audit report. Requires AUDIT-REPORT.md.
 # Standalone audit focused on structure (expands to 5 sub-auditors)
 /clean-team:audit structure
 
-# Refactor with focus on naming
+# Resume refactoring with focus on naming
 /clean-team:refactor src/ focus on naming
 
-# Refactor the auth module
+# Resume refactoring on the auth module
 /clean-team:refactor src/auth/
 ```
 
@@ -116,6 +103,7 @@ Agents inherit shared skills from `~/.claude/skills/`:
 
 ## Gating Logic
 
+- **Checkpoint (after Auditor)**: User confirms before refactoring starts. Can stop, continue, or review.
 - **Gate 1 (Challenger)**: Reviews plan before execution. Max 2 revision cycles.
 - **Gate 2 (Verifier)**: Confirms behavior unchanged, measures improvement. Max 2 fix cycles.
 - **Early exits**: Workflow can stop early if codebase already follows best practices.
@@ -128,7 +116,7 @@ Agents inherit shared skills from `~/.claude/skills/`:
 python scripts/analyze_complexity.py <path>     # High-complexity functions
 python scripts/analyze_dependencies.py <path>   # Circular dependencies
 python scripts/detect_dead_code.py <path>       # Unused code
-node scripts/check.js                           # Design system compliance (31 rules)
+node scripts/check.js                           # Design system compliance (36 rules)
 ```
 
 ---
@@ -137,6 +125,8 @@ node scripts/check.js                           # Design system compliance (31 r
 
 | Version | Changes |
 |---------|---------|
+| v4.0.0 | Merged two-phase pipeline into one continuous flow with checkpoint after Auditor. `/clean-team:clean` now runs all 8 agents. `/clean-team:refactor` repurposed as resume entry point. |
+| v3.4.0 | Added css-import-order rule, tier-structure/tier-imports enforcement, Architecture Structure Gate in Organizer |
 | v3.3.0 | Parallelized Auditor with shared sub-agent roster, added check.js (31 rules) |
 | v3.2.0 | Absorbed improvement-auditor + web-auditor into `/clean-team:audit` command |
 | v3.1.0 | Formatter replaced Stylist + Polisher with universal + type-specific profiles |

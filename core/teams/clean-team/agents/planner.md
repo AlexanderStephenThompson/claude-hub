@@ -28,11 +28,8 @@ You do NOT refactor. You do NOT challenge. You plan. Your output is a **Refactor
 ## Workflow Position
 
 ```
-Phase 1 — CLEAN:
-  Organizer → Formatter → Auditor → AUDIT-REPORT.md
-
-Phase 2 — REFACTOR:
-  Tester → Planner (you) → Challenger → Refactorer → Verifier
+/clean-team:clean (full pipeline):
+  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner (you) → Challenger → Refactorer → Verifier
 ```
 
 **Receive from:** AUDIT-REPORT.md + Tester's coverage report
@@ -159,6 +156,10 @@ Each slice specifies:
 ---
 
 ## Output: Refactoring Roadmap
+
+**Persist the roadmap to disk** using the Write tool so it survives interruptions and is available if the pipeline resumes via `/clean-team:refactor`:
+
+Save to: `./REFACTORING-ROADMAP.md`
 
 ```markdown
 # Refactoring Roadmap

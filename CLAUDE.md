@@ -33,8 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Team | Agents | Workflow |
 |------|--------|----------|
-| clean-team | 8 | **Phase 1 — Clean:** Organizer → Formatter → Auditor → AUDIT-REPORT.md |
-| | | **Phase 2 — Refactor:** Tester → Planner → Challenger → Refactorer → Verifier |
+| clean-team | 8 | Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier |
 | implement-team | 5 | Planner → Challenger → Implementor → Security → Refactorer |
 | diagnose-team | 5 | Clarifier → Investigator → Hypothesizer → Resolver → Validator |
 
@@ -46,8 +45,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Focused audit (CSS, a11y, perf, structure) | clean-team | `/clean-team:audit [focus]` |
 | Quick codebase tidying | clean-team | `/clean-team:clean` |
 | CSS file sprawl (>5 files) | clean-team | `/clean-team:clean` |
-| Existing codebase needs deep refactoring | clean-team | `/clean-team:clean` then `/clean-team:refactor` |
-| Legacy code modernization | clean-team | `/clean-team:clean` then `/clean-team:refactor` |
+| Existing codebase needs deep refactoring | clean-team | `/clean-team:clean` |
+| Legacy code modernization | clean-team | `/clean-team:clean` |
 | New feature implementation | implement-team | `/implement-team:implement` |
 | Bug fix with design decisions | implement-team | `/implement-team:implement` |
 | Security-sensitive features | implement-team | triggers Security agent |
@@ -55,15 +54,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | "It works but not how I wanted" | diagnose-team | `/diagnose-team:diagnose` |
 | Root cause is unclear after multiple attempts | diagnose-team | `/diagnose-team:diagnose` |
 
-### Audit → Clean → Refactor Pipeline
+### Clean-Team Pipeline
 
 The clean-team has three entry points. All produce or consume AUDIT-REPORT.md:
 
 ```
+/clean-team:clean [scope]    → Full 8-agent pipeline with checkpoint after audit
+/clean-team:refactor [path]  → Resume refactoring from existing AUDIT-REPORT.md
 /clean-team:audit [focus]    → Standalone audit (parallel sub-agents, focus modes)
-/clean-team:clean [scope]    → Full pipeline Phase 1 (Organizer → Formatter → Auditor)
-  (user reviews AUDIT-REPORT.md)
-/clean-team:refactor [path]  → Phase 2 (consumes AUDIT-REPORT.md automatically)
 ```
 
 ## Common Commands
@@ -114,7 +112,7 @@ Note: `claude plugin marketplace update` updates the cache, not installed plugin
 python core/teams/clean-team/scripts/analyze_complexity.py <path>     # High-complexity functions
 python core/teams/clean-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
 python core/teams/clean-team/scripts/detect_dead_code.py <path>       # Unused code
-node core/teams/clean-team/scripts/check.js                           # Design system compliance (31 rules)
+node core/teams/clean-team/scripts/check.js                           # Design system compliance (36 rules)
 ```
 
 ## Development
