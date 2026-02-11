@@ -9,8 +9,8 @@
   "plugins": [
     {
       "name": "clean-team",
-      "version": "3.3.0",
-      "description": "An 8-agent cleaning team with 3 entry points: AUDIT (standalone parallel analysis), CLEAN (organize, format, parallel audit pipeline), REFACTOR (test, plan, challenge, execute, verify). The audit report bridges all workflows.",
+      "version": "4.1.0",
+      "description": "An 8-agent pipeline in two phases. Phase 1: Analyze (organize, format, audit). Phase 2: Refactor (test, plan, challenge, execute, verify). One command — /clean-team:clean — with three modes: full pipeline, audit-only, and resume.",
       "source": "./core/teams/clean-team"
     },
     {
