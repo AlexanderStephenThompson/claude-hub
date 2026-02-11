@@ -388,7 +388,7 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
 }
 
 /* Tablet and up */
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   .grid {
     flex-direction: row;
     flex-wrap: wrap;
@@ -418,7 +418,7 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
 .content { ... }
 
 /* Then all tablet adjustments */
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   .header { ... }
   .nav { ... }
   .content { ... }
@@ -439,7 +439,7 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
   padding: var(--space-sm);
 }
 
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   .header {
     padding: var(--space-md);
   }

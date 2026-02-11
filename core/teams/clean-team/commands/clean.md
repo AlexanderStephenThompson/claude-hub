@@ -1,12 +1,17 @@
 ---
-description: Run the full 8-agent pipeline — organize, format, audit, checkpoint, then refactor
+description: Run the full 8-agent pipeline in two phases — analyze first, then refactor after your approval
 argument-hint: [scope — e.g., "src/" or leave empty for full project]
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit, Task
 ---
 
 # /clean-team:clean
 
-Run the full 8-agent pipeline to organize structure, clean code, audit deeply, and then refactor — all in one continuous flow with a checkpoint after the audit.
+Run the full 8-agent pipeline in two phases:
+
+1. **Analyze** (Steps 1–3) — Organize structure, clean code, produce a deep audit report
+2. **Refactor** (Steps 5–8) — Build a roadmap from the audit, execute it slice by slice
+
+A **checkpoint** separates the two phases. You review the audit findings and decide whether to continue, stop, or read the full report before committing to refactoring.
 
 ## Scope
 
@@ -45,6 +50,31 @@ git status --porcelain
 ---
 
 ## Workflow
+
+### Phase 1: Analyze
+
+Tell the user:
+
+> **Phase 1: Analyze** — Organizing structure, cleaning code, and producing an audit report. You'll review the findings at a checkpoint before any refactoring begins.
+
+Create a todo list showing the full pipeline. Mark Phase 1 steps as pending and Phase 2 steps as pending:
+
+```
+Phase 1: Analyze
+  [ ] Organize project structure
+  [ ] Format and clean code
+  [ ] Deep audit with findings report
+  [ ] Checkpoint — review findings
+
+Phase 2: Refactor
+  [ ] Assess test coverage
+  [ ] Plan refactoring roadmap
+  [ ] Challenge the plan (gate)
+  [ ] Execute refactoring
+  [ ] Verify results (gate)
+```
+
+Update each item to in_progress as you start it and completed when done.
 
 ### Step 1: Organizer
 
@@ -96,6 +126,12 @@ Continue to refactoring? (yes / no / review full report)
 
 **If Auditor recommended "No refactoring needed":**
 - Report this to the user and stop. The codebase is clean.
+
+### Phase 2: Refactor
+
+Tell the user:
+
+> **Phase 2: Refactor** — Building a roadmap from the audit findings and executing it slice by slice with safety gates.
 
 ### Step 5: Tester
 
@@ -175,6 +211,10 @@ Produce a concise final summary:
 ```
 /clean-team:clean [scope]
          │
+═══════════════════════════
+  PHASE 1: ANALYZE
+═══════════════════════════
+         │
          ▼
 ┌─────────────────┐
 │    Organizer    │  Fix structure: moves, renames, deletes
@@ -198,6 +238,10 @@ Produce a concise final summary:
   CHECKPOINT       User confirms: yes / no / review
 └ ─ ─ ─ ┬ ─ ─ ─ ┘
          │ yes
+═══════════════════════════
+  PHASE 2: REFACTOR
+═══════════════════════════
+         │
          ▼
 ┌─────────────────┐
 │     Tester      │  Coverage assessment + safety tests

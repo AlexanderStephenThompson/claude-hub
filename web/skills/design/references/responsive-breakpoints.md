@@ -13,7 +13,7 @@ Mobile-first responsive design means starting with mobile styles and progressive
 | Name | Min Width | Target Devices |
 |------|-----------|----------------|
 | **Mobile** | 0px (base) | Phones in portrait |
-| **Tablet** | 641px | Tablets, large phones in landscape |
+| **Tablet** | 768px | Tablets, large phones in landscape |
 | **Desktop** | 1024px | Laptops, desktops |
 | **Large Desktop** | 1280px | Large monitors, wide screens |
 
@@ -28,8 +28,8 @@ Mobile-first responsive design means starting with mobile styles and progressive
   padding: var(--space-sm);
 }
 
-/* Tablet: 641px and up */
-@media (min-width: 641px) {
+/* Tablet: 768px and up */
+@media (min-width: 768px) {
   .container {
     padding: var(--space-md);
   }
@@ -56,7 +56,7 @@ Mobile-first responsive design means starting with mobile styles and progressive
 
 ```css
 :root {
-  --breakpoint-sm: 641px;    /* Tablet */
+  --breakpoint-sm: 768px;    /* Tablet */
   --breakpoint-md: 1024px;   /* Desktop */
   --breakpoint-lg: 1280px;   /* Large Desktop */
 }
@@ -123,9 +123,9 @@ Note: CSS variables can't be used directly in media query conditions, but they d
 /* No max-width needed */
 
 /* Tablet */
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   .container {
-    max-width: 640px;
+    max-width: 768px;
   }
 }
 
@@ -148,7 +148,7 @@ Note: CSS variables can't be used directly in media query conditions, but they d
 
 ```css
 .container-sm {
-  max-width: 640px;
+  max-width: 768px;
 }
 
 .container-md {
@@ -220,7 +220,7 @@ Note: CSS variables can't be used directly in media query conditions, but they d
 }
 
 /* Tablet: Two columns */
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   .card-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -289,7 +289,7 @@ Note: CSS variables can't be used directly in media query conditions, but they d
 }
 
 /* Tablet */
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   :root {
     --font-size-h1: 2rem;    /* 32px */
     --font-size-h2: 1.75rem; /* 28px */
@@ -309,7 +309,7 @@ Note: CSS variables can't be used directly in media query conditions, but they d
 
 ```css
 /* Mobile: Stack table rows */
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   table, thead, tbody, th, td, tr {
     display: block;
   }
@@ -339,7 +339,7 @@ Note: CSS variables can't be used directly in media query conditions, but they d
 }
 
 /* Tablet+: Normal table */
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   /* Default table styles apply */
 }
 ```
@@ -457,7 +457,7 @@ Note: CSS variables can't be used directly in media query conditions, but they d
 
 - [ ] Test on real mobile device (not just browser emulation)
 - [ ] Test on real tablet
-- [ ] Test at each breakpoint boundary (640px, 1024px, 1280px)
+- [ ] Test at each breakpoint boundary (768px, 1024px, 1280px)
 - [ ] Test in both orientations (portrait/landscape)
 - [ ] Test with zoom levels (100%, 150%, 200%)
 - [ ] Test with browser width dragging (resize smoothly)

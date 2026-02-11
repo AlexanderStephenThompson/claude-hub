@@ -81,7 +81,7 @@ user-invocable: false
 
 - Complete color palette (neutrals, semantic, dark mode)
 - Full typography scale (fonts, sizes, weights, line heights)
-- Spacing system (8px base)
+- Spacing system (4px base)
 - Border radii
 - Shadows
 - Z-index layers
@@ -182,7 +182,7 @@ HTML describes structure. CSS handles presentation. Keep them separated.
 
 1. One property per line
 2. Use design tokens (CSS variables), not hardcoded values
-3. Logical property order: positioning → box model → typography → visual → animation
+3. Logical property order: Positioning → Box Model → Typography → Visual → Animation
 4. Descriptive class names (BEM or semantic naming)
 5. Generous spacing between rule sets
 6. Comments for complex sections
@@ -219,7 +219,7 @@ All interactive components MUST have these five states:
 | **Default** | Base appearance | Normal button |
 | **Hover** | Visual feedback on mouse over | Background darkens |
 | **Active** | Visual feedback when pressed | Slight scale down |
-| **Focus** | Clear focus indicator (keyboard nav) | Blue outline ring |
+| **Focus** | Clear focus indicator (keyboard nav) | `outline: 2px solid var(--color-focus); outline-offset: 2px;` |
 | **Disabled** | Visually distinct, non-interactive | Grayed out, low opacity |
 
 ---
@@ -304,10 +304,10 @@ All interactive components MUST have these five states:
 ### Mobile-First Breakpoints
 
 ```css
-/* Mobile: 0-640px (base styles, no media query needed) */
+/* Mobile: 0-767px (base styles, no media query needed) */
 
-/* Tablet: 641px and up */
-@media (min-width: 641px) { }
+/* Tablet: 768px and up */
+@media (min-width: 768px) { }
 
 /* Desktop: 1024px and up */
 @media (min-width: 1024px) { }
@@ -321,7 +321,7 @@ All interactive components MUST have these five states:
 ### Container max-widths
 
 - Mobile: 100% (with padding)
-- Tablet: 640px
+- Tablet: 768px
 - Desktop: 1024px
 - Large: 1280px
 

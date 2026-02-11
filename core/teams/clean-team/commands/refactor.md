@@ -66,6 +66,23 @@ npm test  # or equivalent
 
 ## Workflow
 
+Tell the user:
+
+> **Phase 2: Refactor** — Resuming from an existing audit report. Building a roadmap and executing it slice by slice with safety gates.
+
+Create a todo list showing Phase 2 steps:
+
+```
+Phase 2: Refactor
+  [ ] Assess test coverage
+  [ ] Plan refactoring roadmap
+  [ ] Challenge the plan (gate)
+  [ ] Execute refactoring
+  [ ] Verify results (gate)
+```
+
+Update each item to in_progress as you start it and completed when done.
+
 ### Step 1: Assess Tests
 
 Invoke the **@tester** agent.

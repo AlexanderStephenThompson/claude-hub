@@ -1,33 +1,40 @@
 # Clean-Team v4.0.0
 
-An 8-agent pipeline that cleans, audits, and refactors codebases in one continuous flow with a checkpoint after the audit.
+An 8-agent pipeline in two phases, separated by a checkpoint where you review findings and decide whether to continue.
 
-## One Pipeline, Eight Agents
+## Two Phases, One Pipeline
 
 ```
 /clean-team:clean [scope]
-  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
+
+  Phase 1: Analyze     Organizer → Formatter → Auditor
+                                                  │
+                                            [checkpoint]
+                                                  │
+  Phase 2: Refactor    Tester → Planner → Challenger → Refactorer → Verifier
 ```
 
-The **AUDIT-REPORT.md** is the bridge between cleanup and refactoring. The Auditor produces it, presents a checkpoint summary, and the user confirms whether to continue. No more forgetting to run a second command.
+**Phase 1** organizes, cleans, and audits — producing **AUDIT-REPORT.md** with prioritized findings. At the checkpoint, you review the report and decide: continue to refactoring, stop here, or read the full report first.
 
-There is also a standalone audit command (`/clean-team:audit`) that skips cleaning and produces the report directly using parallel sub-agents, and a resume command (`/clean-team:refactor`) for picking up from an existing audit report.
+**Phase 2** builds a roadmap from those findings and executes it slice by slice with safety gates.
+
+`/clean-team:refactor` resumes Phase 2 from an existing audit report. `/clean-team:audit` runs a standalone analysis without cleaning.
 
 ---
 
 ## Agents
 
-| # | Agent | Job | Output |
-|---|-------|-----|--------|
-| 1 | **Organizer** | File moves, renames, folder organization | git commit |
-| 2 | **Formatter** | Universal cleaning + project-type-specific conventions | git commit |
-| 3 | **Auditor** | Parallel sub-agents for deep analysis: architecture, best practices, metrics, findings | AUDIT-REPORT.md + checkpoint summary |
-| — | **Checkpoint** | User confirms: continue / stop / review full report | — |
-| 4 | **Tester** | Coverage assessment, writes safety tests | Coverage report |
-| 5 | **Planner** | Phased roadmap from audit findings | Roadmap |
-| 6 | **Challenger** | Gate 1: reviews plan feasibility | Approve/Revise/Block |
-| 7 | **Refactorer** | Executes approved slices | git commits |
-| 8 | **Verifier** | Gate 2: validates behavior + clarity | Approve/Route back/Block |
+| Phase | # | Agent | Job | Output |
+|-------|---|-------|-----|--------|
+| **Analyze** | 1 | **Organizer** | File moves, renames, folder organization | git commit |
+| | 2 | **Formatter** | Universal cleaning + project-type-specific conventions | git commit |
+| | 3 | **Auditor** | Parallel sub-agents for deep analysis | AUDIT-REPORT.md |
+| | — | **Checkpoint** | User confirms: continue / stop / review full report | — |
+| **Refactor** | 4 | **Tester** | Coverage assessment, writes safety tests | Coverage report |
+| | 5 | **Planner** | Phased roadmap from audit findings | Roadmap |
+| | 6 | **Challenger** | Gate 1: reviews plan feasibility | Approve/Revise/Block |
+| | 7 | **Refactorer** | Executes approved slices | git commits |
+| | 8 | **Verifier** | Gate 2: validates behavior + clarity | Approve/Route back/Block |
 
 The Auditor launches 4-12 parallel sub-agents (4 core + up to 8 web, depending on stack) using the shared roster at `assets/parallel-audit-roster.md`.
 
@@ -125,7 +132,7 @@ node scripts/check.js                           # Design system compliance (36 r
 
 | Version | Changes |
 |---------|---------|
-| v4.0.0 | Merged two-phase pipeline into one continuous flow with checkpoint after Auditor. `/clean-team:clean` now runs all 8 agents. `/clean-team:refactor` repurposed as resume entry point. |
+| v4.0.0 | Unified pipeline: Phase 1 (Analyze) and Phase 2 (Refactor) run as one command with a checkpoint between them. `/clean-team:clean` runs all 8 agents. `/clean-team:refactor` resumes Phase 2 from an existing audit. |
 | v3.4.0 | Added css-import-order rule, tier-structure/tier-imports enforcement, Architecture Structure Gate in Organizer |
 | v3.3.0 | Parallelized Auditor with shared sub-agent roster, added check.js (31 rules) |
 | v3.2.0 | Absorbed improvement-auditor + web-auditor into `/clean-team:audit` command |
