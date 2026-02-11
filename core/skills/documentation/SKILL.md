@@ -176,169 +176,19 @@ Every feature file MUST include:
 8. **Open questions**
 9. **Related features**
 
-### Feature File Template
-
-```markdown
-# Feature Name
-
-> One-line description of what this feature does.
-
-**Module:** [Program] / [Module]
-**Status:** Planned | In Progress | Complete
-**Started:** YYYY-MM-DD
-**Completed:** YYYY-MM-DD
-
----
-
-## User Story
-
-**As a** [user type],
-**I want** [action/capability],
-**So that** [benefit/outcome].
-
----
-
-## Overview
-
-[2-3 paragraph description of the feature]
-
-### Basic Scenario
-
-1. User does X
-2. System responds with Y
-3. User sees Z
-
----
-
-## Acceptance Criteria
-
-- [ ] Criterion 1 (testable)
-- [ ] Criterion 2 (testable)
-- [ ] Criterion 3 (testable)
-
----
-
-## Data Model
-
-[If applicable - tables, schemas, data structures]
-
----
-
-## Technical Notes
-
-### Approach
-
-[Implementation approach]
-
-### Standards Checklist
-
-- [ ] Code Quality: Tests written first (TDD)
-- [ ] Code Quality: 3-tier architecture followed
-- [ ] Architecture: Module boundaries respected
-- [ ] Design: Design tokens used (no hardcoded values)
-- [ ] Security: Input validation implemented
-- [ ] Documentation: Feature file complete
-
----
-
-## Open Questions
-
-- [ ] **Open:** Question 1?
-- [x] **Resolved:** Question 2? → Answer
-
----
-
-## Related Features
-
-- [Related Feature 1](./related-1.md)
-- [Related Feature 2](./related-2.md)
-```
+Use the template at `assets/feature-template.md`. Every feature file must include: one-line description, module reference + status, user story (As/Want/So), overview with basic scenario, testable acceptance criteria, data model (if applicable), technical notes with standards checklist, open questions, and related features.
 
 ---
 
 ## Module Explainers
 
-### Structure
-
-```markdown
-# Module Name
-
-> One-line module description.
-
-**Program:** [Program Name]
-**Status:** 2/6 features complete
-
----
-
-## Overview
-
-[Module purpose and scope]
-
----
-
-## Features
-
-| Feature | Status | Description |
-|---------|--------|-------------|
-| [Feature 1](./feature-1.md) | ✅ | Description |
-| [Feature 2](./feature-2.md) | 🔄 | Description |
-| [Feature 3](./feature-3.md) | ⏳ | Description |
-
----
-
-## Dependencies
-
-- [Other Module](../other/other.md)
-- External API X
-
----
-
-## Architecture Notes
-
-[How this module fits into the system]
-```
+Use the template at `assets/module-template.md`. Each module explainer includes: one-line description, program reference + status count, overview, feature table (with status + links), dependencies, and architecture notes.
 
 ---
 
 ## Changelog Format
 
-Follow [Keep a Changelog](https://keepachangelog.com/) format:
-
-```markdown
-# Changelog
-
-All notable changes to this project are documented here.
-
-## [Unreleased]
-
-### Added
-- New feature X
-
-### Changed
-- Modified behavior Y
-
-### Fixed
-- Bug fix Z
-
----
-
-## [0.2.0] — 2026-01-15 — Kitchen / Planning: Create weekly meal plan
-
-### Added
-- Weekly meal planning interface
-- Recipe suggestion based on preferences
-
-### Changed
-- Updated planning algorithm
-
----
-
-## [0.1.0] — 2026-01-01 — Initial Release
-
-### Added
-- Project scaffolding
-- Basic infrastructure
-```
+Follow [Keep a Changelog](https://keepachangelog.com/) format. Use the template at `assets/changelog-template.md`.
 
 ### Change Types
 

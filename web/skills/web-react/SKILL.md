@@ -31,112 +31,22 @@ Small components with extracted hooks and Apollo-managed server state produce co
 
 | Size | Status | Action |
 |------|--------|--------|
-| < 100 lines | ✅ Ideal | Keep it |
-| 100-200 lines | ⚠️ Watch | Consider splitting if growing |
-| > 200 lines | ❌ Too big | Split into smaller components |
-| > 300 lines | 🚨 Critical | Immediate refactor needed |
+| < 100 lines | Ideal | Keep it |
+| 100-200 lines | Watch | Consider splitting if growing |
+| > 200 lines | Too big | Split into smaller components |
+| > 300 lines | Critical | Immediate refactor needed |
 
-### Component Structure
+### When to Split
 
-```jsx
-// ✅ Good - Clear structure
-function ProductCard({ product, onAddToCart }) {
-  const [quantity, setQuantity] = useState(1);
+Split when you see: multiple responsibilities, reusable UI patterns, complex conditional rendering, or deeply nested JSX (> 4 levels).
 
-  const handleAdd = () => {
-    onAddToCart(product.id, quantity);
-  };
-
-  return (
-    <article className="product-card">
-      <img src={product.image} alt={product.name} />
-      <h3>{product.name}</h3>
-      <p>{product.description}</p>
-      <div className="product-card__actions">
-        <input
-          type="number"
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-          min={1}
-        />
-        <button onClick={handleAdd}>Add to Cart</button>
-      </div>
-    </article>
-  );
-}
-```
-
-### When to Split Components
-
-Split when you see:
-- Multiple responsibilities in one component
-- Reusable UI patterns
-- Complex conditional rendering
-- Deeply nested JSX (> 4 levels)
-
-```jsx
-// ❌ Too much in one component
-function ProductPage() {
-  // 50 lines of hooks...
-  // 100 lines of handlers...
-  // 200 lines of JSX...
-}
-
-// ✅ Split by responsibility
-function ProductPage() {
-  return (
-    <main>
-      <ProductHeader />
-      <ProductGallery />
-      <ProductDetails />
-      <ProductReviews />
-      <RelatedProducts />
-    </main>
-  );
-}
-```
+See `assets/component-patterns.md` for ProductCard structure and split-by-responsibility examples.
 
 ---
 
 ## Hooks Patterns
 
-### Custom Hooks for Logic
-
-Extract logic that:
-- Uses multiple hooks together
-- Contains business logic
-- Could be reused
-- Makes components hard to read
-
-```jsx
-// ✅ Good - Logic extracted to hook
-function useProductQuantity(initialQuantity = 1) {
-  const [quantity, setQuantity] = useState(initialQuantity);
-
-  const increment = () => setQuantity(q => q + 1);
-  const decrement = () => setQuantity(q => Math.max(1, q - 1));
-  const reset = () => setQuantity(initialQuantity);
-
-  return { quantity, setQuantity, increment, decrement, reset };
-}
-
-// Component stays clean
-function QuantitySelector({ onChange }) {
-  const { quantity, increment, decrement } = useProductQuantity();
-
-  useEffect(() => {
-    onChange(quantity);
-  }, [quantity, onChange]);
-
-  return (
-    <div className="quantity-selector">
-      <button onClick={decrement}>-</button>
-      <span>{quantity}</span>
-      <button onClick={increment}>+</button>
-    </div>
-  );
-}
-```
+Extract logic that uses multiple hooks together, contains business logic, could be reused, or makes components hard to read.
 
 ### Hook Rules (Enforced)
 
@@ -144,6 +54,8 @@ function QuantitySelector({ onChange }) {
 2. Only call hooks from React functions
 3. Custom hooks must start with `use`
 4. Dependencies must be exhaustive (ESLint rule)
+
+See `assets/component-patterns.md` for useProductQuantity hook and QuantitySelector examples.
 
 ---
 
@@ -159,99 +71,13 @@ function QuantitySelector({ onChange }) {
 | UI state | Local state | Modal open, sidebar collapsed |
 | Derived from server data | Computed | Filtered list, totals |
 
-### Query Patterns
+Never duplicate Apollo cache data into local state. Filter/transform inline or with `useMemo`.
 
-```jsx
-// ✅ Good - Using Apollo hooks
-function ProductList({ categoryId }) {
-  const { data, loading, error } = useQuery(GET_PRODUCTS, {
-    variables: { categoryId },
-    // Stale-while-revalidate pattern
-    fetchPolicy: 'cache-and-network',
-  });
-
-  if (loading && !data) return <ProductListSkeleton />;
-  if (error) return <ErrorMessage error={error} />;
-
-  return (
-    <ul className="product-list">
-      {data.products.map(product => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </ul>
-  );
-}
-```
-
-### Mutation Patterns
-
-```jsx
-// ✅ Good - Optimistic updates
-function AddToCartButton({ productId }) {
-  const [addToCart, { loading }] = useMutation(ADD_TO_CART, {
-    variables: { productId },
-    optimisticResponse: {
-      addToCart: {
-        __typename: 'CartItem',
-        id: 'temp-id',
-        productId,
-        quantity: 1,
-      },
-    },
-    update(cache, { data: { addToCart } }) {
-      // Update cart cache
-      cache.modify({
-        fields: {
-          cart(existingCart = []) {
-            const newItemRef = cache.writeFragment({
-              data: addToCart,
-              fragment: CART_ITEM_FRAGMENT,
-            });
-            return [...existingCart, newItemRef];
-          },
-        },
-      });
-    },
-  });
-
-  return (
-    <button onClick={() => addToCart()} disabled={loading}>
-      {loading ? 'Adding...' : 'Add to Cart'}
-    </button>
-  );
-}
-```
-
-### Don't Duplicate Server State
-
-```jsx
-// ❌ Bad - Duplicating Apollo data in local state
-function ProductList() {
-  const { data } = useQuery(GET_PRODUCTS);
-  const [products, setProducts] = useState([]); // Why?
-
-  useEffect(() => {
-    if (data) setProducts(data.products); // Duplication!
-  }, [data]);
-}
-
-// ✅ Good - Use Apollo cache directly
-function ProductList() {
-  const { data, loading } = useQuery(GET_PRODUCTS);
-
-  // Filter/transform inline or with useMemo
-  const activeProducts = useMemo(
-    () => data?.products.filter(p => p.active) ?? [],
-    [data]
-  );
-}
-```
+See `assets/component-patterns.md` for query, mutation, and optimistic update patterns.
 
 ---
 
 ## State Management
-
-### When to Use What
 
 | Need | Solution |
 |------|----------|
@@ -261,56 +87,13 @@ function ProductList() {
 | Complex component state | useReducer |
 | Form state | useState or form library |
 
-### Context Pattern (When Needed)
+Keep contexts focused (one per concern). Don't put frequently-changing data in a single mega-context — split by concern to avoid unnecessary re-renders.
 
-```jsx
-// ✅ Good - Focused context for specific concern
-const ThemeContext = createContext();
-
-function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light');
-
-  const toggle = useCallback(() => {
-    setTheme(t => t === 'light' ? 'dark' : 'light');
-  }, []);
-
-  const value = useMemo(() => ({ theme, toggle }), [theme, toggle]);
-
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
-
-function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within ThemeProvider');
-  }
-  return context;
-}
-```
-
-### Avoid Context for Frequently Changing Data
-
-```jsx
-// ❌ Bad - Causes unnecessary re-renders
-const AppContext = createContext();
-// Contains: user, theme, cart, notifications, sidebar state...
-// Every change re-renders everything!
-
-// ✅ Good - Split by concern
-const UserContext = createContext();
-const ThemeContext = createContext();
-const SidebarContext = createContext();
-```
+See `assets/component-patterns.md` for ThemeProvider context pattern and context splitting examples.
 
 ---
 
 ## File Organization
-
-### Recommended Structure
 
 ```
 src/
@@ -347,21 +130,9 @@ src/
 
 ## JSX Cleanliness
 
-### Semantic Elements
-
-Use the right element for the job — not `<div>` for everything.
-
-```jsx
-// ❌ Div soup
-<div className="nav">
-  <div className="nav-item" onClick={handleClick}>Home</div>
-</div>
-
-// ✅ Semantic elements
-<nav>
-  <a href="/">Home</a>
-</nav>
-```
+- **Semantic elements** — Use `<nav>`, `<button>`, `<a>`, `<main>`, `<article>`, not `<div>` for everything
+- **No inline styles** — Styles belong in CSS files, not JSX `style={{ }}` props
+- **Minimal class lists** — 1-3 classes per element. More than 4 → consolidate into a semantic class
 
 | Need | Use | Not |
 |------|-----|-----|
@@ -370,29 +141,7 @@ Use the right element for the job — not `<div>` for everything.
 | Lists | `<ul>`, `<li>` | `<div>` with bullets |
 | Page sections | `<main>`, `<section>`, `<article>` | Nested `<div>` |
 
-### No Inline Styles
-
-Styles belong in CSS files, not JSX.
-
-```jsx
-// ❌ Inline styles
-<div style={{ marginTop: 16, padding: '8px 16px', backgroundColor: '#3b82f6' }}>
-
-// ✅ CSS class
-<div className="card-header">
-```
-
-### Minimal Class Lists
-
-If an element needs 5+ classes, consolidate them into one semantic class.
-
-```jsx
-// ❌ Class soup
-<button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-
-// ✅ Semantic class
-<button className="btn-primary">
-```
+See `assets/component-patterns.md` for semantic element, inline style, and class list examples.
 
 ---
 
@@ -428,8 +177,6 @@ If an element needs 5+ classes, consolidate them into one semantic class.
 
 ## When to Consider Alternatives
 
-While this stack works well, consider alternatives when:
-
 | Situation | Consider |
 |-----------|----------|
 | Need SSR/SSG | Next.js or Remix |
@@ -439,26 +186,6 @@ While this stack works well, consider alternatives when:
 
 ---
 
-## Quick Reference
+## References
 
-### Import Order
-
-```jsx
-// 1. React
-import React, { useState, useCallback } from 'react';
-
-// 2. Third-party
-import { useQuery, useMutation } from '@apollo/client';
-import { format } from 'date-fns';
-
-// 3. Internal modules
-import { useAuth } from '@/hooks/useAuth';
-import { GET_PRODUCTS } from '@/graphql/products';
-
-// 4. Components
-import { Button } from '@/components/Button';
-import { ProductCard } from './ProductCard';
-
-// 5. Styles
-import './ProductList.css';
-```
+- `assets/component-patterns.md` — Component, hook, Apollo, state, and JSX examples
