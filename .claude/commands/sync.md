@@ -117,14 +117,39 @@ foreach ($domain in $domains) {
 
 ### 4. Reinstall Team Plugins
 
-Discover all teams dynamically by scanning for `.claude-plugin/plugin.json` under any domain folder. This ensures new teams are always picked up without editing this file.
+#### Step 4a: Update marketplace mirror
+
+The plugin system reads from a local mirror of the GitHub repo. This must be refreshed before reinstalling, otherwise the install pulls stale versions.
+
+```bash
+claude plugin marketplace update
+```
+
+#### Step 4b: Discover teams
+
+Scan for `.claude-plugin/plugin.json` under any domain folder. This ensures new teams are always picked up without editing this file.
 
 ```powershell
 $repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
-Get-ChildItem $repo -Directory -Recurse | Where-Object {
+$teams = Get-ChildItem $repo -Directory -Recurse | Where-Object {
     Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json')
 } | ForEach-Object { $_.Name }
+$teams
 ```
+
+#### Step 4c: Clean stale plugin cache
+
+Remove cached versions for teams no longer in the repo and old versions of current teams:
+
+```powershell
+$cacheRoot = 'C:\Users\Alexa\.claude\plugins\cache\claude-hub'
+if (Test-Path $cacheRoot) {
+    Get-ChildItem $cacheRoot -Directory | Where-Object { $_.Name -notin $teams } |
+        ForEach-Object { Remove-Item $_.FullName -Recurse -Force; Write-Output "Removed stale team cache: $($_.Name)" }
+}
+```
+
+#### Step 4d: Reinstall each team
 
 For each team found, uninstall then install:
 
