@@ -1,6 +1,6 @@
 # Parallel Audit Roster
 
-Shared sub-agent definitions for parallel codebase analysis. Referenced by both the standalone audit command (`/clean-team:audit`) and the Auditor agent within the clean pipeline (`/clean-team:clean`).
+Shared sub-agent definitions for parallel codebase analysis. Referenced by both the audit-only mode (`/clean-team:clean audit`) and the Auditor agent within the full pipeline (`/clean-team:clean`).
 
 Parallelism is the point. A single agent doing sequential analysis is shallow and slow. Launching specialized auditors simultaneously produces deeper results in less time — each sub-agent focuses on one domain without context-switching.
 

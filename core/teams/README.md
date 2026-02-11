@@ -8,7 +8,7 @@ Multi-agent workflows that coordinate specialized agents to accomplish complex t
 
 | Team | Agents | Commands | Purpose |
 |------|--------|----------|---------|
-| [clean-team](./clean-team) | 8 | `/clean-team:audit`, `/clean-team:clean`, `/clean-team:refactor` | Audit, cleanup, and refactoring |
+| [clean-team](./clean-team) | 8 | `/clean-team:clean [scope\|audit [focus]]` | Audit, cleanup, and refactoring |
 | [implement-team](./implement-team) | 5 | `/implement-team:implement <feature>` | TDD feature implementation |
 | [diagnose-team](./diagnose-team) | 5 | `/diagnose-team:diagnose <problem>` | Stubborn bugs and intent-reality gaps |
 
@@ -21,15 +21,12 @@ A single continuous pipeline: **clean** (organize, format, audit), **checkpoint*
 ### Workflow
 
 ```
-/clean-team:clean [scope]:
+/clean-team:clean [scope]:    Full pipeline (auto-detects existing audit report for resume)
   Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
                                          ↑                                  ↑              ↑
                                     User confirms                       (Gate 1)       (Gate 2)
 
-/clean-team:refactor [path]:  Resume from existing AUDIT-REPORT.md
-  Tester → Planner → Challenger → Refactorer → Verifier
-
-/clean-team:audit [focus]:    Standalone parallel audit
+/clean-team:clean audit [focus]:  Read-only parallel audit
   4-11 sub-agents → AUDIT-REPORT.md
 ```
 
@@ -53,7 +50,7 @@ A single continuous pipeline: **clean** (organize, format, audit), **checkpoint*
 - **Universal Formatter**: Detects project type, applies universal cleaning + type-specific profiles (web, unity, python, data)
 - **Gated execution**: Challenger reviews plans (Gate 1), Verifier validates results (Gate 2)
 - **Parallel audit**: Auditor launches 4-12 sub-agents simultaneously via shared roster
-- **Standalone audit**: `/clean-team:audit [focus]` with focus modes (css, a11y, perf, structure, etc.)
+- **Audit-only mode**: `/clean-team:clean audit [focus]` with focus modes (css, a11y, perf, structure, etc.)
 - **Analysis scripts**: Python scripts for complexity, dependency, and dead code analysis
 - **Design system checker**: 36-rule linter for CSS, HTML, and JS
 
@@ -189,11 +186,8 @@ claude plugin install diagnose-team
 # Full pipeline: clean + audit + checkpoint + refactor
 /clean-team:clean src/
 
-# Resume refactoring from existing audit report
-/clean-team:refactor src/
-
-# Standalone audit with optional focus
-/clean-team:audit css
+# Read-only audit with optional focus
+/clean-team:clean audit css
 
 # TDD implementation
 /implement-team:implement "Add user authentication with OAuth2"
@@ -208,8 +202,8 @@ claude plugin install diagnose-team
 
 | Situation | Team |
 |-----------|------|
-| Quick codebase health check | clean-team (`/clean-team:audit`) |
-| Focused audit (CSS, a11y, perf, structure) | clean-team (`/clean-team:audit [focus]`) |
+| Quick codebase health check | clean-team (`/clean-team:clean audit`) |
+| Focused audit (CSS, a11y, perf, structure) | clean-team (`/clean-team:clean audit [focus]`) |
 | Quick codebase tidying | clean-team (`/clean-team:clean`) |
 | CSS file sprawl (>5 files) | clean-team (`/clean-team:clean`) |
 | Existing codebase needs deep refactoring | clean-team (`/clean-team:clean`) |

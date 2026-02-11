@@ -1,7 +1,7 @@
 {
   "name": "clean-team",
-  "version": "4.0.0",
-  "description": "An 8-agent pipeline in two phases — Phase 1: Analyze (organize → format → audit), checkpoint for user approval, Phase 2: Refactor (test → plan → challenge → refactor → verify). Entry points: CLEAN (full pipeline), REFACTOR (resume Phase 2 from existing audit), AUDIT (standalone analysis).",
+  "version": "4.1.0",
+  "description": "An 8-agent pipeline in two phases — Phase 1: Analyze (organize → format → audit), checkpoint for user approval, Phase 2: Refactor (test → plan → challenge → refactor → verify). One command with three modes: full pipeline, audit-only (read-only), and resume (auto-detected from existing audit report).",
   "agents": [
     "./agents/organizer.md",
     "./agents/formatter.md",

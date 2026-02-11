@@ -186,7 +186,7 @@ Awaiting decision before proceeding.
 
 ## Handoff to Planner
 
-**Persist the coverage report** using the Write tool so it survives interruptions and is available if the pipeline resumes via `/clean-team:refactor`:
+**Persist the coverage report** using the Write tool so it survives interruptions and is available if the pipeline resumes via `/clean-team:clean`:
 
 Save to: `./COVERAGE-REPORT.md`
 

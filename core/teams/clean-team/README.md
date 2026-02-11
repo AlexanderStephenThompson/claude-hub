@@ -1,11 +1,11 @@
-# Clean-Team v4.0.0
+# Clean-Team v4.1.0
 
-An 8-agent pipeline in two phases, separated by a checkpoint where you review findings and decide whether to continue.
+An 8-agent pipeline in two phases, separated by a checkpoint where you review findings and decide whether to continue. One command — three modes.
 
-## Two Phases, One Pipeline
+## Two Phases, One Command
 
 ```
-/clean-team:clean [scope]
+/clean-team:clean [scope|audit [focus]]
 
   Phase 1: Analyze     Organizer → Formatter → Auditor
                                                   │
@@ -18,7 +18,7 @@ An 8-agent pipeline in two phases, separated by a checkpoint where you review fi
 
 **Phase 2** builds a roadmap from those findings and executes it slice by slice with safety gates.
 
-`/clean-team:refactor` resumes Phase 2 from an existing audit report. `/clean-team:audit` runs a standalone analysis without cleaning.
+The command auto-detects existing audit reports and offers to resume Phase 2. Pass `audit` as the first argument for read-only analysis without code changes.
 
 ---
 
@@ -40,18 +40,17 @@ The Auditor launches 4-12 parallel sub-agents (4 core + up to 8 web, depending o
 
 ---
 
-## Commands
+## Usage
 
-```bash
-# Full pipeline: clean + audit + checkpoint + refactor
-/clean-team:clean [scope]
+| Invocation | Mode | What Happens |
+|------------|------|-------------|
+| `/clean-team:clean` | Full pipeline | Analyze → checkpoint → refactor |
+| `/clean-team:clean src/` | Full pipeline | Same, scoped to src/ |
+| `/clean-team:clean audit` | Audit only | Read-only parallel analysis → AUDIT-REPORT.md |
+| `/clean-team:clean audit css` | Audit only | Read-only analysis with CSS focus |
+| `/clean-team:clean audit structure` | Audit only | Structure focus (expands to 5 sub-auditors) |
 
-# Resume refactoring from existing AUDIT-REPORT.md
-/clean-team:refactor [path] [focus]
-
-# Standalone audit (parallel sub-agents, optional focus)
-/clean-team:audit [focus]
-```
+If an existing AUDIT-REPORT.md is detected, the command asks whether to resume refactoring or start fresh.
 
 ### Examples
 
@@ -62,17 +61,17 @@ The Auditor launches 4-12 parallel sub-agents (4 core + up to 8 web, depending o
 # Clean only src/
 /clean-team:clean src/
 
-# Standalone audit focused on CSS
-/clean-team:audit css
+# Read-only audit — full scan
+/clean-team:clean audit
 
-# Standalone audit focused on structure (expands to 5 sub-auditors)
-/clean-team:audit structure
+# Read-only audit — CSS focus
+/clean-team:clean audit css
 
-# Resume refactoring with focus on naming
-/clean-team:refactor src/ focus on naming
+# Read-only audit — structure focus
+/clean-team:clean audit structure
 
-# Resume refactoring on the auth module
-/clean-team:refactor src/auth/
+# Read-only audit — accessibility focus
+/clean-team:clean audit a11y
 ```
 
 ---
@@ -132,9 +131,10 @@ node scripts/check.js                           # Design system compliance (36 r
 
 | Version | Changes |
 |---------|---------|
-| v4.0.0 | Unified pipeline: Phase 1 (Analyze) and Phase 2 (Refactor) run as one command with a checkpoint between them. `/clean-team:clean` runs all 8 agents. `/clean-team:refactor` resumes Phase 2 from an existing audit. |
+| v4.1.0 | Consolidated three commands into one. `/clean-team:clean` now handles full pipeline, audit-only (`audit` arg), and resume (auto-detected from existing AUDIT-REPORT.md). Removed `/clean-team:audit` and `/clean-team:refactor`. |
+| v4.0.0 | Unified pipeline: Phase 1 (Analyze) and Phase 2 (Refactor) run as one command with a checkpoint between them. |
 | v3.4.0 | Added css-import-order rule, tier-structure/tier-imports enforcement, Architecture Structure Gate in Organizer |
 | v3.3.0 | Parallelized Auditor with shared sub-agent roster, added check.js (31 rules) |
-| v3.2.0 | Absorbed improvement-auditor + web-auditor into `/clean-team:audit` command |
+| v3.2.0 | Absorbed improvement-auditor + web-auditor into audit command |
 | v3.1.0 | Formatter replaced Stylist + Polisher with universal + type-specific profiles |
 | v3.0.0 | Merged old clean-team into refactor-team as Phase 1. Added Auditor (merged Explorer + Researcher). Renamed to clean-team. |

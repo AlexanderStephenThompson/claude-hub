@@ -21,7 +21,7 @@ Slash commands stored in `~/.claude/commands/`. Invoked directly with `/command-
 
 > **Note:** `/sync` is a [project-level command](../../.claude/commands/sync.md) — always available in this repo, not deployed.
 
-> **Note:** `/clean-team:audit` produces reports that `/clean-team:refactor` can consume automatically.
+> **Note:** `/clean-team:clean audit` produces reports that `/clean-team:clean` can resume from automatically.
 
 ---
 

@@ -157,7 +157,7 @@ Each slice specifies:
 
 ## Output: Refactoring Roadmap
 
-**Persist the roadmap to disk** using the Write tool so it survives interruptions and is available if the pipeline resumes via `/clean-team:refactor`:
+**Persist the roadmap to disk** using the Write tool so it survives interruptions and is available if the pipeline resumes via `/clean-team:clean`:
 
 Save to: `./REFACTORING-ROADMAP.md`
 

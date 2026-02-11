@@ -41,8 +41,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Situation | Team | Command |
 |-----------|------|---------|
-| Quick codebase health check | clean-team | `/clean-team:audit` |
-| Focused audit (CSS, a11y, perf, structure) | clean-team | `/clean-team:audit [focus]` |
+| Quick codebase health check | clean-team | `/clean-team:clean audit` |
+| Focused audit (CSS, a11y, perf, structure) | clean-team | `/clean-team:clean audit [focus]` |
 | Quick codebase tidying | clean-team | `/clean-team:clean` |
 | CSS file sprawl (>5 files) | clean-team | `/clean-team:clean` |
 | Existing codebase needs deep refactoring | clean-team | `/clean-team:clean` |
@@ -56,12 +56,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Clean-Team Pipeline
 
-The clean-team has three entry points. All produce or consume AUDIT-REPORT.md:
+One command with three modes. Auto-detects existing audit reports for resume:
 
 ```
-/clean-team:clean [scope]    → Full 8-agent pipeline with checkpoint after audit
-/clean-team:refactor [path]  → Resume refactoring from existing AUDIT-REPORT.md
-/clean-team:audit [focus]    → Standalone audit (parallel sub-agents, focus modes)
+/clean-team:clean [scope]        → Full 8-agent pipeline with checkpoint after audit
+/clean-team:clean audit [focus]  → Read-only audit (parallel sub-agents, focus modes)
 ```
 
 ## Common Commands

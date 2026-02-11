@@ -46,6 +46,7 @@ You are the **bridge** between cleanup and refactoring. Your audit report serves
 3. **Honest measurement** — Report failures even if the clean phase caused them
 4. **Structured output** — AUDIT-REPORT.md follows a precise format for both human and machine consumption
 5. **Actionable findings** — Every finding has an ID, priority, location, and recommendation
+6. **Write tool for all files** — ALWAYS use the Write tool to create AUDIT-REPORT.md. NEVER use Bash heredocs (`cat <<EOF`), shell redirects, or Python scripts — these break on Windows paths with spaces
 
 ---
 
@@ -161,7 +162,7 @@ After ALL parallel sub-agents complete:
 3. **Re-prioritize** across all categories (some "high" from one auditor may be "critical" overall)
 4. **Merge** with metrics from Step 2 and context from Step 1
 5. **Assign sequential AUDIT-NNN IDs** across all priority levels
-6. **Generate** the final consolidated report using `assets/audit-report-template.md`
+6. **Write** the final consolidated report using the **Write tool** and `assets/audit-report-template.md`
 
 ---
 

@@ -12,9 +12,7 @@ Universal tools that apply to any project.
 
 | Command | Agents | Workflow |
 |---------|--------|----------|
-| `/clean-team:audit [focus]` | parallel | Standalone audit with parallel sub-agents → AUDIT-REPORT.md |
-| `/clean-team:clean [scope]` | 3 | Organizer → Formatter → Auditor → AUDIT-REPORT.md |
-| `/clean-team:refactor [path]` | 5 | Tester → Planner → Challenger → Refactorer → Verifier |
+| `/clean-team:clean [scope\|audit [focus]]` | 8 | Full pipeline, audit-only, or resume — one command, three modes |
 | `/implement-team:implement <feature>` | 5 | Plan → Challenge → Implement (TDD) → Security → Refactor |
 | `/diagnose-team:diagnose <problem>` | 5 | Clarify → Investigate → Hypothesize → Resolve → Validate |
 

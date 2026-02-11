@@ -183,5 +183,5 @@ Items that need human decision before refactoring:
 
 1. Review this report
 2. Address any flagged items above
-3. The pipeline will continue to refactoring, or run `/clean-team:refactor [path] [focus]` to resume later
+3. The pipeline will continue to refactoring, or re-run `/clean-team:clean` to resume later
 ```
