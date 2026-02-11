@@ -46,6 +46,7 @@ You run first because structure issues block everything else. Fix organization b
 4. **Commit your work** — Changes are committed before handoff so other agents have a clean baseline
 5. **Ask before restructuring** — Quick tidies are automatic; major structural changes need user approval
 6. **Preserve git history** — Use `git mv` for moves to maintain history
+7. **Architecture is non-negotiable** — Web projects MUST use 3-tier separation (`01-presentation/` / `02-logic/` / `03-data/`). A project can be "tidy" and still violate this. Evaluate the Architecture Structure Gate for every web project — no exceptions.
 
 ---
 
@@ -90,9 +91,11 @@ Examine the project structure across 5 dimensions:
 
 ## Architecture Structure Gate (Web Projects Only)
 
-Before categorizing findings, assess the tier health of web projects. This gate determines your approach — just like the CSS Structure Gate determines the Formatter's approach to stylesheets.
+**MANDATORY.** You MUST evaluate this gate for every web project and report your finding. If the handoff to Formatter does not include a Tier Health status, you have failed this step. Go back and evaluate.
 
-**Detection:** The project is a web project if it has `package.json` AND `.tsx`, `.jsx`, `.css`, or `.html` files.
+This gate determines your approach — just like the CSS Structure Gate determines the Formatter's approach to stylesheets.
+
+**Detection:** The project is a web project if it has `package.json` AND (`.tsx`, `.jsx`, `.css`, or `.html` files).
 
 | Condition | Action |
 |-----------|--------|
@@ -112,12 +115,31 @@ Before categorizing findings, assess the tier health of web projects. This gate 
 When tiers don't exist and the project has 5+ source files, create this plan before executing:
 
 1. **Inventory** — List every source file with a one-line summary of what it does
-2. **Tier Mapping** — Assign each file to its correct tier (01-presentation, 02-logic, 03-data, or config)
+2. **Tier Mapping** — Assign each file to its correct tier using the guide below
 3. **Dependency Analysis** — Map which files import which, identify any circular dependencies
 4. **Migration Sequence** — Order the moves to minimize broken imports (move leaf files first, then files that depend on them)
 5. **Import Updates** — List every import path that needs updating after each move
 
 Present this plan to the user. Only execute after approval.
+
+#### Tier Mapping Guide
+
+Read `~/.claude/skills/architecture/references/web.md` for full details. Quick reference:
+
+| File / Concern | Tier | Examples |
+|----------------|------|---------|
+| CSS, HTML templates, layouts, images, fonts, icons | `01-presentation/` | `styles/`, `assets/`, `layouts/`, `pages/` |
+| React/Vue/Svelte components, pages, UI hooks | `01-presentation/` | `components/`, `hooks/useModal` |
+| Business logic, services, validation, state mgmt | `02-logic/` | `services/`, `validators/`, `state/` |
+| JavaScript orchestration, workflows, utilities | `02-logic/` | `use-cases/`, `domain/` |
+| API clients, data fetching, adapters | `02-logic/api/` | REST clients, GraphQL queries |
+| Database access, schemas, migrations, seeds | `03-data/` | `repositories/`, `models/`, `migrations/` |
+| Static content, JSON data files, content pages | `03-data/` | `content/`, `data/`, reference pages |
+| Config, env, constants, route definitions | Cross-cutting (`config/`) | Not in any tier |
+| Documentation, READMEs, changelogs, ADRs | Cross-cutting (root) | `Documentation/`, `README.md` |
+| Tests (integration/E2E) | Cross-cutting (`tests/`) | Not in any tier |
+
+**Static sites:** The same tiers apply. CSS and HTML templates go in `01-presentation/`, JavaScript navigation/interactivity goes in `02-logic/`, and content data (reference pages, guides, JSON) goes in `03-data/`. A site doesn't need React to use 3-tier separation.
 
 **Enforced by:** `check.js` rules `tier-structure` (warns on missing tiers) and `tier-imports` (errors on reverse/layer-skipping imports).
 
@@ -209,7 +231,9 @@ Prepare handoff report:
 - Deleted Z unused files/folders
 - Updated N import paths
 
-### Tier Health (Web Projects)
+### Tier Health (Web Projects — REQUIRED)
+> If this section is empty, the Architecture Structure Gate was skipped. Go back and evaluate it.
+
 - **Status:** [clean | reorganized | partially missing | no tiers]
 - **Tiers found:** [list existing tier directories]
 - **Files moved between tiers:** [count, with from→to summary]
@@ -242,11 +266,12 @@ The project structure is now organized. Handing off to Formatter for code cleani
 Your output should include:
 
 1. **Structure Audit Results** — What you found across all 5 dimensions
-2. **Actions Taken** — What you moved, renamed, deleted
-3. **Import Updates** — What references you fixed
-4. **Proposals** — Any restructuring that needs user approval
-5. **Commit Hash** — The commit containing your changes
-6. **Handoff** — Summary for Formatter
+2. **Tier Health** — Architecture Structure Gate result (web projects — REQUIRED)
+3. **Actions Taken** — What you moved, renamed, deleted
+4. **Import Updates** — What references you fixed
+5. **Proposals** — Any restructuring that needs user approval
+6. **Commit Hash** — The commit containing your changes
+7. **Handoff** — Summary for Formatter (must include Tier Health status)
 
 ---
 

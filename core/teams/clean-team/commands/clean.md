@@ -23,30 +23,15 @@ $ARGUMENTS
 
 ## Mode Detection
 
-Parse the arguments to determine which mode to run:
+Silently determine which mode to run. Do NOT narrate the detection steps — just do them and announce the result.
 
-### Step 1: Check for "audit" keyword
+1. **If the first argument is `audit`** (case-insensitive) → **Mode B: Audit Only**. Remaining arguments become the focus area.
 
-If the first argument is `audit` (case-insensitive):
-→ **Mode B: Audit Only**
-→ Remaining arguments become the focus area (e.g., "css", "structure", "a11y")
-
-### Step 2: Check for existing audit report
-
-If the first argument is NOT "audit":
-→ Glob for `AUDIT-REPORT*.md` in the current directory
-→ **If found:** Ask the user:
-
-```
-Found existing audit report ([filename]).
-Resume refactoring from it, or start fresh?
-```
-
-- **Resume** → Mode C: Resume Refactoring
-- **Fresh** → Mode A: Full Pipeline (will overwrite existing report)
-
-→ **If not found:** Mode A: Full Pipeline
-→ Any arguments become the scope (directory path)
+2. **Otherwise**, glob for `AUDIT-REPORT*.md` in the current directory:
+   - **Found** → Ask the user: "Found existing audit report ([filename]). Resume refactoring from it, or start fresh?"
+     - Resume → **Mode C**
+     - Fresh → **Mode A** (will overwrite existing report)
+   - **Not found** → **Mode A: Full Pipeline**. Any arguments become the scope (directory path).
 
 ### Mode Summary
 
@@ -121,15 +106,16 @@ Update each item to in_progress as you start it and completed when done.
 
 ### Step 1: Organizer
 
-**Question:** "Can I navigate this codebase?"
+**Question:** "Can I navigate this codebase, and does it follow the documented architecture?"
 
 Invoke the **@organizer** agent to:
 1. Audit project structure (root, folders, files, naming, docs)
-2. Execute quick tidies (deletes, renames, moves)
-3. Execute reorganization (merges, splits, import updates)
-4. Ask before any major restructuring
-5. Commit changes
-6. Hand off to Formatter
+2. Evaluate Architecture Structure Gate (web projects — mandatory)
+3. Execute quick tidies (deletes, renames, moves)
+4. Execute reorganization (merges, splits, import updates)
+5. Ask before any major restructuring (including tier introduction)
+6. Commit changes
+7. Hand off to Formatter with Tier Health status
 
 ### Step 2: Formatter
 
