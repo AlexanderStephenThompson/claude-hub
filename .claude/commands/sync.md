@@ -5,204 +5,154 @@ argument-hint: [push|deploy|pull]
 
 **Mode:** $ARGUMENTS
 
-# Sync Command
+# /sync
 
-Sync customizations between this repo and Claude's local config directory.
+Sync customizations between this repo and `~/.claude/`. Three modes:
 
----
+| Mode | Trigger | What Happens |
+|------|---------|-------------|
+| **Push** | `/sync` or `/sync push` | Commit + push to GitHub, then deploy |
+| **Pull** | `/sync pull` | Pull from GitHub, then deploy |
+| **Deploy** | `/sync deploy` | Deploy only (no git) |
 
 ## Paths
 
 | Name | Path |
 |------|------|
-| Repository | `c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub` |
-| Claude Home | `C:\Users\Alexa\.claude` |
+| Repo | `c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub` |
+| Home | `C:\Users\Alexa\.claude` |
 
 ---
 
-## Instructions
+## Step 1: Git
 
-### 1. Determine Mode
+Skip for deploy mode.
 
-Check `$ARGUMENTS`:
-- **Empty or "push"** (default): Push to GitHub, then deploy
-- **"deploy"**: Deploy only, no git operations
-- **"pull"**: Pull from GitHub, then deploy
-
----
-
-### 2. Execute Based on Mode
-
-#### Push Mode (default)
+**Push mode (default):**
 
 ```bash
-cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub"
-git add -A
-git status
+git add -A && git status
 ```
 
 If there are changes to commit:
-1. Analyze the changes with `git diff --cached`
-2. Create a conventional commit message based on what changed
-3. Push to origin
+1. Review with `git diff --cached`
+2. Create a conventional commit based on what changed
+3. `git push`
+
+**Pull mode:**
 
 ```bash
-git commit -m "type(scope): description"
-git push
-```
-
-Then proceed to deploy.
-
-#### Deploy Mode
-
-Skip git operations. Proceed directly to deploy.
-
-#### Pull Mode
-
-```bash
-cd "c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub"
 git pull
 ```
 
-Then proceed to deploy.
-
 ---
 
-### 3. Deploy
+## Step 2: Deploy
 
-Use PowerShell for all file operations (required on Windows).
+This step handles everything: flat files, plugin marketplace mirror, plugin installation, and reference validation. All sub-steps run every time regardless of mode.
 
-#### Step 1: Clean stale files
+**PowerShell execution:** Write PowerShell scripts to a temp `.ps1` file and run with `powershell -File <path>` to avoid bash escaping issues with `$` variables.
 
-Remove old files first so renamed or deleted items don't linger:
+### 2a: Flat files
 
-```powershell
-Remove-Item 'C:\Users\Alexa\.claude\skills\*' -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item 'C:\Users\Alexa\.claude\agents\*.md' -Force -ErrorAction SilentlyContinue
-Remove-Item 'C:\Users\Alexa\.claude\commands\*.md' -Force -ErrorAction SilentlyContinue
-```
-
-#### Step 2: Copy fresh files from all domain folders
-
-The repo uses domain folders (`core/`, `web/`, `world-building/`, `data/`). Deploy flattens everything into `~/.claude/`. Skills are discovered recursively (supports nested sub-categories like `world-building/unity/skills/`).
+Clean stale files, then copy fresh ones from all domain folders. Skills are discovered recursively (supports nested sub-categories).
 
 ```powershell
 $repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
+$home = 'C:\Users\Alexa\.claude'
 $domains = @('core', 'web', 'world-building', 'data')
 
-foreach ($domain in $domains) {
-    # Skills: recursive discovery (finds skills/ at any depth within the domain)
-    Get-ChildItem -Path (Join-Path $repo $domain) -Directory -Recurse |
+# Clean
+Remove-Item "$home\skills\*" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item "$home\agents\*.md" -Force -ErrorAction SilentlyContinue
+Remove-Item "$home\commands\*.md" -Force -ErrorAction SilentlyContinue
+
+# Copy
+foreach ($d in $domains) {
+    # Skills (recursive — finds skills/ at any depth)
+    Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
         Where-Object { $_.Name -eq 'skills' } |
-        ForEach-Object {
-            Copy-Item -Path "$($_.FullName)\*" -Destination 'C:\Users\Alexa\.claude\skills\' -Recurse -Force
-        }
+        ForEach-Object { Copy-Item "$($_.FullName)\*" "$home\skills\" -Recurse -Force }
 
-    # Agents: flat discovery
-    $agentsPath = Join-Path $repo "$domain\agents"
-    if (Test-Path $agentsPath) {
-        Get-ChildItem "$agentsPath\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination 'C:\Users\Alexa\.claude\agents\' -Force
-    }
+    # Agents (flat)
+    $a = Join-Path $repo "$d\agents"
+    if (Test-Path $a) { Get-ChildItem "$a\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$home\agents\" -Force }
 
-    # Commands: flat discovery
-    $commandsPath = Join-Path $repo "$domain\commands"
-    if (Test-Path $commandsPath) {
-        Get-ChildItem "$commandsPath\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination 'C:\Users\Alexa\.claude\commands\' -Force
-    }
-
+    # Commands (flat)
+    $c = Join-Path $repo "$d\commands"
+    if (Test-Path $c) { Get-ChildItem "$c\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$home\commands\" -Force }
 }
 ```
 
----
+### 2b: Plugin marketplace mirror
 
-### 4. Reinstall Team Plugins
-
-#### Step 4a: Update marketplace mirror
-
-The plugin system reads from a local mirror of the GitHub repo. This must be refreshed before reinstalling, otherwise the install pulls stale versions.
+**CRITICAL — this must run before plugin reinstall.** The plugin system reads from a local git clone (`~/.claude/plugins/marketplaces/claude-hub/`). Without refreshing it, `claude plugin install` pulls stale versions and the reinstall is a no-op.
 
 ```bash
 claude plugin marketplace update
 ```
 
-#### Step 4b: Discover teams
-
-Scan for `.claude-plugin/plugin.json` under any domain folder. This ensures new teams are always picked up without editing this file.
+### 2c: Discover teams and clean stale cache
 
 ```powershell
 $repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
-$teams = Get-ChildItem $repo -Directory -Recurse | Where-Object {
-    Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json')
-} | ForEach-Object { $_.Name }
+$cache = 'C:\Users\Alexa\.claude\plugins\cache\claude-hub'
+
+# Discover teams (any folder with .claude-plugin/plugin.json)
+$teams = Get-ChildItem $repo -Directory -Recurse |
+    Where-Object { Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json') } |
+    ForEach-Object { $_.Name }
+
+# Remove cache entries for teams no longer in the repo
+if (Test-Path $cache) {
+    Get-ChildItem $cache -Directory |
+        Where-Object { $_.Name -notin $teams } |
+        ForEach-Object { Remove-Item $_.FullName -Recurse -Force; "Removed stale cache: $($_.Name)" }
+}
+
 $teams
 ```
 
-#### Step 4c: Clean stale plugin cache
+### 2d: Reinstall each team
 
-Remove cached versions for teams no longer in the repo and old versions of current teams:
-
-```powershell
-$cacheRoot = 'C:\Users\Alexa\.claude\plugins\cache\claude-hub'
-if (Test-Path $cacheRoot) {
-    Get-ChildItem $cacheRoot -Directory | Where-Object { $_.Name -notin $teams } |
-        ForEach-Object { Remove-Item $_.FullName -Recurse -Force; Write-Output "Removed stale team cache: $($_.Name)" }
-}
-```
-
-#### Step 4d: Reinstall each team
-
-For each team found, uninstall then install:
+For each team discovered above:
 
 ```bash
 claude plugin uninstall <team-name> && claude plugin install <team-name>
 ```
 
-If a team isn't installed yet, the uninstall will fail silently — just install it.
+If a team isn't installed yet, the uninstall fails silently — just install it.
 
-**Important:** New teams must also be registered in `.claude-plugin/marketplace.json` or `claude plugin install` won't find them.
+**New teams** must be registered in `.claude-plugin/marketplace.json` or `claude plugin install` won't find them. Keep `marketplace.json` version in sync with `plugin.json` version.
 
----
+### 2e: Validate references
 
-### 5. Sync Global CLAUDE.md
+Check for stale references left behind by removed skills or teams:
 
-The global `~/.claude/CLAUDE.md` references deployed skills by name. After deploy, verify it only references skills that actually exist:
+1. **`~/.claude/CLAUDE.md`** — Read the file and cross-check skill names against `~/.claude/skills/`. Remove any references to skills that weren't deployed. The repo's `CLAUDE.md` is the source of truth.
 
-```powershell
-# Get deployed skill names
-$deployedSkills = Get-ChildItem 'C:\Users\Alexa\.claude\skills' -Directory | Select-Object -ExpandProperty Name
-
-# Check CLAUDE.md for skill references that don't exist
-$claudeMd = Get-Content 'C:\Users\Alexa\.claude\CLAUDE.md' -Raw
-```
-
-If `~/.claude/CLAUDE.md` references a skill that wasn't deployed (e.g., a skill removed from the repo), remove that reference. The repo's `CLAUDE.md` is the source of truth for the skill list.
+2. **`~/.claude/settings.json`** — Check `enabledPlugins` for entries referencing teams not discovered above. Remove stale entries.
 
 ---
 
-### 6. Clean Stale Plugin References
+## Step 3: Report
 
-Check `~/.claude/settings.json` for `enabledPlugins` entries that reference teams no longer in the repo. Compare against teams discovered in Step 4 — remove any entries for teams that don't exist.
-
-```powershell
-# Read settings.json and check enabledPlugins keys
-# Remove any <name>@claude-hub entries where <name> is not a discovered team
-```
-
----
-
-### 7. Verify & Report
+Count what was deployed and report:
 
 ```powershell
-Get-ChildItem 'C:\Users\Alexa\.claude\skills' -Directory | Select-Object Name
-Get-ChildItem 'C:\Users\Alexa\.claude\agents\*.md' | Select-Object Name
-Get-ChildItem 'C:\Users\Alexa\.claude\commands\*.md' | Select-Object Name
+$home = 'C:\Users\Alexa\.claude'
+$skills = (Get-ChildItem "$home\skills" -Directory -ErrorAction SilentlyContinue).Count
+$agents = (Get-ChildItem "$home\agents\*.md" -ErrorAction SilentlyContinue).Count
+$commands = (Get-ChildItem "$home\commands\*.md" -ErrorAction SilentlyContinue).Count
+"$skills skills, $agents agents, $commands commands"
 ```
 
-Report what was synced:
-- Number of skills deployed
-- Number of agents deployed
-- Number of commands deployed
-- Team plugins reinstalled
-- Stale references cleaned (from CLAUDE.md or settings.json)
-- Any files that were cleaned up (existed before but not in repo)
-- Git status (if push/pull mode)
+Report format:
+
+```
+Synced:
+- X skills, X agents, X commands
+- X team plugins reinstalled (team@version, team@version, ...)
+- Stale references cleaned: [list or "none"]
+- Git: [committed + pushed / pulled / skipped]
+```

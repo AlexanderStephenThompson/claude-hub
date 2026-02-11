@@ -65,46 +65,17 @@ One command with three modes. Auto-detects existing audit reports for resume:
 
 ## Common Commands
 
-### Full Sync (pull + deploy + reinstall)
+### Sync
 
-Use `/sync pull` or run manually:
+`/sync` handles everything: git operations, flat file deployment, marketplace mirror refresh, plugin reinstallation, and stale reference cleanup.
 
-```bash
-git pull
+```
+/sync           Commit + push to GitHub, then deploy everything
+/sync pull      Pull from GitHub, then deploy everything
+/sync deploy    Deploy only (no git)
 ```
 
-```powershell
-$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
-$domains = @('core', 'web', 'world-building', 'data')
-
-# Clean stale files
-Remove-Item 'C:\Users\Alexa\.claude\skills\*' -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item 'C:\Users\Alexa\.claude\agents\*.md' -Force -ErrorAction SilentlyContinue
-Remove-Item 'C:\Users\Alexa\.claude\commands\*.md' -Force -ErrorAction SilentlyContinue
-
-# Copy fresh files from all domains (skills discovered recursively for nested sub-categories)
-foreach ($domain in $domains) {
-    Get-ChildItem -Path (Join-Path $repo $domain) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'skills' } |
-        ForEach-Object { Copy-Item "$($_.FullName)\*" 'C:\Users\Alexa\.claude\skills\' -Recurse -Force }
-    $ap = Join-Path $repo "$domain\agents"
-    if (Test-Path $ap) { Get-ChildItem "$ap\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination 'C:\Users\Alexa\.claude\agents\' -Force }
-    $cp = Join-Path $repo "$domain\commands"
-    if (Test-Path $cp) { Get-ChildItem "$cp\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination 'C:\Users\Alexa\.claude\commands\' -Force }
-}
-```
-
-```bash
-# Reinstall team plugins (discovers teams dynamically from any domain folder)
-# For each team found, run:
-claude plugin uninstall <team-name> && claude plugin install <team-name>
-```
-
-Note: `claude plugin marketplace update` updates the cache, not installed plugins. New teams are picked up automatically via `.claude-plugin/marketplace.json`.
-
-**Post-deploy checks** (the `/sync` command handles these automatically):
-- Verify `~/.claude/CLAUDE.md` only references skills that were deployed (remove stale refs)
-- Verify `~/.claude/settings.json` `enabledPlugins` only lists installed teams (remove stale refs)
+Deploy covers: flat files (skills, agents, commands) + `claude plugin marketplace update` + team plugin reinstall + cache cleanup + reference validation. See [sync.md](.claude/commands/sync.md) for full steps.
 
 ### Analysis Scripts (clean-team)
 ```bash
@@ -122,7 +93,7 @@ node core/teams/clean-team/scripts/check.js                           # Design s
 | Web skills | `web/skills/<skill>/` | `/sync deploy` |
 | World-building skills | `world-building/skills/<skill>/` | `/sync deploy` |
 | Data skills | `data/skills/<skill>/` | `/sync deploy` |
-| Teams | `*/teams/<team>/` | Update `.claude-plugin/marketplace.json`, `/sync push` |
+| Teams | `*/teams/<team>/` | Update both `plugin.json` AND `.claude-plugin/marketplace.json` (versions must match), then `/sync push` |
 | Agents | `core/agents/` | `/sync deploy` |
 | Commands | `core/commands/` | `/sync deploy` |
 | Templates | `*/templates/<name>/` | Copy to new project directory |
@@ -133,7 +104,7 @@ node core/teams/clean-team/scripts/check.js                           # Design s
 
 ## File Conventions
 
-- Commands: lowercase (`commit.md`, `audit.md`)
+- Commands: lowercase (`commit.md`, `clean.md`)
 - Agents: kebab-case (`new-codebase-scout.md`)
 - Skills: `<domain>/skills/<name>/SKILL.md` as main file
 - Audit reports: `AUDIT-REPORT-[YYYY-MM-DD].md`
