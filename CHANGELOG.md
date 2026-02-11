@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-02-11
+
+### Changed
+- **clean-team v4.0.0 → v4.1.0** — Consolidated three commands (`/clean-team:clean`, `/clean-team:audit`, `/clean-team:refactor`) into one: `/clean-team:clean [scope|audit [focus]]`. Mode detection routes to full pipeline, audit-only, or resume based on arguments and existing audit report.
+- **Two-phase communication** — Pipeline now explicitly announces Phase 1 (Analyze) and Phase 2 (Refactor) with phase-labeled todo lists showing all 9 steps.
+- **Auditor Write tool reinforcement** — Added 3 layers of instruction to prevent Bash heredoc usage on Windows (Core Principle, action point, output section).
+- **`/sync` command rewritten** — Simplified from 7 steps to 3. Added marketplace mirror refresh before plugin reinstall. Removed duplicate deploy scripts from CLAUDE.md.
+- **`marketplace.json`** — Updated clean-team version from 3.3.0 to 4.1.0.
+
+### Removed
+- `/clean-team:audit` command — Folded into `/clean-team:clean audit [focus]`
+- `/clean-team:refactor` command — Folded into `/clean-team:clean` (auto-detected resume from existing audit report)
+
+---
+
+## [4.0.0] - 2026-02-10
+
+### Changed
+- **clean-team v3.4.0 → v4.0.0** — Unified pipeline: Phase 1 (Analyze: Organizer → Formatter → Auditor) and Phase 2 (Refactor: Tester → Planner → Challenger → Refactorer → Verifier) run as one command with a checkpoint between them.
+- **Renamed refactor-team → clean-team** — The team was originally called refactor-team (v1.0–v3.4). Renamed to clean-team to better reflect its expanded scope (cleanup + audit + refactoring).
+- **Design tokens** — Revised design token system and skill updates.
+
+---
+
 ## [3.1.0] - 2026-02-07
 
 ### Added
@@ -30,6 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [3.0.0] - 2026-02-05
+
+> **Note:** v3.0.0–v3.4.0 used the name **refactor-team**. This was renamed to **clean-team** in v4.0.0.
 
 ### Added
 - **Domain folder structure** — Organized repo into `core/`, `web/`, `world-building/`, `data/`. Sync deploys flat to `~/.claude/`.
