@@ -20,7 +20,7 @@ Sync customizations between this repo and `~/.claude/`. Three modes:
 | Name | Path |
 |------|------|
 | Repo | `c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub` |
-| Home | `C:\Users\Alexa\.claude` |
+| Claude | `C:\Users\Alexa\.claude` |
 
 ---
 
@@ -49,73 +49,67 @@ git pull
 
 ## Step 2: Deploy
 
-This step handles everything: flat files, plugin marketplace mirror, plugin installation, and reference validation. All sub-steps run every time regardless of mode.
+Handles everything: flat files, plugin marketplace, and plugin installation. All sub-steps run every time regardless of mode.
 
-**PowerShell execution:** Write PowerShell scripts to a temp `.ps1` file and run with `powershell -File <path>` to avoid bash escaping issues with `$` variables.
+**PowerShell execution:** Write scripts to a temp `.ps1` file and run with `powershell -File <path>` to avoid bash `$` variable escaping issues.
 
-### 2a: Flat files
+### 2a: Flat files, team discovery, and cache cleanup
 
-Clean stale files, then copy fresh ones from all domain folders. Skills are discovered recursively (supports nested sub-categories).
+One script that deploys flat files, discovers teams, clears stale plugin cache, and counts results:
 
 ```powershell
 $repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
-$home = 'C:\Users\Alexa\.claude'
+$claude = 'C:\Users\Alexa\.claude'
 $domains = @('core', 'web', 'world-building', 'data')
 
-# Clean
-Remove-Item "$home\skills\*" -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item "$home\agents\*.md" -Force -ErrorAction SilentlyContinue
-Remove-Item "$home\commands\*.md" -Force -ErrorAction SilentlyContinue
+# --- Deploy flat files ---
+Remove-Item "$claude\skills\*" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item "$claude\agents\*.md" -Force -ErrorAction SilentlyContinue
+Remove-Item "$claude\commands\*.md" -Force -ErrorAction SilentlyContinue
 
-# Copy
 foreach ($d in $domains) {
     # Skills (recursive — finds skills/ at any depth)
     Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
         Where-Object { $_.Name -eq 'skills' } |
-        ForEach-Object { Copy-Item "$($_.FullName)\*" "$home\skills\" -Recurse -Force }
+        ForEach-Object { Copy-Item "$($_.FullName)\*" "$claude\skills\" -Recurse -Force }
 
     # Agents (flat)
     $a = Join-Path $repo "$d\agents"
-    if (Test-Path $a) { Get-ChildItem "$a\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$home\agents\" -Force }
+    if (Test-Path $a) { Get-ChildItem "$a\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\agents\" -Force }
 
     # Commands (flat)
     $c = Join-Path $repo "$d\commands"
-    if (Test-Path $c) { Get-ChildItem "$c\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$home\commands\" -Force }
+    if (Test-Path $c) { Get-ChildItem "$c\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\commands\" -Force }
 }
+
+# --- Discover teams ---
+$teams = Get-ChildItem $repo -Directory -Recurse |
+    Where-Object { Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json') } |
+    ForEach-Object { $_.Name }
+
+# --- Clear plugin cache (rebuilt fresh on install) ---
+$cache = "$claude\plugins\cache\claude-hub"
+if (Test-Path $cache) { Remove-Item $cache -Recurse -Force }
+
+# --- Report counts ---
+$skills = (Get-ChildItem "$claude\skills" -Directory -ErrorAction SilentlyContinue).Count
+$agents = (Get-ChildItem "$claude\agents\*.md" -ErrorAction SilentlyContinue).Count
+$commands = (Get-ChildItem "$claude\commands\*.md" -ErrorAction SilentlyContinue).Count
+"Deployed: $skills skills, $agents agents, $commands commands"
+"Teams: $($teams -join ', ')"
 ```
 
-### 2b: Plugin marketplace mirror
+### 2b: Refresh marketplace mirror
 
-**CRITICAL — this must run before plugin reinstall.** The plugin system reads from a local git clone (`~/.claude/plugins/marketplaces/claude-hub/`). Without refreshing it, `claude plugin install` pulls stale versions and the reinstall is a no-op.
+**CRITICAL — must run before plugin reinstall.** The plugin system reads from a local git clone, not GitHub directly. Without refreshing, `claude plugin install` pulls stale versions.
 
 ```bash
 claude plugin marketplace update
 ```
 
-### 2c: Discover teams and clean stale cache
+### 2c: Reinstall each team
 
-```powershell
-$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
-$cache = 'C:\Users\Alexa\.claude\plugins\cache\claude-hub'
-
-# Discover teams (any folder with .claude-plugin/plugin.json)
-$teams = Get-ChildItem $repo -Directory -Recurse |
-    Where-Object { Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json') } |
-    ForEach-Object { $_.Name }
-
-# Remove cache entries for teams no longer in the repo
-if (Test-Path $cache) {
-    Get-ChildItem $cache -Directory |
-        Where-Object { $_.Name -notin $teams } |
-        ForEach-Object { Remove-Item $_.FullName -Recurse -Force; "Removed stale cache: $($_.Name)" }
-}
-
-$teams
-```
-
-### 2d: Reinstall each team
-
-For each team discovered above:
+For each team from 2a:
 
 ```bash
 claude plugin uninstall <team-name> && claude plugin install <team-name>
@@ -123,36 +117,17 @@ claude plugin uninstall <team-name> && claude plugin install <team-name>
 
 If a team isn't installed yet, the uninstall fails silently — just install it.
 
-**New teams** must be registered in `.claude-plugin/marketplace.json` or `claude plugin install` won't find them. Keep `marketplace.json` version in sync with `plugin.json` version.
+**New teams** must be registered in `.claude-plugin/marketplace.json` or install won't find them. Keep `marketplace.json` version in sync with `plugin.json` version.
 
-### 2e: Validate references
-
-Check for stale references left behind by removed skills or teams:
-
-1. **`~/.claude/CLAUDE.md`** — Read the file and cross-check skill names against `~/.claude/skills/`. Remove any references to skills that weren't deployed. The repo's `CLAUDE.md` is the source of truth.
-
-2. **`~/.claude/settings.json`** — Check `enabledPlugins` for entries referencing teams not discovered above. Remove stale entries.
+> **Optional cleanup:** If skills or teams were removed from the repo, check `~/.claude/CLAUDE.md` for stale skill references and `~/.claude/settings.json` for stale `enabledPlugins` entries.
 
 ---
 
 ## Step 3: Report
 
-Count what was deployed and report:
-
-```powershell
-$home = 'C:\Users\Alexa\.claude'
-$skills = (Get-ChildItem "$home\skills" -Directory -ErrorAction SilentlyContinue).Count
-$agents = (Get-ChildItem "$home\agents\*.md" -ErrorAction SilentlyContinue).Count
-$commands = (Get-ChildItem "$home\commands\*.md" -ErrorAction SilentlyContinue).Count
-"$skills skills, $agents agents, $commands commands"
-```
-
-Report format:
-
 ```
 Synced:
 - X skills, X agents, X commands
-- X team plugins reinstalled (team@version, team@version, ...)
-- Stale references cleaned: [list or "none"]
+- X team plugins reinstalled (team@version, ...)
 - Git: [committed + pushed / pulled / skipped]
 ```
