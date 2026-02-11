@@ -162,6 +162,47 @@ Scaffolding is working when it passes these checks:
 
 When you encounter scaffolding that passes these checks, **acknowledge it as useful structure** rather than flagging it for removal. Note where content has filled in and where it hasn't, but don't recommend tearing down the framework.
 
+**Example — good scaffolding in a world-building project:**
+
+```
+VR World/
+├── Arctic/
+│   ├── Locations/
+│   │   ├── Commercial/
+│   │   │   ├── _Ideas/
+│   │   │   └── Winter Lodge Restaurant/    ← named, filling in
+│   │   ├── Natural/
+│   │   │   └── _Ideas/
+│   │   └── Residential/
+│   │       └── Dream House/                ← built out with rooms
+│   └── Residents/
+│       └── Alexander Borealis/             ← named character
+├── Forest/                                  ← same template, different fill state
+│   └── Residents/
+│       ├── Big Bear/                        ← fully developed
+│       └── Zebra Fox/
+└── Desert/                                  ← same template, less filled
+    └── ...
+```
+
+The template is consistent, reflects the world-building domain (biomes × content types), and is progressively filling with real content. The empty slots are a content roadmap, not noise.
+
+**Example — good scaffolding in a content pipeline:**
+
+```
+character-types/
+├── bears/images/
+│   ├── head/        (31 files)              ← filling in
+│   ├── body/        (15 files)
+│   └── tail/        (0 files)               ← empty but expected
+├── dogs/images/
+│   ├── head/        (26 files)
+│   └── legs-and-feet/ (28 files)
+└── foxes/images/                            ← mostly empty, work not started yet
+```
+
+Same body-part template across 25 species. Bears and dogs are well-populated; foxes haven't started yet. The empty folders are task slots in a production pipeline.
+
 ### Scattered Clutter (Flag It)
 
 Scaffolding has become clutter when:
@@ -291,6 +332,14 @@ File names should communicate what the file contains at a glance. A good file na
 | **Files inside a transit folder (`~`)** | **Ignore** — transit content is WIP |
 | **Files in a scaffolding placeholder** | Ignore — will be renamed when content arrives |
 | **A handful of files with obvious visual context** | Low priority |
+
+#### Suggesting Better Names
+
+When flagging non-semantic names, suggest replacements based on:
+1. **The folder context** — a file in `Arctic/Locations/Natural/_Ideas/` is probably a nature/landscape reference
+2. **The file's visible content** — if you can read the image, describe what you see
+3. **Sibling files** — if named files exist alongside unnamed ones, match the pattern
+4. **Don't require perfection** — `snowy-village.jpg` is better than `241076.jpg`, even if it's not a complete description
 
 ---
 
