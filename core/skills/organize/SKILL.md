@@ -162,47 +162,6 @@ Scaffolding is working when it passes these checks:
 
 When you encounter scaffolding that passes these checks, **acknowledge it as useful structure** rather than flagging it for removal. Note where content has filled in and where it hasn't, but don't recommend tearing down the framework.
 
-**Example — good scaffolding in a world-building project:**
-
-```
-VR World/
-├── Arctic/
-│   ├── Locations/
-│   │   ├── Commercial/
-│   │   │   ├── _Ideas/
-│   │   │   └── Winter Lodge Restaurant/    ← named, filling in
-│   │   ├── Natural/
-│   │   │   └── _Ideas/
-│   │   └── Residential/
-│   │       └── Dream House/                ← built out with rooms
-│   └── Residents/
-│       └── Alexander Borealis/             ← named character
-├── Forest/                                  ← same template, different fill state
-│   └── Residents/
-│       ├── Big Bear/                        ← fully developed
-│       └── Zebra Fox/
-└── Desert/                                  ← same template, less filled
-    └── ...
-```
-
-The template is consistent, reflects the world-building domain (biomes × content types), and is progressively filling with real content. The empty slots are a content roadmap, not noise.
-
-**Example — good scaffolding in a content pipeline:**
-
-```
-character-types/
-├── bears/images/
-│   ├── head/        (31 files)              ← filling in
-│   ├── body/        (15 files)
-│   └── tail/        (0 files)               ← empty but expected
-├── dogs/images/
-│   ├── head/        (26 files)
-│   └── legs-and-feet/ (28 files)
-└── foxes/images/                            ← mostly empty, work not started yet
-```
-
-Same body-part template across 25 species. Bears and dogs are well-populated; foxes haven't started yet. The empty folders are task slots in a production pipeline.
-
 ### Scattered Clutter (Flag It)
 
 Scaffolding has become clutter when:
@@ -290,8 +249,6 @@ If any level exceeds its max, it's a signal to split or restructure.
 
 ### Context-Sensitive Naming Rules
 
-Some naming rules depend on where the folders live. Apply the right set:
-
 | Context | Spaces OK? | Hyphens/underscores required? | Why |
 |---------|-----------|------------------------------|-----|
 | **Personal/creative drives** | Yes | No — readability matters more | `Winter Lodge Restaurant` is easier to read than `Winter-Lodge-Restaurant`. OS handles spaces natively |
@@ -302,19 +259,18 @@ Some naming rules depend on where the folders live. Apply the right set:
 
 ### File Name Semantics
 
-Beyond folder names, individual **file names** should communicate what the file contains at a glance. A good file name answers "what is this?" without opening it. A bad file name forces you to open, preview, or remember.
+File names should communicate what the file contains at a glance. A good file name answers "what is this?" without opening it.
 
 #### Non-Semantic Names (Flag These)
 
 | Pattern | Example | Problem |
 |---------|---------|---------|
-| **Hash / ID strings** | `50bacb7db3dbda5ba74ce3b7e51aa624.jpg` | Tells you nothing. Could be anything |
-| **Generic defaults** | `Untitled.png`, `images.jfif`, `download (1).jfif` | Indistinguishable from every other default-named file |
-| **Screenshot auto-names** | `Screenshot (163).png` | The number is meaningless — what's in the screenshot? |
-| **Bare timestamps** | `photo_2021-03-15_09-25-00.jpg` | When it was taken, not what it shows |
-| **AI generation prompts as filenames** | `alexandersthompson_UI_design_of_a_Forest_Exploration_Game_Landi_d400767c...png` | The prompt is useful context but too long for a filename. Truncated hashes make it worse |
-| **Platform export names** | `IMG_20200417_180854_994.jpg`, `1568483796.pastelcore_noah_hippo.png` | Camera roll IDs or platform metadata, not content descriptors |
-| **URL slugs** | `most-beautiful-places-in-the-world-pamukkale.jpeg` | SEO text from the source website, not your description |
+| **Hash / ID strings** | `50bacb7db3dbda5ba74ce3b7e51aa624.jpg` | Tells you nothing |
+| **Generic defaults** | `Untitled.png`, `download (1).jfif` | Indistinguishable |
+| **Screenshot auto-names** | `Screenshot (163).png` | What's in the screenshot? |
+| **Bare timestamps** | `photo_2021-03-15_09-25-00.jpg` | When, not what |
+| **AI prompts as filenames** | `alexandersthompson_UI_design_of_a_Forest...png` | Too long, truncated hashes |
+| **Platform export names** | `IMG_20200417_180854_994.jpg` | Camera roll IDs |
 
 #### What Makes a Good File Name
 
@@ -322,35 +278,23 @@ Beyond folder names, individual **file names** should communicate what the file 
 |-----------|---------|
 | **Describes the content** | `ice-cave-interior.jpg` not `89381.jpg` |
 | **Uses your vocabulary** | `bear-head-front-view.png` not `head-01.jpg` |
-| **Distinguishes from siblings** | `moraine-lake-sunrise.jpg` and `crater-lake-aerial.jpg` not `image1.jpg` and `image2.jpg` |
-| **Keeps reasonable length** | 3-6 words. Long enough to identify, short enough to scan |
-| **Preserves useful metadata as a suffix** | `desert-canyon-ref_antelope-canyon.jpg` — your description first, source attribution after |
+| **Distinguishes from siblings** | `moraine-lake-sunrise.jpg` and `crater-lake-aerial.jpg` |
+| **Keeps reasonable length** | 3-6 words |
+| **Preserves useful metadata as a suffix** | `desert-canyon-ref_antelope-canyon.jpg` |
 
 #### When to Flag vs. When to Ignore
 
-Not every non-semantic filename is worth flagging. Apply context:
-
 | Situation | Action |
 |-----------|--------|
-| **Files in a curated, final-destination folder** | Flag non-semantic names — these are artifacts you'll revisit |
-| **Files in `_Ideas/` or reference/inspiration folders** | Flag if the folder has 10+ files and they're all hashes/timestamps — batch renaming would help navigation |
-| **Files inside a transit folder (`~`)** | **Ignore** — transit content is WIP (see *Transit Folder Analysis Scope*) |
-| **Files in a scaffolding placeholder** | Ignore — the placeholder will be renamed when content arrives |
-| **A handful of files with obvious visual context** (e.g., 3 photos in a character folder) | Low priority — if you can visually browse them, names matter less |
-
-#### Suggesting Better Names
-
-When flagging non-semantic names, suggest replacements based on:
-1. **The folder context** — a file in `Arctic/Locations/Natural/_Ideas/` is probably a nature/landscape reference
-2. **The file's visible content** — if you can read the image, describe what you see
-3. **Sibling files** — if named files exist alongside unnamed ones, match the pattern
-4. **Don't require perfection** — `snowy-village.jpg` is better than `241076.jpg`, even if it's not a complete description
+| **Files in a curated, final-destination folder** | Flag — these are artifacts you'll revisit |
+| **Files in `_Ideas/` or reference folders** | Flag if 10+ files with hashes/timestamps |
+| **Files inside a transit folder (`~`)** | **Ignore** — transit content is WIP |
+| **Files in a scaffolding placeholder** | Ignore — will be renamed when content arrives |
+| **A handful of files with obvious visual context** | Low priority |
 
 ---
 
 ## Decision Guide: Where Does This File Go?
-
-When you have a file and don't know where to put it, ask these questions in order. Stop at the first "yes."
 
 | Ask yourself... | If yes → |
 |-----------------|----------|
@@ -365,23 +309,19 @@ When you have a file and don't know where to put it, ask these questions in orde
 
 ## Active vs Reference: The Intent Test
 
-Folders serve two different cognitive purposes. Mixing them creates confusion.
-
 | Folder type | Purpose | Brain mode | Examples |
 |-------------|---------|------------|---------|
-| **Active (doing)** | Work in progress, projects, deliverables | "I'm producing something" | `Launch/`, `Ship/`, `Hire/`, `Campaign/` |
-| **Reference (knowing)** | Lookup material, policies, standards, guides | "I'm finding an answer" | `Reference/`, `Policies/`, `Standards/`, `Templates/` |
+| **Active (doing)** | Work in progress, projects, deliverables | "I'm producing something" | `Launch/`, `Ship/`, `Hire/` |
+| **Reference (knowing)** | Lookup material, policies, standards, guides | "I'm finding an answer" | `Reference/`, `Policies/`, `Standards/` |
 
 **The test:** "Am I opening this folder to *do work* or to *look something up*?"
 
-- If both → split into two L2 folders. The active folder holds the work and links to the reference folder for lookup.
-- Active folders archive when the work is done. Reference folders persist.
+- If both → split into two L2 folders. The active folder holds the work and links to the reference folder.
+- Active folders archive when work is done. Reference folders persist.
 
 ---
 
 ## Overlap Resolution
-
-When a file feels like it belongs in two places, use this pattern:
 
 > **The active folder owns the work. The reference folder owns the knowledge. They link to each other — never duplicate.**
 
@@ -398,7 +338,7 @@ When a file feels like it belongs in two places, use this pattern:
 
 ## System Folders
 
-Some folders are infrastructure, not content. They support the system itself rather than holding domain-specific work. These use a **leading underscore** to signal "this is a system folder — don't file your work here."
+Infrastructure folders that support the structure, not content. Use a **leading underscore**.
 
 | System Folder | Purpose | Scope |
 |---------------|---------|-------|
@@ -421,183 +361,29 @@ Some folders are infrastructure, not content. They support the system itself rat
 
 ## Transit Folders
 
-Some folders hold content that is **actively being moved** from one location to another. This is distinct from `_Unsorted/` (destination unknown) — transit folders have a known destination and an in-progress migration. These use a **leading tilde** (`~`) to signal "this content is in transit — it has a destination and shouldn't live here permanently."
+Folders holding content that is **actively being moved** to a known destination. Use a **leading tilde** (`~`). Distinct from `_Unsorted/` (destination unknown).
 
-| Transit Folder | Purpose | Example |
-|----------------|---------|---------|
-| `~Transfer/` | Staging area for content being moved into a project | Raw assets being processed into final structure |
-| `~Import/` | Incoming content being integrated from an external source | Files from a collaborator being sorted into the project |
-| `~Migrate/` | Content moving between organizational structures | Files being reorganized from an old hierarchy to a new one |
+| Folder | Purpose |
+|--------|---------|
+| `~Transfer/` | Staging area for content being moved into a project |
+| `~Import/` | Incoming content from an external source |
+| `~Migrate/` | Content moving between organizational structures |
 
-### How Transit Differs from System Folders
+Key rules: always tilde-prefixed, include a date suffix (`~Transfer 2026-02/`), include `_STATUS.md` for multi-session transfers, delete when empty.
 
-| Prefix | Meaning | Duration | Destination |
-|--------|---------|----------|-------------|
-| `_` (underscore) | System infrastructure — supports the structure | Permanent | N/A — it IS the destination |
-| `~` (tilde) | Content in active transit | Temporary | Known — the content has a final home |
-
-`_Unsorted/` means "I don't know where this goes yet." `~Transfer/` means "I know exactly where this goes — I'm actively moving it."
-
-### Naming Convention
-
-Transit folders use **two signals** to communicate their status: a **date suffix** on the folder name and a **`_STATUS.md`** file inside.
-
-#### Date Suffix
-
-Append the year-month the transfer was started or last actively worked on:
-
-```
-~Transfer 2026-02/          ← started or last active February 2026
-~Import 2025-11/            ← started or last active November 2025
-```
-
-The date provides at-a-glance recency. When you return to a transit folder after time away, update the date suffix to the current month to signal "I'm back on this."
-
-#### _STATUS.md
-
-Every transit folder that can't be completed in a single session should contain a `_STATUS.md` file:
-
-```markdown
-# Transfer Status
-
-**Destination:** Implement/Location building/
-**Started:** 2026-01
-**Last active:** 2026-02-07
-
-## What's being transferred
-Updated location development reference material — interior design
-principles, room layouts, architectural details.
-
-## What's left
-- [ ] Interior/Lighting — needs curating
-- [ ] Interior/Floor Plans — destination empty, source has drafts
-- [x] Interior/Details — done
-- [x] Exterior/ — done
-
-## Notes
-~ Floor Space Design and ~Anthropometrics are still being refined
-before moving to destination.
-```
-
-The `_STATUS.md` is the definitive answer to "is this active or stale?" If the file exists and describes remaining work with recent dates, the transfer is active. If the file is missing or outdated, the transfer needs attention.
-
-### Rules for Transit Folders
-
-| Rule | Rationale |
-|------|-----------|
-| **Always tilde-prefixed** | Visually distinct from both content folders and `_` system folders |
-| **Include a date suffix** | `~Transfer 2026-02/` — at-a-glance recency without opening the folder |
-| **Include `_STATUS.md` for multi-session transfers** | Documents what's moving, where, and what's left. The single source of truth for transfer state |
-| **Transit folders are temporary** | They exist only while migration is in progress. When the transfer is complete, delete the source `~` folder |
-| **Don't nest transit folders at the top level** | `~Transfer/~Import/` is a red flag — each transit operation gets one `~` folder |
-| **`~` subfolders within a destination are OK** | A `~`-prefixed subfolder inside a destination folder means "this area is still receiving content." Remove the `~` when that subfolder's transfer is complete |
-| **Parallel structure is a good sign** | If the transit folder mirrors the destination's structure, the transfer is well-organized. This is correct, not a duplication problem |
-
-### Where `~` Can Appear
-
-| Location | Meaning | Example |
-|----------|---------|---------|
-| **Top-level transit folder** | "This entire folder is a staging area" | `~Transfer 2026-02/` |
-| **Subfolder inside a transit folder** | Redundant but harmless — everything inside `~` is already in transit | `~Transfer/~Drafts/` |
-| **Subfolder inside a destination** | "This specific area is still receiving content from a transit source" | `Implement/~Floor Space Design/` |
-| **A destination folder itself** | **Never.** The destination is the final home — it should have a normal name | ~~`~Implement/`~~ |
-
-### Transit Folder Lifecycle
-
-```
-Created → Active → Draining → Empty → Deleted
-```
-
-| Stage | What It Looks Like | Action |
-|-------|-------------------|--------|
-| **Created** | `~Transfer YYYY-MM/` appears with raw content and a `_STATUS.md` | Begin sorting content into its destination |
-| **Active** | Files are being moved; `_STATUS.md` shows remaining work | Continue processing. Update the date suffix if a month boundary passes |
-| **Draining** | Most content moved, only stragglers remain. `_STATUS.md` mostly checked off | Prioritize finishing — don't let it stall |
-| **Empty** | All content has been moved to its final home | Delete `~Transfer/` immediately. Remove any `~` prefixes from destination subfolders |
-| **Stale** | See staleness signals below | Decide: finish the transfer or abandon and delete |
-
-### Staleness Signals
-
-A transit folder has gone stale when **multiple** of these are true:
-
-| Signal | What It Means |
-|--------|--------------|
-| **`_STATUS.md` is missing or has no recent date** | No one is tracking the transfer |
-| **Date suffix is 3+ months old and hasn't been updated** | The folder was created or last touched a quarter ago |
-| **No files have been added, removed, or modified recently** | No actual transfer activity is happening |
-| **Temporary/lock files remain** (`.tmp`, `~$` files) | The transfer was interrupted and never resumed |
-
-**Important:** These signals must be evaluated together. A single signal is not enough:
-
-- Parallel structure between source and destination is **not** a staleness signal — it means the transfer is organized.
-- A transit folder that's months old but has a current `_STATUS.md` with remaining work is **active, not stale**.
-- A transit folder with no `_STATUS.md` and no recent file changes **is** likely stale, regardless of how the structure looks.
-
-### Transit Folder Analysis Scope
-
-When auditing or analyzing a folder structure, **do not diagnose the internal contents of transit folders.** Transit folders are work-in-progress by definition — their contents will be messy, duplicated, inconsistently named, and structurally imperfect. That's the nature of an active transfer. Flagging issues inside a `~` folder creates noise that obscures the real problems in the settled structure.
-
-**What to evaluate for transit folders:**
-
-| Evaluate | Skip |
-|----------|------|
-| Does the `~` folder exist? | Folder structure inside `~` |
-| Does it have a `_STATUS.md`? | Naming quality of files inside `~` |
-| Is the `_STATUS.md` current? | Depth of nesting inside `~` |
-| Does it have a date suffix? | Duplication between `~` source and destination |
-| Is it active or stale? (use Staleness Signals) | Empty folders inside `~` |
-| Is the `~` prefix used at a destination? (it shouldn't be) | Overpopulation inside `~` |
-
-**Report transit folders as a status table** — active, stale, or missing conventions — and move on. Trust the `_STATUS.md` as the source of truth for transfer progress.
-
-> The user already knows the transit folder is messy. That's why it's marked with `~`. Analyze the structure they've *committed to*, not the staging area they're still working through.
+For full details (naming conventions, lifecycle, staleness signals, analysis scope), see `references/transit-folders.md`.
 
 ---
 
 ## File Lifecycle
 
-Files move through stages. Knowing the stage tells you where the file belongs right now.
-
 ```
 Created → Active → Completed → Archived → (Deleted)
 ```
 
-| Stage | Where It Lives | What Happens |
-|-------|---------------|--------------|
-| **Created** | L2 outcome folder (or `_Unsorted/` if unknown) | New file, just produced or received |
-| **Active** | L2 outcome folder | Being worked on, edited, referenced regularly |
-| **Completed** | Stays in L2 outcome folder | Done but still relevant to the current project |
-| **Archived** | `_Archive/` within the L2 outcome | Project is finished, file preserved for lookup |
-| **Deleted** | Gone | Only when legally/contractually safe and truly worthless |
+Files move through stages based on project status. Archive at L2 level (`_Archive/` within the outcome folder). Default to keeping — storage is cheap, regret is expensive.
 
-### Lifecycle Rules
-
-- **Don't skip stages.** A file goes Active → Completed → Archived, not Active → Deleted.
-- **Completed ≠ Archived.** A finished deliverable stays in the active folder until the *project* is done. Then the whole outcome folder moves to `_Archive/`.
-- **Reference material doesn't follow this lifecycle.** It's persistent by nature — it lives in `Reference/` and stays there.
-- **Default to keeping.** If you're unsure whether to delete, archive instead. You can always delete later; you can't un-delete.
-
----
-
-## Archive Strategy
-
-Completed work shouldn't clutter active navigation but should remain findable.
-
-```
-Marketing/
-├── Campaign/                    # Active L2
-│   ├── Q1-2025-Launch/         # Current
-│   └── _Archive/               # Completed campaigns
-│       ├── Q4-2024-Holiday/
-│       └── Q3-2024-Rebrand/
-└── ...
-```
-
-| Rule | Rationale |
-|------|-----------|
-| Prefix with `_Archive` | Sorts to top/bottom predictably, visually distinct |
-| Archive at L2 level | Keep the L1 arena clean, preserve L2 context |
-| Never delete unless required | Storage is cheap, regret is expensive |
+For full lifecycle rules, archive strategy, and maintenance cadence (weekly/monthly/quarterly), see `references/lifecycle.md`.
 
 ---
 
@@ -608,38 +394,6 @@ Marketing/
 | **Personal** (one person) | Life domains: `Career`, `Finances`, `Home`, `Media`, `Personal` | Lightweight — project names or simple outcomes | L3 is where most files live |
 | **Team** (small group) | Mindsets: `Fulfill`, `Maintain`, `Grow` | Structured — processes, projects, time periods | Decide who owns each L1 arena |
 | **Organization** (company) | Departments or business units | Enforced naming conventions across teams | Align access controls with L1 boundaries |
-
----
-
-## Maintenance Cadence
-
-Structure decays without regular upkeep. These reviews prevent entropy.
-
-### Weekly (15 minutes)
-
-| Task | Purpose |
-|------|---------|
-| Empty `_Unsorted/` | Sort every file into its L1/L2 home |
-| Clear `Downloads/` | Move or delete everything in your downloads folder |
-| Archive completed L2 outcomes | Move finished work to `_Archive/` |
-
-### Monthly (30 minutes)
-
-| Task | Purpose |
-|------|---------|
-| Review each L1 arena | Does it still reflect your actual domains? |
-| Check L2 outcomes | Archive anything completed, remove empty folders |
-| Review `_Shared/` | Move anything that now has a clear owner |
-| Check naming consistency | Fix any drift in casing or conventions |
-
-### Quarterly (1 hour)
-
-| Task | Purpose |
-|------|---------|
-| Full L1 audit | Add or merge arenas if life/work has changed |
-| Count items per folder | Flag anything over the max thresholds |
-| Access review (shared drives) | Do permissions still match L1 boundaries? |
-| Run `audit_structure.py` | Get a machine-readable health check |
 
 ---
 
@@ -666,7 +420,7 @@ Stop and reorganize when you see:
 | **The Filing Cabinet** | Rigid categories that don't match how you think | Forces you to memorize arbitrary locations |
 | **The Chronological Dump** | Everything sorted by date first | Dates don't help you find things by topic |
 | **The Mirror** | Folder structure mirrors org chart exactly | Org charts change; your files don't reorganize themselves |
-| **The Perfectionist** | Scattered empty folders with no consistent template and no content anywhere. One-off "for someday" folders that serve no structural purpose | Random empties create noise without communicating intent. (Note: consistent templates with progressive filling are **scaffolding**, not perfectionism — see *Scaffolding Evaluation*) |
+| **The Perfectionist** | Scattered empty folders with no consistent template and no content anywhere | Random empties create noise without communicating intent. (Note: consistent templates with progressive filling are **scaffolding**, not perfectionism — see *Scaffolding Evaluation*) |
 | **The Flat Earth** | Everything in one giant folder with search | Works until search fails or context is lost |
 
 ---
@@ -677,29 +431,23 @@ Every rule in this framework has legitimate exceptions. The key: **break rules c
 
 ### Date-First at L1
 
-The rule says "no dates at L1." The exception:
-
 | Exception | Example | Why It's OK |
 |-----------|---------|-------------|
 | **Tax/legal compliance** | `2024-Tax-Returns/`, `2025-Tax-Returns/` | Legal requirements are inherently annual. The year IS the domain |
-| **Academic semesters** | `Fall-2025/`, `Spring-2026/` | Each semester is a self-contained world with its own classes and work |
+| **Academic semesters** | `Fall-2025/`, `Spring-2026/` | Each semester is a self-contained world |
 
 **Test:** Is the time period genuinely the primary organizing principle, not just a habit?
 
 ### More Than 12 L1 Arenas
 
-The rule says "5-8, max 12." The exception:
-
 | Exception | Example | Why It's OK |
 |-----------|---------|-------------|
-| **Client-based businesses** | One L1 per major client | Each client is a genuinely separate world with its own context |
+| **Client-based businesses** | One L1 per major client | Each client is a genuinely separate world |
 | **Multi-property management** | One L1 per property | Physical locations are natural arenas |
 
 **Test:** Would merging any two arenas force you to constantly context-switch within a single folder?
 
 ### Flat L3 With Many Files
-
-The rule says "max 30 items, then subgroup." The exception:
 
 | Exception | Example | Why It's OK |
 |-----------|---------|-------------|
@@ -716,7 +464,7 @@ The rule says "max 30 items, then subgroup." The exception:
 
 ## Quality Checks
 
-Before considering a drive "organized," verify these rules hold. These are the structural equivalent of unit tests — if any fail, there's a boundary violation somewhere.
+Before considering a drive "organized," verify these rules hold.
 
 ### Structure Checks
 
@@ -724,7 +472,7 @@ Before considering a drive "organized," verify these rules hold. These are the s
 |-------|---------------|
 | Every L1 arena has at least one active L2 outcome | No empty arenas cluttering the top level |
 | No L2 folder tries to be both active work AND reference lookup | Split into separate doing/knowing folders |
-| Every active L2 folder has artifacts, subfolders, or is part of a consistent template scaffold | No scattered one-off empty folders. Consistent scaffolding with progressive filling is OK (see *Scaffolding Evaluation*) |
+| Every active L2 folder has artifacts, subfolders, or is part of a consistent template scaffold | No scattered one-off empty folders |
 | No L3 artifact is duplicated across arenas | One owner, shortcuts from elsewhere |
 | `_Unsorted/` has fewer than 20 items | You're keeping up with weekly sorting |
 
@@ -733,10 +481,10 @@ Before considering a drive "organized," verify these rules hold. These are the s
 | Check | Pass Condition |
 |-------|---------------|
 | L1 names are nouns (arenas) | No verbs, dates, or abbreviations at the top level |
-| L2 names signal intent (verbs, outcomes, or subject categories) | Reading the name tells you what happens here or what type of thing lives here |
+| L2 names signal intent (verbs, outcomes, or subject categories) | Reading the name tells you what happens here |
 | L3 names are specific enough to find via search | No `Document.pdf` or `Notes.txt` |
 | Consistent casing within each level | Not mixing `Title-Case` and `lowercase` at the same depth |
-| Naming matches context | Spaces OK on personal drives; hyphens/underscores required in code projects (see Context-Sensitive Naming Rules) |
+| Naming matches context | Spaces OK on personal drives; hyphens/underscores required in code projects |
 
 ### Boundary Checks
 
@@ -744,7 +492,7 @@ Before considering a drive "organized," verify these rules hold. These are the s
 |-------|---------------|
 | Active folders contain work, not reference material | Reference has its own folder |
 | Reference folders contain lookup material, not active projects | Work has its own folder |
-| `_Shared/` contains only genuinely cross-functional items | Not a dumping ground for "I don't know where this goes" |
+| `_Shared/` contains only genuinely cross-functional items | Not a dumping ground |
 | Archive folders live within their L1 arena | Not a top-level `Archive/` that loses context |
 
 ---
@@ -779,6 +527,8 @@ Move files in batches. Start with the arena you use most. Don't try to reorganiz
 
 - `references/naming-patterns.md` — Detailed naming examples and conventions for each layer
 - `references/migration-guide.md` — Step-by-step guide for reorganizing existing messy drives
+- `references/transit-folders.md` — Transit folder conventions, lifecycle, and staleness signals
+- `references/lifecycle.md` — File lifecycle rules, archive strategy, and maintenance cadence
 
 ## Assets
 

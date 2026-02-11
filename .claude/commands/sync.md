@@ -103,9 +103,22 @@ $commands = (Get-ChildItem "$claude\commands\*.md" -ErrorAction SilentlyContinue
 
 **CRITICAL — must run before plugin reinstall.** The plugin system reads from a local git clone, not GitHub directly. Without refreshing, `claude plugin install` pulls stale versions.
 
+First try the built-in command:
+
 ```bash
 claude plugin marketplace update
 ```
+
+Then **verify** the mirror is current. If the built-in command didn't pull the latest commit, force-update manually:
+
+```powershell
+cd 'C:\Users\Alexa\.claude\plugins\marketplaces\claude-hub'
+git fetch origin
+git reset --hard origin/main
+git log --oneline -1
+```
+
+The displayed commit should match the latest push from Step 1. If it doesn't, the reinstall below will install stale files.
 
 ### 2c: Reinstall each team
 

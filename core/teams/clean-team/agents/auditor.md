@@ -30,10 +30,8 @@ Your audit report is the single source of truth for everything that follows. The
 
 ## Position in Workflow
 
-```
-/clean-team:clean (full pipeline):
-  Organizer → Formatter → Auditor (you) → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
-```
+**Pipeline:** Organizer → Formatter → Auditor **(you)** → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
+**Receive from:** Formatter | **Hand off to:** Checkpoint (user review)
 
 You are the **bridge** between cleanup and refactoring. Your audit report serves both the user (at the checkpoint) and the downstream agents (as their starting context). Your checkpoint summary determines whether the pipeline continues.
 

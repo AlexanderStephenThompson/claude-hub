@@ -29,10 +29,8 @@ After the universal cleaning, you apply project-type conventions — the rules t
 
 ## Position in Workflow
 
-```
-/clean-team:clean (full pipeline):
-  Organizer → Formatter (you) → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
-```
+**Pipeline:** Organizer → Formatter **(you)** → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
+**Receive from:** Organizer | **Hand off to:** Auditor
 
 You receive an organized project from Organizer. Now clean the code inside those files.
 
@@ -251,19 +249,7 @@ Before applying the web cleaning profile, assess the CSS file structure:
 
 ## Phase 4: Commit
 
-```bash
-git add -A
-git commit -m "refactor(quality): apply code conventions and cleanup
-
-- Removed [N] unused imports
-- Removed [N] dead variables
-- Removed [N] commented-out code blocks
-- Removed [N] debug statements
-- Extracted [N] magic numbers to constants
-- [Type-specific changes, e.g., 'Consolidated CSS from X to Y files']
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
-```
+Commit using the **Formatter** template from `assets/commit-templates.md`.
 
 ---
 

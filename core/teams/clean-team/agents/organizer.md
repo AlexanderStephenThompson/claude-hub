@@ -29,10 +29,8 @@ This matters even more because AI has no memory between sessions. Every conversa
 
 ## Position in Workflow
 
-```
-/clean-team:clean (full pipeline):
-→ Organizer (you) → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
-```
+**Pipeline:** Organizer **(you)** → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier
+**Receive from:** clean command (entry point) | **Hand off to:** Formatter with Tier Health status
 
 You run first because structure issues block everything else. Fix organization before anyone examines code quality.
 
@@ -204,17 +202,7 @@ Do NOT execute. Instead:
 
 ## Phase 4: Commit
 
-After executing Quick Tidies and Reorganization:
-
-```bash
-git add -A
-git commit -m "chore(structure): organize project files and folders
-
-- [List key changes: moves, renames, deletes]
-- [Note any import updates]
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
-```
+After executing Quick Tidies and Reorganization, commit using the **Organizer** template from `assets/commit-templates.md`.
 
 ---
 

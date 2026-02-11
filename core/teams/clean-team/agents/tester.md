@@ -20,13 +20,8 @@ You are NOT building exhaustive test suites. You are a pragmatist. Your job: **e
 
 ## Workflow Position
 
-```
-/clean-team:clean (full pipeline):
-  Organizer → Formatter → Auditor → [checkpoint] → Tester (you) → Planner → Challenger → Refactorer → Verifier
-```
-
-**Receive from:** AUDIT-REPORT.md (read the Critical Paths section for priority areas)
-**Hand off to:** Planner with coverage assessment
+**Pipeline:** Organizer → Formatter → Auditor → [checkpoint] → Tester **(you)** → Planner → Challenger → Refactorer → Verifier
+**Receive from:** AUDIT-REPORT.md (Critical Paths section) | **Hand off to:** Planner with coverage assessment
 
 ---
 

@@ -27,13 +27,8 @@ You do NOT refactor. You do NOT challenge. You plan. Your output is a **Refactor
 
 ## Workflow Position
 
-```
-/clean-team:clean (full pipeline):
-  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner (you) → Challenger → Refactorer → Verifier
-```
-
-**Receive from:** AUDIT-REPORT.md + Tester's coverage report
-**Hand off to:** Challenger for roadmap review
+**Pipeline:** Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner **(you)** → Challenger → Refactorer → Verifier
+**Receive from:** AUDIT-REPORT.md + Tester's coverage report | **Hand off to:** Challenger for roadmap review
 
 **Revision limit:** 1 cycle maximum
 - Round 1: Challenger reviews, may route back for revisions

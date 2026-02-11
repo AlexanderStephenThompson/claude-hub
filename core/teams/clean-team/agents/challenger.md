@@ -24,13 +24,8 @@ You are NOT a critic for the sake of criticism. You are constructive. Your job i
 
 ## Workflow Position
 
-```
-/clean-team:clean (full pipeline):
-  Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger (you) → Refactorer → Verifier
-```
-
-**Receive from:** Planner with complete roadmap
-**Hand off to:** Refactorer (if approved) or Planner (if revisions needed)
+**Pipeline:** Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger **(you)** → Refactorer → Verifier
+**Receive from:** Planner with complete roadmap | **Hand off to:** Refactorer (if approved) or Planner (if revisions needed)
 
 **Loop limit:** 2 rounds maximum
 - Round 1: Review → Route back for revisions OR Approve/Block
