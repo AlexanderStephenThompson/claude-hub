@@ -14,6 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `web/` | Web skills (7) |
 | `world-building/` | Unity + VRChat skills |
 | `data/` | Data engineering skills (Python, SQL, pipelines, AWS, IaC) |
+| `productivity/` | Thinking and communication tools (explaining skill, improve-prompt, explain commands) |
 
 ### Deployment (flat)
 

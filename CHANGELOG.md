@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2026-02-12
+
+### Added
+- **productivity domain** — New domain (`productivity/`) for thinking and communication tools, deployed flat alongside existing domains
+- **explaining skill** — Subject and Situational frameworks for producing clear explanations with depth scaling (Short/Medium/Long) and relatability tools
+- `/improve-prompt` command — Diagnose prompt weaknesses across 5 dimensions (goal, audience, constraints, context, scope), produce annotated improvements with comparison table and optional 3 variants
+- `/explain` command — Produce explanations using the explaining skill framework, with `--short`/`--long` depth flags
+
+---
+
 ## [4.1.0] - 2026-02-11
 
 ### Changed

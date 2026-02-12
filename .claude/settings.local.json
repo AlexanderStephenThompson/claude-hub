@@ -22,7 +22,13 @@
       "Bash(test:*)",
       "Bash(node:*)",
       "Bash(python:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(findstr:*)",
+      "Read(//c/c/**)",
+      "Bash(git restore:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(wc -l:*)"
     ]
   }
 }

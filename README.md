@@ -33,6 +33,21 @@ Skills: architecture, code-quality, documentation, security
 
 ---
 
+## Productivity
+
+Thinking and communication tools — not tied to any project type.
+
+### Commands
+
+| Command | What It Does |
+|---------|--------------|
+| `/improve-prompt` | Analyze and refine a rough prompt with annotated improvements |
+| `/explain` | Produce a clear explanation using the Subject or Situational framework |
+
+Skills: explaining
+
+---
+
 ## Web
 
 Web development tools — CSS, HTML, accessibility, React, and frontend testing.
