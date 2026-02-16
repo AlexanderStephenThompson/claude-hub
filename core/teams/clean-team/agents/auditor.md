@@ -128,7 +128,7 @@ python scripts/detect_dead_code.py <path> --format text
 ```bash
 node scripts/check.js --quiet
 ```
-Include any errors in the audit report. Warnings indicate drift from design tokens but aren't blockers.
+Include any errors in the audit report. Most warnings indicate design token drift and aren't blockers, but architecture findings (`tier-structure`, `tier-imports`) are structural issues that MUST appear as AUDIT-NNN entries in the final report.
 
 ### Step 3: Deep Analysis — Launch Parallel Sub-Agents
 
@@ -161,6 +161,7 @@ After ALL parallel sub-agents complete:
 4. **Merge** with metrics from Step 2 and context from Step 1
 5. **Assign sequential AUDIT-NNN IDs** across all priority levels
 6. **Write** the final consolidated report using the **Write tool** and `assets/audit-report-template.md`
+7. **Architecture findings are mandatory** — If check.js reported `tier-structure` or `tier-imports` issues, or the Layer Architecture Auditor flagged tier violations, these MUST have AUDIT-NNN entries in the final report. Do not deprioritize or omit architecture findings.
 
 ---
 

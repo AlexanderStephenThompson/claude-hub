@@ -109,11 +109,16 @@ For each slice:
 - Is the migration sequenced correctly (Data first -> Logic -> Presentation)?
 - Reference: `~/.claude/skills/architecture/references/web.md`
 
+**Missing Tier Architecture Detection:**
+- If the project is a web app (has `package.json` + CSS/JSX/HTML files) but lacks `01-presentation/`, `02-logic/`, `03-data/` directories, the roadmap MUST include a tier introduction slice
+- Check the project structure directly — do not rely solely on the roadmap mentioning it
+
 **Stop-Ship Triggers (Semantic):**
 - Proposed names violate established conventions
 - Reorganization creates circular imports
 - Reorganization creates reverse tier imports (data -> logic, logic -> presentation)
 - Structure becomes less intuitive, not more
+- Web project roadmap ignores missing tier architecture (no tier introduction or migration slice when project lacks tiers)
 
 #### Lens 3: Behavioral Preservation
 

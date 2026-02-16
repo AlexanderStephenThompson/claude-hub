@@ -48,7 +48,7 @@
  * Project rules (3):
  *   css-file-count         (warn/error)  CSS file sprawl (warn >5, error >7)
  *   css-file-names         (warn)        No canonical CSS names (reset/global/layouts/components/overrides)
- *   tier-structure         (warn)        Missing or incomplete 3-tier architecture in web projects
+ *   tier-structure         (error)       Missing or incomplete 3-tier architecture in web projects
  *
  * Inline suppression:
  *   CSS:  /* check-disable * / check-enable / check-disable-next-line (block comments)
@@ -1040,7 +1040,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
             issues.push({
                 line: 0,
                 col: 0,
-                severity: WARN,
+                severity: ERROR,
                 message: `Web project without 3-tier architecture — expected: 01-presentation/, 02-logic/, 03-data/`,
                 rule: 'tier-structure',
             });
@@ -1049,7 +1049,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
             issues.push({
                 line: 0,
                 col: 0,
-                severity: WARN,
+                severity: ERROR,
                 message: `Incomplete tier structure: found ${existingTiers.join(', ')} — missing: ${missing.join(', ')}`,
                 rule: 'tier-structure',
             });

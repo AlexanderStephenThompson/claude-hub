@@ -73,6 +73,10 @@ git status
 
 Also read the **Tester's coverage report** for safety net status.
 
+**For web projects, independently verify tier health:**
+
+Even if AUDIT-REPORT.md doesn't mention tier issues, check for yourself. Look for `01-presentation/`, `02-logic/`, `03-data/` directories in the project root or `src/`. If the project is a web app (has `package.json` + CSS/JSX/HTML files) and lacks 3-tier directories, this is a critical structural gap — create a dedicated "Introduce 3-Tier Architecture" slice as described in the Tier Migration Rules below.
+
 ### Step 2: Prioritize by Impact + Risk
 
 Rate each improvement:
@@ -118,7 +122,9 @@ Order slices so:
 
 **Tier Migration Rules (Web Projects):**
 
-If AUDIT-REPORT contains tier architecture violations (misplaced files, import direction violations, missing tier structure), apply these rules:
+For all web projects, evaluate tier architecture compliance. This applies whether or not AUDIT-REPORT.md explicitly flagged tier violations — use your independent verification from Step 1.
+
+If tier violations exist (misplaced files, import direction violations, missing tier structure), apply these rules:
 
 1. **Create migration slices** — each slice moves files from one wrong tier to the correct one. Sequence: Data tier first, then Logic, then Presentation (foundation before dependents).
 

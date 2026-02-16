@@ -109,20 +109,25 @@ This matters even more when AI is involved. AI has no memory between sessions �
 
 **The goal: any file should be findable in 2-3 navigation steps based on intuition alone. If you have to search, the structure failed.**
 
-### Organize by Feature, Not Layer
+### Organize by Feature Within Tiers
+
+For web projects using 3-tier architecture, organize by feature WITHIN each tier — don't scatter a single feature across global `models/`, `services/`, `controllers/` directories.
 
 ```
+Within 02-logic/:
 Prefer:                          Avoid:
-src/                             src/
+02-logic/                        02-logic/
   users/                           models/
     user.model.ts                    user.model.ts
     user.service.ts                  order.model.ts
-    user.controller.ts             services/
-  orders/                            ...
-    ...
+  orders/                          services/
+    ...                              user.service.ts
+                                     order.service.ts
 ```
 
-Feature-based keeps related code together. When you work on "users," everything is in one place. When AI works on "users," it reads one folder, not three.
+Feature-based grouping keeps related code together within each tier. Tiers enforce dependency flow (presentation → logic → data), while feature folders enforce cohesion within each tier. These are complementary, not contradictory.
+
+**For non-web projects** (CLI tools, libraries, scripts) that don't use 3-tier architecture, apply feature-based grouping at the project root level.
 
 ### Universal Structural Principles
 
