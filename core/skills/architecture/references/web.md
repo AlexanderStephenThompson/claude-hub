@@ -81,6 +81,32 @@ project-root/
 - **Integration tests get their own folder.** Unit tests co-locate with source; integration and E2E tests live in `tests/`.
 - **Config is cross-cutting.** Environment parsing, constants, and route definitions don't belong in any tier.
 
+### Default Stack → Tier Placement
+
+Typical stack choices and where their files land. Use this as a lookup when deciding tier placement.
+
+| Technology | Tier | What goes where |
+|-----------|------|----------------|
+| **React** | `01-presentation/` | Components, pages, layouts, UI hooks (`useForm`, `useModal`) |
+| **Vite** | Cross-cutting | `vite.config.ts` stays at project root |
+| **Plain CSS** | `01-presentation/styles/` | Design tokens in `global.css`, component styles co-located |
+| **GraphQL (Apollo Client)** | `02-logic/api/` | Queries, mutations, fragments, client config |
+| **GraphQL (Apollo Server)** | `02-logic/` | Resolvers in `services/`, schema in `domain/` |
+| **Express.js** | `02-logic/` | Route handlers, middleware, server setup |
+| **React Context / state** | `02-logic/state/` | Contexts, reducers, stores — not in components |
+| **Validation (Zod, Yup)** | `02-logic/validators/` | Input schemas, form validation rules |
+| **Prisma** | `03-data/` | Schema in `models/`, migrations in `migrations/`, client in `repositories/` |
+| **Postgres** | `03-data/` | All SQL access through Prisma repositories |
+| **Redis** | `03-data/` | Cache adapters, session stores |
+| **S3 (file storage)** | `03-data/` | Upload/download adapters |
+| **Cognito / Auth** | `02-logic/services/` | Auth service wrapping the provider SDK |
+| **Stripe** | `02-logic/services/` | Payment service; webhooks in `02-logic/api/` |
+| **SES (email)** | `02-logic/services/` | Notification service wrapping the provider SDK |
+| **Terraform / CDK** | Outside app | Separate `infrastructure/` directory, not in any tier |
+| **GitHub Actions** | Outside app | `.github/workflows/` at project root |
+
+**The key rule:** SDKs and provider clients go in `03-data/` (they're external data sources). Services that *use* those clients go in `02-logic/` (they contain business rules about *when* and *how* to call them). Components that *trigger* those services go in `01-presentation/` (they handle user interaction).
+
 ### Dependency Flow
 
 ```
