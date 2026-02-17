@@ -28,7 +28,8 @@
       "Bash(git restore:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(wc -l:*)"
+      "Bash(wc -l:*)",
+      "Bash(git rm:*)"
     ]
   }
 }
