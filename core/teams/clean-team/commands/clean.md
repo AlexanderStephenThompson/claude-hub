@@ -89,24 +89,26 @@ Create a todo list showing the full pipeline:
 
 ```
 Phase 1: Analyze
-  [ ] Organize project structure
-  [ ] Format and clean code
-  [ ] Deep audit with findings report
-  [ ] Checkpoint — review findings
+  [ ] Organizer — structure, root cleanup, 3-tier alignment
+  [ ] Formatter — dead code, unused imports, style conventions
+  [ ] Auditor — deep parallel analysis → AUDIT-REPORT.md
+  [ ] Checkpoint — review findings before refactoring
 
 Phase 2: Refactor
-  [ ] Assess test coverage
-  [ ] Plan refactoring roadmap
-  [ ] Challenge the plan (gate)
-  [ ] Execute refactoring
-  [ ] Verify results (gate)
+  [ ] Tester — assess coverage, write safety-net tests
+  [ ] Planner — build phased roadmap from audit findings
+  [ ] Challenger — review roadmap feasibility (gate)
+  [ ] Refactorer — execute slices, commit per change
+  [ ] Verifier — confirm behavior preserved (gate)
 ```
 
 Update each item to in_progress as you start it and completed when done.
 
 ### Step 1: Organizer
 
-**Question:** "Can I navigate this codebase, and does it follow the documented architecture?"
+**Tell the user before launching:**
+
+> **Step 1: Organizer** — Making sure the project structure is navigable and follows the 3-tier model (`01-presentation/` → `02-logic/` → `03-data/`). This means: cleaning stray files from the root, checking that source files live in the right tier, and flagging any major restructuring for your approval before touching it.
 
 Invoke the **@organizer** agent to:
 1. Audit project structure (root, folders, files, naming, docs)
@@ -117,9 +119,33 @@ Invoke the **@organizer** agent to:
 6. Commit changes
 7. Hand off to Formatter with Tier Health status
 
+### Step 1.1: Tier Architecture Check (Web Projects)
+
+After the Organizer returns, check its Tier Health status from the handoff.
+
+**If Tier Health is "no tiers" or "partially missing":**
+
+Present the user with the Organizer's finding and ask:
+
+> The Organizer found this is a web project without 3-tier architecture (`01-presentation/` → `02-logic/` → `03-data/`). This is a significant structural change that would reorganize your source files.
+>
+> Options:
+> 1. **Include tier migration in refactoring** — The Planner will create a migration plan during Phase 2
+> 2. **Skip tier work** — Focus on code quality improvements only
+> 3. **Stop here** — Review the project structure before proceeding
+
+Record the user's choice. Pass it to the Planner as context:
+- Option 1: `Tier migration: APPROVED by user`
+- Option 2: `Tier migration: SKIPPED by user`
+- Option 3: Stop the pipeline
+
+**If Tier Health is "clean" or "reorganized":** Continue silently to Step 2.
+
 ### Step 2: Formatter
 
-**Question:** "Is the code clean?"
+**Tell the user before launching:**
+
+> **Step 2: Formatter** — Cleaning code without changing behavior. Removes unused imports, dead code, magic numbers, and debug statements. Detects the project type (web, Unity, Python, etc.) and applies its specific conventions — for web projects that includes CSS file structure (5-file architecture) and design token enforcement.
 
 Invoke the **@formatter** agent to:
 1. Detect project type (web, unity, python, data, or generic)
@@ -130,7 +156,9 @@ Invoke the **@formatter** agent to:
 
 ### Step 3: Auditor
 
-**Question:** "What does the full picture look like?"
+**Tell the user before launching:**
+
+> **Step 3: Auditor** — Deep analysis with parallel sub-agents. Launches 4+ specialized auditors simultaneously (code quality, structure, scalability, developer experience — plus web-specific auditors for CSS, React, accessibility, and performance if applicable). Runs `check.js` for automated rule enforcement. Everything consolidates into AUDIT-REPORT.md with prioritized, numbered findings.
 
 Invoke the **@auditor** agent to:
 1. Explore the codebase deeply (architecture, modules, patterns, data flow)
@@ -268,11 +296,11 @@ Create a todo list:
 
 ```
 Phase 2: Refactor (resume)
-  [ ] Assess test coverage
-  [ ] Plan refactoring roadmap
-  [ ] Challenge the plan (gate)
-  [ ] Execute refactoring
-  [ ] Verify results (gate)
+  [ ] Tester — assess coverage, write safety-net tests
+  [ ] Planner — build phased roadmap from audit findings
+  [ ] Challenger — review roadmap feasibility (gate)
+  [ ] Refactorer — execute slices, commit per change
+  [ ] Verifier — confirm behavior preserved (gate)
 ```
 
 Update each item to in_progress as you start it and completed when done.
@@ -291,7 +319,9 @@ Tell the user:
 
 ### Step 5: Tester
 
-**Question:** "Is there a safety net for refactoring?"
+**Tell the user before launching:**
+
+> **Step 5: Tester** — Checking whether there's a safety net for refactoring. Assesses current test coverage against the audit's critical paths. If coverage is too low on areas we're about to refactor, writes characterization tests to lock in existing behavior before anything changes.
 
 Invoke the **@tester** agent to:
 1. Read AUDIT-REPORT.md (Critical Paths section)
@@ -305,33 +335,46 @@ Invoke the **@tester** agent to:
 
 ### Step 6: Planner
 
-**Question:** "What should we refactor, and in what order?"
+**Tell the user before launching:**
 
-Invoke the **@planner** agent with AUDIT-REPORT.md and Tester's report to:
+> **Step 6: Planner** — Turning the audit findings into a sequenced refactoring roadmap. Organizes into phases (Small → Medium → Large), defines specific slices with files and commit strategies, and maps which audit findings each slice resolves. For web projects, independently verifies tier architecture and includes migration slices if needed.
+
+Invoke the **@planner** agent with AUDIT-REPORT.md, Tester's report, and the user's tier architecture decision (from Step 1.1) to:
 1. Create a phased refactoring roadmap (Small → Medium → Large)
 2. Define specific slices with commit strategies
 3. Map which audit findings each slice addresses
+4. If tier migration was approved by the user, include tier introduction slices
 
 > **Resume mode:** If `REFACTORING-ROADMAP.md` exists from a previous run, pass it to the Planner — they may reuse or revise it instead of starting from scratch.
 
 ### Step 6.1: Challenger (Gate)
 
-Invoke the **@challenger** agent for roadmap review:
+**Tell the user before launching:**
+
+> **Step 6.1: Challenger** — Quality gate reviewing the roadmap through three lenses: feasibility (can it be executed?), semantic correctness (will it improve clarity?), and behavioral preservation (will tests stay green?). Can approve, send back for revision, or block on stop-ship triggers.
+
+Invoke the **@challenger** agent. Tell it to **read `REFACTORING-ROADMAP.md` from disk** for the full roadmap:
 - **Approve** → Continue to Step 7
 - **Revise** → Send back to Planner, then re-challenge (max 2 cycles). Do NOT loop back to Tester.
 - **Block** → Stop. Ask user for missing info
 
 ### Step 7: Refactorer
 
-**Question:** "Execute the approved plan."
+**Tell the user before launching:**
 
-Invoke the **@refactorer** agent with approved roadmap to:
+> **Step 7: Refactorer** — Executing the approved roadmap slice by slice. Each slice gets its own commit(s), tests run after every change, and the app stays working at every step. Tier boundaries are respected — files land in the correct tier and import direction is verified after structural changes.
+
+Invoke the **@refactorer** agent. Tell it to **read `REFACTORING-ROADMAP.md` from disk** for the full slice details:
 1. Execute slice by slice
 2. Commit per strategy
 3. Run tests after each slice
 4. Update AUDIT-REPORT.md as findings are addressed
 
 ### Step 7.1: Verifier (Gate)
+
+**Tell the user before launching:**
+
+> **Step 7.1: Verifier** — Final quality gate. Confirms behavior is unchanged (tests prove it), measures semantic clarity improvement (naming, docs, organization), and produces a before/after comparison. Can approve, route back for targeted fixes, or block.
 
 Invoke the **@verifier** agent to validate results:
 - **Approve** → Continue to Step 8

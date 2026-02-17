@@ -110,7 +110,8 @@ For each slice:
 - Reference: `~/.claude/skills/architecture/references/web.md`
 
 **Missing Tier Architecture Detection:**
-- If the project is a web app (has `package.json` + CSS/JSX/HTML files) but lacks `01-presentation/`, `02-logic/`, `03-data/` directories, the roadmap MUST include a tier introduction slice
+- If the project is a web app (has `package.json` + CSS/JSX/HTML files) but lacks `01-presentation/`, `02-logic/`, `03-data/` directories, AND the user approved tier migration, the roadmap MUST include a tier introduction slice
+- If the user explicitly skipped tier migration, this is acceptable — do not flag it
 - Check the project structure directly — do not rely solely on the roadmap mentioning it
 
 **Stop-Ship Triggers (Semantic):**
@@ -118,7 +119,9 @@ For each slice:
 - Reorganization creates circular imports
 - Reorganization creates reverse tier imports (data -> logic, logic -> presentation)
 - Structure becomes less intuitive, not more
-- Web project roadmap ignores missing tier architecture (no tier introduction or migration slice when project lacks tiers)
+
+**REVISE Triggers (Semantic):**
+- Web project roadmap ignores missing tier architecture (no tier introduction or migration slice when project lacks tiers) — route back to Planner to add tier slices
 
 #### Lens 3: Behavioral Preservation
 

@@ -56,6 +56,11 @@ You are the **bridge** between cleanup and refactoring. Your audit report serves
 - Check git log for Organizer and Formatter commits
 - Record what each agent changed and why
 
+**Read Formatter's flagged items:**
+- Look for the Formatter's handoff in the conversation context — specifically the "Flagged for Auditor" section
+- These are items the Formatter identified but couldn't safely fix (unused functions that might be used dynamically, complex refactors, public API naming issues)
+- Include each flagged item as an AUDIT-NNN finding in your report, verifying whether the Formatter's concern is valid
+
 **Detect project type and web stack:**
 
 Use dedicated tools (Glob, Grep, Read) instead of shell commands for cross-platform compatibility:
@@ -118,15 +123,22 @@ Glob: **/*.css
 ```
 
 **Run analysis scripts (if codebase is large enough to warrant it):**
+
+These scripts live in the clean-team plugin, not in the user's project. Find them at `~/.claude/plugins/cache/claude-hub/clean-team/*/scripts/` or search for them:
+
 ```bash
-python scripts/analyze_complexity.py <path> --format text
-python scripts/analyze_dependencies.py <path> --format text
-python scripts/detect_dead_code.py <path> --format text
+# Find the scripts directory
+find ~/.claude/plugins -name "check.js" -path "*/clean-team/*" 2>/dev/null | head -1
+
+# Then run with full paths
+python <scripts-dir>/analyze_complexity.py <project-path> --format text
+python <scripts-dir>/analyze_dependencies.py <project-path> --format text
+python <scripts-dir>/detect_dead_code.py <project-path> --format text
 ```
 
 **Run design system checker (for web projects with CSS/HTML/JS):**
 ```bash
-node scripts/check.js --quiet
+node <scripts-dir>/check.js --quiet
 ```
 Include any errors in the audit report. Most warnings indicate design token drift and aren't blockers, but architecture findings (`tier-structure`, `tier-imports`) are structural issues that MUST appear as AUDIT-NNN entries in the final report.
 

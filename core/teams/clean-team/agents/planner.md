@@ -71,11 +71,16 @@ git status
 - Critical paths (for Tester reference)
 - Flagged items needing user review
 
-Also read the **Tester's coverage report** for safety net status.
+Also read the **Tester's coverage report** (`COVERAGE-REPORT.md` in the project root) for safety net status.
 
 **For web projects, independently verify tier health:**
 
-Even if AUDIT-REPORT.md doesn't mention tier issues, check for yourself. Look for `01-presentation/`, `02-logic/`, `03-data/` directories in the project root or `src/`. If the project is a web app (has `package.json` + CSS/JSX/HTML files) and lacks 3-tier directories, this is a critical structural gap — create a dedicated "Introduce 3-Tier Architecture" slice as described in the Tier Migration Rules below.
+Even if AUDIT-REPORT.md doesn't mention tier issues, check for yourself. Look for `01-presentation/`, `02-logic/`, `03-data/` directories in the project root or `src/`. If the project is a web app (has `package.json` + CSS/JSX/HTML files) and lacks 3-tier directories, this is a critical structural gap.
+
+**Check the user's tier decision** — the orchestrator will have passed either "Tier migration: APPROVED by user" or "Tier migration: SKIPPED by user" as context:
+- **APPROVED:** Create a dedicated "Introduce 3-Tier Architecture" slice as described in the Tier Migration Rules below
+- **SKIPPED:** Do not create tier migration slices. Focus on other improvements within the existing structure.
+- **No decision recorded:** Treat as if APPROVED — include tier migration slices and let the Challenger validate.
 
 ### Step 2: Prioritize by Impact + Risk
 

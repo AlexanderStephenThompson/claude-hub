@@ -99,8 +99,8 @@ This gate determines your approach — just like the CSS Structure Gate determin
 |-----------|--------|
 | **Tiers exist, files correctly placed** | Proceed normally. Note tier health as "clean" in handoff. |
 | **Tiers exist, some files in wrong tier** | Categorize misplaced files as Reorganization. Move files to correct tier, update imports. |
-| **Tiers partially exist** (1-2 of 3) | Categorize missing tiers as Restructuring. **STOP and ask the user** before creating missing tiers. |
-| **No tiers exist** (flat `src/` or scattered files) | **STOP.** Create an Architecture Restructure Plan before any structural work. Present to user for approval. |
+| **Tiers partially exist** (1-2 of 3) | Report Tier Health = "partially missing" with which tiers exist and which are absent. The orchestrator will ask the user before creating missing tiers. |
+| **No tiers exist** (flat `src/` or scattered files) | **Do NOT attempt to create tier structure.** Report clearly in your handoff: Tier Health = "no tiers", list all source files with their current location, and recommend tier placement for each. The orchestrator will present this to the user. |
 
 **What counts as "wrong tier":**
 - API calls or data fetching in `01-presentation/` → belongs in `02-logic/` or `03-data/`
@@ -108,17 +108,15 @@ This gate determines your approach — just like the CSS Structure Gate determin
 - UI concerns (React components, JSX, CSS) in `02-logic/` → belongs in `01-presentation/`
 - Business rules in `03-data/` → belongs in `02-logic/`
 
-### Architecture Restructure Plan (when triggered)
+### Tier Assessment (when no tiers exist)
 
-When tiers don't exist and the project has 5+ source files, create this plan before executing:
+When tiers don't exist, do NOT create them yourself. Instead, include a **Tier Assessment** in your handoff report with:
 
 1. **Inventory** — List every source file with a one-line summary of what it does
 2. **Tier Mapping** — Assign each file to its correct tier using the guide below
 3. **Dependency Analysis** — Map which files import which, identify any circular dependencies
-4. **Migration Sequence** — Order the moves to minimize broken imports (move leaf files first, then files that depend on them)
-5. **Import Updates** — List every import path that needs updating after each move
 
-Present this plan to the user. Only execute after approval.
+This assessment gives the orchestrator and downstream agents (Planner, Refactorer) what they need to plan the migration. The orchestrator will ask the user whether to proceed with tier introduction.
 
 #### Tier Mapping Guide
 
@@ -139,7 +137,7 @@ Read `~/.claude/skills/architecture/references/web.md` for full details. Quick r
 
 **Static sites:** The same tiers apply. CSS and HTML templates go in `01-presentation/`, JavaScript navigation/interactivity goes in `02-logic/`, and content data (reference pages, guides, JSON) goes in `03-data/`. A site doesn't need React to use 3-tier separation.
 
-**Enforced by:** `check.js` rules `tier-structure` (warns on missing tiers) and `tier-imports` (errors on reverse/layer-skipping imports).
+**Enforced by:** `check.js` rules `tier-structure` (errors on missing tiers) and `tier-imports` (errors on reverse/layer-skipping imports).
 
 ---
 
