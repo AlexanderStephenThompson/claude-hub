@@ -104,12 +104,12 @@ npm test
 - Add "TENDED TO" block with how it was addressed
 - See "Updating the Audit Report" section below
 
-**8. Merge to main**
+**8. Merge to main (preserve branch)**
 ```bash
 git checkout main
-git merge refactor/[slice-name]
-git branch -d refactor/[slice-name]
+git merge --no-ff refactor/[slice-name]
 ```
+Do NOT delete the branch. Branches stay visible on the git graph.
 
 **9. Move to next slice**
 

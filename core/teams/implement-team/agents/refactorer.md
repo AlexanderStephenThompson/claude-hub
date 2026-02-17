@@ -211,6 +211,8 @@ Refactoring is only safe with a harness.
 - Incremental commits per meaningful step
 - Be ready to abandon if risk outweighs benefit
 
+**Merging**: Always use `git merge --no-ff` to preserve branch history on the git graph. Never delete branches after merging.
+
 ---
 
 ## Step 3: Refactor Ladder (Small → Medium → Large)

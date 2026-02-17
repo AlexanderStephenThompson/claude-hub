@@ -328,7 +328,7 @@ The lean version is half the size, instantly readable, and every visual property
 | Presentational class names | `.blue-text`, `.large-padding`, `.float-left` | Rename to describe purpose, not appearance |
 | Repeated class patterns | Same 5-class combo on 10 elements | Extract to one semantic class |
 
-**Note:** If the project uses Tailwind or a utility-first framework, this is the architecture — don't fight it. But *within* that paradigm, still extract repeated patterns into `@apply` components or custom classes when the same utility chain appears 3+ times.
+**If Tailwind is present:** Don't extend it. Extract utility chains into semantic classes in `components.css` that reference design tokens. New CSS always goes in vanilla `.css` files. Migrate incrementally as you touch files.
 
 ### Attribute Hygiene
 

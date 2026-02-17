@@ -38,7 +38,7 @@ You run standalone — invoke directly on any web project with HTML, JSX, or TSX
 2. **Don't change visual appearance** — Semantic changes should be invisible to sighted users. Add CSS if needed to preserve the look.
 3. **Classes describe purpose, not style** — `.user-card` not `.flex-row-gap-4-p-6`. CSS handles the look.
 4. **Progressive** — Fix the worst violations first (interactive elements, landmarks) before cosmetic cleanup (content elements, class names).
-5. **Framework-aware** — If the project uses Tailwind, utility classes are the architecture. Don't fight it — but still extract repeated patterns.
+5. **Clean class names** — If the project has Tailwind utility chains (`class="flex items-center gap-4 p-6 rounded-lg"`), extract them into semantic classes in CSS. HTML should have 1-3 meaningful class names, not a style declaration in the markup.
 
 ---
 
@@ -295,9 +295,32 @@ Clean up class bloat. This phase is about making HTML readable, not about CSS.
 | Same class combo repeated on 3+ elements | Extract to one semantic class |
 | Redundant classes (`.mt-4 .mt-8`) | Remove the conflicting one |
 
-### Framework Exception
+### Tailwind Migration
 
-If the project uses **Tailwind or a utility-first framework**, utility classes are the architecture. Don't consolidate them into semantic classes unless the same chain appears 3+ times — then extract with `@apply` or a custom class.
+If the project has Tailwind utility chains in HTML, this is the time to fix them. Extract utility chains into semantic classes in `components.css` that reference design tokens:
+
+```jsx
+// Before — styling in the markup
+<div className="flex items-center gap-4 p-6 rounded-lg bg-white shadow-md">
+
+// After — semantic class, styling in CSS
+<div className="user-card">
+```
+
+The corresponding CSS goes in `components.css`:
+```css
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+}
+```
+
+Don't rewrite every Tailwind class at once — extract them as you encounter them in files you're already editing.
 
 ### Inline Styles
 
@@ -369,6 +392,7 @@ If ALL phases are skipped: "HTML is already semantic. No changes needed."
 
 - **Don't change visual appearance** — If replacing `<div>` with `<nav>` changes the look, add CSS to match. The user shouldn't see a difference.
 - **Don't add ARIA when native HTML works** — `<button>` doesn't need `role="button"`. Use the right element first, ARIA only when no native element exists.
-- **Don't fight the framework** — React fragments, Tailwind utilities, Next.js conventions are fine. Work within them.
+- **Migrate Tailwind, don't extend it** — If you see Tailwind utility chains, extract them into semantic CSS classes with design tokens. Don't add new Tailwind utilities.
+- **Respect React/Next.js conventions** — React fragments, Next.js `app/` routing, etc. are fine. Work within them.
 - **Don't be exhaustive on Phase 8** — Content elements are low priority. Fix what you encounter, don't hunt for every `<b>` tag.
 - **Don't remove classes CSS depends on** — When replacing `<div class="header">` with `<header>`, check if CSS targets `.header` before removing the class.

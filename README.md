@@ -52,7 +52,7 @@ Skills: explaining
 
 Web development tools — CSS, HTML, accessibility, React, and frontend testing.
 
-Skills: design, web-accessibility, web-css, web-react, web-graphql, web-performance, web-testing
+Skills: design, web-accessibility, web-css, web-performance
 
 ---
 

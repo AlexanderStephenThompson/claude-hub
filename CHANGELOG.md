@@ -112,7 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - refactor-team v2.0.0 with 7-agent workflow
 - Comprehensive skills library (code-quality, architecture, design, security, documentation)
-- Web-specific skill scaffolds (web-accessibility, web-css, web-graphql, web-performance, web-react, web-testing)
+- Web-specific skill scaffolds (web-accessibility, web-css, web-performance)
 - Analysis scripts (analyze_complexity.py, analyze_dependencies.py, detect_dead_code.py)
 - Skill template with references, scripts, and assets structure
 

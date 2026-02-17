@@ -505,32 +505,47 @@ This guide provides ready-to-use layout patterns using CSS Grid and Flexbox. Cop
 
 ---
 
-## Utility Classes
+## Layout Classes (layouts.css)
+
+Layout patterns belong in `layouts.css` as semantic classes — not as utility chains in HTML.
 
 ```css
-/* Flex utilities */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-wrap { flex-wrap: wrap; }
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
-.items-end { align-items: flex-end; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.justify-end { justify-content: flex-end; }
+/* layouts.css — Page structure */
+.page-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: var(--space-6);
+  min-height: 100vh;
+}
 
-/* Gap utilities */
-.gap-xs { gap: var(--space-xs); }
-.gap-sm { gap: var(--space-sm); }
-.gap-md { gap: var(--space-md); }
-.gap-lg { gap: var(--space-lg); }
-.gap-xl { gap: var(--space-xl); }
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
 
-/* Grid utilities */
-.grid { display: grid; }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+/* Responsive — collapses to single column on small screens */
+@media (min-width: 768px) {
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+}
+```
+
+**Do not** create single-property utility classes for flex/grid layout. If a component needs a flex row with centered items, give it a semantic name in `components.css`:
+
+```css
+/* components.css — not a utility chain */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
 ```
 
 ---

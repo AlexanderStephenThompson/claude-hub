@@ -260,14 +260,19 @@ Organize properties by group. 5 groups, always in this order:
 
 ---
 
-## When to Consider Alternatives
+## No Tailwind. No PostCSS.
 
-| Situation | Consider |
-|-----------|----------|
-| Large team, many contributors | CSS Modules for guaranteed scoping |
-| Rapid prototyping | Tailwind CSS |
-| Complex theming needs | CSS-in-JS (styled-components, Emotion) |
-| Legacy browser support | PostCSS with autoprefixer |
+This design system uses **vanilla CSS with design tokens**. No build tools, no utility-class frameworks, no preprocessors.
+
+**Why not Tailwind?** It moves styling decisions into HTML, producing class bloat (`class="flex items-center gap-4 p-6 rounded-lg bg-white shadow-md"`) that's hard to scan, hard to search, and impossible to update from one place. Our design system solves the same problem — consistency — by putting it where it belongs: in CSS variables and semantic class names.
+
+**Why not PostCSS?** Modern CSS supports variables, nesting, `@layer`, `color-mix()`, and container queries natively. PostCSS adds a build step and tooling complexity for features browsers already handle.
+
+**If a project already uses Tailwind or PostCSS:**
+1. Don't add more Tailwind utilities or PostCSS plugins
+2. New CSS goes in vanilla `.css` files using the 5-file architecture and design tokens
+3. When touching existing Tailwind components, extract the utility chains into semantic classes in `components.css` that reference tokens
+4. Migrate incrementally — don't rewrite everything at once, but don't extend the old pattern either
 
 ---
 

@@ -470,6 +470,6 @@ If ALL phases are skipped, report: "CSS is already clean. No changes needed."
 - **Don't change visual appearance** — If the page looks different after your changes, you broke something. Revert and try again.
 - **Don't remove CSS you're unsure about** — Flag uncertain cases in your report instead.
 - **Don't over-consolidate** — `components.css` can be large; that's fine. Don't create artificial abstractions just to reduce file size.
-- **Don't fight the framework** — If the project uses CSS Modules, Tailwind, or styled-components, work within that paradigm. The 5-file architecture applies to vanilla CSS.
+- **Migrate away from Tailwind/PostCSS** — If the project uses Tailwind or PostCSS, don't extend those patterns. New CSS goes in vanilla `.css` files with design tokens. When touching existing Tailwind components, extract utility chains into semantic classes in `components.css`. Migrate incrementally.
 - **Don't ignore existing conventions** — If the project already uses a naming convention (even if it's not BEM), be consistent with it rather than introducing BEM alongside it.
 - **Don't create tokens nobody will use** — Only tokenize values that appear more than once. A one-off `margin: 7px` doesn't need `--space-almost-2`.

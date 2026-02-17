@@ -208,4 +208,4 @@ All configuration is in `.env`. See `.env.example` for defaults.
 2. Create a branch: `git checkout -b feature/your-feature`
 3. Make changes
 4. Run tests: `<test-command>`
-5. Submit a PR
+5. Submit a PR (merge with `--no-ff`, do not delete the branch)

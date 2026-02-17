@@ -341,7 +341,7 @@ How to help, where to start, what the workflow looks like.
 2. Create a branch: `git checkout -b feature/your-feature`
 3. Make your changes following the project conventions
 4. Run tests: `npm test`
-5. Submit a PR
+5. Submit a PR (merge with `--no-ff`, do not delete the branch)
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 ```

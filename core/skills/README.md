@@ -25,10 +25,7 @@ Web-specific skills with comprehensive SKILL.md content. Located in `web/skills/
 | [design](../../web/skills/design/) | Design system, semantic HTML, CSS formatting, component states |
 | [web-accessibility](../../web/skills/web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management |
 | [web-css](../../web/skills/web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns |
-| [web-graphql](../../web/skills/web-graphql/) | GraphQL patterns, Apollo |
 | [web-performance](../../web/skills/web-performance/) | Performance optimization |
-| [web-react](../../web/skills/web-react/) | React patterns, hooks, state |
-| [web-testing](../../web/skills/web-testing/) | Frontend testing strategies |
 
 ### Data Engineering Skills
 
@@ -79,10 +76,8 @@ Skills have defined boundaries to avoid duplication. See each skill's "Scope and
     design ─────┐          data-python             unity-csharp
     web-css ◄───┤          data-sql                vrc-udon
     web-a11y ◄──┘          data-pipelines          vrc-worlds
-    web-react              data-aws                vrc-avatars
-    web-graphql            data-iac
-    web-performance
-    web-testing
+    web-performance        data-aws                vrc-avatars
+                           data-iac
 
     ┌─────────────────────────────────────────────────────────┐
     │                       CROSS-CUTTING                      │

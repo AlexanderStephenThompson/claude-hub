@@ -262,28 +262,36 @@ Use 2 spaces for indentation (configurable, but be consistent).
 .big-text { }
 ```
 
-### Utility Classes
+### Utility Classes (overrides.css only)
 
-For single-purpose utilities, use clear prefixes:
+Utilities are exceptions, not architecture. They live in `overrides.css`, use the `u-` prefix, and each sets only 1-2 properties. If you need more, write a semantic class in `components.css`.
 
 ```css
-/* Spacing utilities */
-.mt-sm { margin-top: var(--space-sm); }
-.mb-md { margin-bottom: var(--space-md); }
-.p-lg { padding: var(--space-lg); }
+/* Spacing — overrides.css */
+.u-mt-4 { margin-top: var(--space-4); }
+.u-mb-0 { margin-bottom: 0; }
+.u-p-2 { padding: var(--space-2); }
 
-/* Text utilities */
-.text-center { text-align: center; }
-.text-bold { font-weight: var(--font-weight-bold); }
+/* Text — overrides.css */
+.u-text-center { text-align: center; }
+.u-text-right { text-align: right; }
 
-/* Display utilities */
-.d-none { display: none; }
-.d-flex { display: flex; }
+/* Display — overrides.css */
+.u-hidden { display: none; }
+.u-block { display: block; }
+.u-flex { display: flex; }
 
-/* Visibility utilities */
-.sr-only { /* screen reader only */ }
-.visually-hidden { /* hidden but in DOM */ }
+/* Accessibility — overrides.css */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
 ```
+
+**Do not** build layouts or components from utility chains. If an element needs `display: flex; align-items: center; gap: var(--space-4); padding: var(--space-6)`, that's a component — give it a semantic name and put it in `components.css`.
 
 ---
 
