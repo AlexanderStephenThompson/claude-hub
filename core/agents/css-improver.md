@@ -94,19 +94,50 @@ Assess the current state and determine your approach:
 
 ### Restructure Plan (when triggered)
 
-1. **Inventory** — List every CSS file with a one-line summary of its contents
-2. **Mapping** — Assign each file to a canonical destination:
-   - Browser resets → `reset.css`
-   - Variables/tokens + element defaults → `global.css`
-   - Page layouts, grids, containers → `layouts.css`
-   - Component styles → `components.css`
-   - Helpers, one-offs, page-specific → `overrides.css`
-3. **Execution order** — Merge in dependency order (tokens first, then layouts, then components)
-4. **Execute** — Merge files, delete originals, update all `@import` and `<link>` references
-5. **Add origin comments** — When merging, mark where content came from:
-   ```css
-   /* === Merged from: old-file.css === */
-   ```
+**Step 1 — Inventory every CSS file:**
+
+For each file, read it and summarize:
+- What selectors does it contain?
+- What kinds of values does it use? (tokens, hardcoded, mix)
+- Is it single-purpose or mixed-concern?
+
+**Step 2 — Classify every rule into its destination:**
+
+Go through each selector and decide where it belongs using these rules:
+
+| If the selector... | It goes in... |
+|---------------------|--------------|
+| Is `*`, `body`, `html`, `img`, `input`, `table`, or other bare elements with NO tokens | `reset.css` |
+| Is `:root` or bare elements that reference `var(--*)` tokens | `global.css` |
+| Uses `.page-*`, `.container`, `.grid-*`, `.section-*`, or defines flex/grid for page regions | `layouts.css` |
+| Uses `.btn`, `.card`, `.form-*`, `.nav-*`, `.modal`, or any BEM-named reusable component | `components.css` |
+| Uses `.u-*` utilities, `@media print`, page-specific overrides, or sets only 1-2 properties | `overrides.css` |
+
+**Ambiguous cases:**
+- **Element selectors that set colors/fonts** (e.g., `a { color: blue }`) — These are design decisions, not browser resets. Goes in `global.css`.
+- **Files with mixed concerns** — Split them. A file with both `:root` tokens and `.btn` styles gets its `:root` block moved to `global.css` and `.btn` rules moved to `components.css`.
+- **A class that sets both layout AND visual styles** — Put it in `components.css` (it's a component that happens to define its own layout). Only `layouts.css` should have classes that ONLY do positioning with zero visual properties.
+- **Vendor resets for third-party libraries** — `overrides.css` (they're exceptions to the normal cascade).
+
+**Step 3 — Plan the merge order:**
+
+Merge in dependency order so tokens exist before they're referenced:
+1. `reset.css` first (no dependencies)
+2. `global.css` second (defines tokens everything else uses)
+3. `layouts.css` third (may reference spacing tokens)
+4. `components.css` fourth (references tokens, may reference layout patterns)
+5. `overrides.css` last (overrides everything above)
+
+**Step 4 — Execute the merges:**
+
+For each source file, move its rules to the correct destination. Delete empty originals. Update all `@import` and `<link>` references.
+
+**Step 5 — Add origin comments:**
+
+When merging, mark where content came from so it's reviewable:
+```css
+/* === Merged from: old-file.css === */
+```
 
 ### Import Order
 
@@ -142,38 +173,101 @@ If uncertain whether a selector is used, **leave it** and note it in your report
 
 ## Phase 4: Consistency (AI-Generated Drift Fix)
 
-This is the core differentiator. Find near-duplicates and consolidate them.
+This is the most important phase. AI generates CSS that works locally but drifts globally. Without memory between sessions, similar components end up with slightly different padding, colors, and spacing — not by choice, but by independence. The result: you change `.card`'s background, but `.panel` uses `#fff`, `.info-box` uses `white`, and `.content-block` uses `rgb(255,255,255)` — same color, different formats, so only one gets updated. You're always playing whack-a-mole.
 
-**Reference:** Read `~/.claude/skills/web-css/references/file-architecture.md` for the internal organization patterns within each canonical file.
+**Goal:** Every variant of the same design intent uses the same token. One edit propagates everywhere.
 
-### How to Hunt Near-Duplicates
+### Step 1: Build a Selector Inventory
 
-**Step 1 — Group by visual role:**
-Find all "card-like" components, all "button-like" components, all "section containers." Compare their properties side by side. Look for rule sets that are 80%+ identical but differ in small ways.
+Read through `components.css` (and any other file with component rules). For every selector, record:
+- **Selector name** (`.card`, `.panel`, `.info-box`)
+- **Properties and values** (list them all)
+- **Visual role** — what it looks like (card, button, section, header, input, badge, etc.)
 
-**Step 2 — Search for raw values:**
-Search for common hardcoded values (`16px`, `#fff`, `8px`, `1rem`). Every hit is a potential variant that should be a single token.
+Group selectors by visual role. Put all card-like things together, all button-like things together, all container-like things together.
 
-**Step 3 — Check property clusters:**
-If 3+ selectors share the same `border-radius` + `box-shadow` + `padding` pattern, they're variants of the same design intent.
+### Step 2: Compare Within Each Group
 
-### What to Consolidate
+For each group, put the selectors side by side and look for:
 
-| Pattern | Problem | Fix |
-|---------|---------|-----|
-| Same value, different unit | `16px` vs `1rem` — search for one misses the other | Normalize to one unit, then tokenize |
-| Same color, different format | `#3b82f6` vs `rgb(59,130,246)` | Normalize all to hex6 format, then tokenize |
-| Near-identical spacing | `padding: 14px` vs `16px` on similar components | Unify to one token value |
-| Duplicate layout patterns | Multiple components with the same flex setup | Extract shared layout class |
-| Redundant selectors | `.btn-primary` and `.button-main` doing the same thing | Keep one, search-replace the other |
+**2a. Same properties, different values:**
+```css
+/* These were generated in separate sessions for the same intent */
+.card {
+  padding: 16px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.panel {
+  padding: 1rem;          /* same as 16px, different unit */
+  border-radius: 8px;
+  background: #fff;       /* same color, short hex */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.info-box {
+  padding: 16px;
+  border-radius: 0.5rem;  /* same as 8px, yet another unit */
+  background: white;      /* same color, keyword */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+```
 
-### Value Normalization
+**2b. Almost-identical values (within 2-3px):**
+One has `padding: 14px`, another `padding: 16px`, another `padding: 15px` on visually identical components. These aren't intentional design choices — they're AI picking slightly different numbers each session.
 
-Before tokenizing, normalize inconsistent representations:
-- **Colors:** normalize to hex6 (`#3b82f6`), the format used in `global.css`
-- **Spacing:** normalize to `px` or `rem` consistently (match project convention)
-- **Zero values:** always unit-less (`0` not `0px`)
-- **Shorthand:** use shorthand where all sides are equal (`margin: 16px` not `margin: 16px 16px 16px 16px`)
+**2c. Same layout pattern, different selectors:**
+Multiple selectors using the same `display: flex; align-items: center; gap: 8px` setup but defined independently.
+
+### Step 3: Decide What to Keep
+
+For each group of near-duplicates, pick the **canonical version** using this priority:
+
+1. **If one already uses tokens** — that's the canonical version
+2. **If values differ slightly** — pick the value closest to an existing token (e.g., `14px` and `16px` → `16px` because it maps to `--space-4`)
+3. **If selectors are truly identical** — keep the one with the clearest name, delete the others, search-replace all usages in HTML/JSX
+4. **If selectors share 80%+ of properties** — merge into a shared rule, then add selector-specific overrides:
+   ```css
+   /* Shared foundation */
+   .card, .panel, .info-box {
+     padding: var(--space-4);
+     border-radius: var(--radius-md);
+     background: var(--color-surface);
+     box-shadow: var(--shadow-sm);
+   }
+
+   /* Only the differences */
+   .card { max-width: 400px; }
+   .panel { border-left: 3px solid var(--color-primary); }
+   ```
+
+### Step 4: Normalize Values
+
+Before tokenizing, normalize inconsistent representations of the same value:
+
+| Inconsistency | Canonical Form |
+|---------------|---------------|
+| `#fff`, `#ffffff`, `white`, `rgb(255,255,255)` | `#ffffff` (hex6) |
+| `16px`, `1rem`, `1em` | Pick one unit consistently (match project convention) |
+| `0px`, `0em`, `0rem` | `0` (unit-less) |
+| `margin: 16px 16px 16px 16px` | `margin: 16px` (shorthand) |
+
+### Step 5: Search for Stray Values
+
+After grouping and normalizing, do a sweep for orphan hardcoded values that weren't caught by visual grouping:
+
+1. **Grep for hex colors** outside `:root` — each unique hex is a consolidation candidate
+2. **Grep for px/rem spacing values** on margin/padding/gap — list all unique values and look for near-matches
+3. **Grep for z-index values** — map all z-index usage; conflicting values (100, 99, 101) indicate fragile stacking
+4. **Grep for box-shadow values** — shadows are prime drift candidates since they're long and vary subtly
+
+For each stray value found, determine: is this intentionally different, or did AI just pick a slightly different number? If the latter, normalize to the nearest existing value in the design system.
+
+### What NOT to Consolidate
+
+- **Intentionally different components** — A `.btn-primary` and `.btn-danger` share structure but differ in color by design. Don't merge their colors.
+- **Responsive overrides** — Different padding at different breakpoints is intentional.
+- **State variations** — `:hover` having different values from `:default` is the point.
 
 **Commit:** `refactor(css): consolidate near-duplicate rules — [N] rule sets unified`
 
@@ -325,10 +419,19 @@ Token usage (var):  [N]    → [N]
 Changes:
   Tokens added:       [N] new CSS variables in :root
   Dead CSS removed:   [N] selectors
-  Duplicates unified: [N] near-identical rule sets consolidated
   Properties ordered: [N] rules normalized
   State gaps filled:  [N] interactive elements completed
   Responsive fixes:   [N] queries converted to mobile-first
+
+Near-Duplicate Consolidation:
+  Groups found:       [N] sets of near-identical selectors
+  Selectors merged:   [N] selectors → [N] shared rules
+  Values normalized:  [N] (unit/format inconsistencies fixed)
+  Stray values found: [N] orphan hardcoded values tokenized
+  Detail:
+    - .card, .panel, .info-box → shared rule (4 properties unified)
+    - .btn-primary, .button-main → kept .btn-primary, replaced 3 usages
+    - [... one line per merge ...]
 
 Commits:
   [hash] refactor(css): consolidate to 5-file architecture
