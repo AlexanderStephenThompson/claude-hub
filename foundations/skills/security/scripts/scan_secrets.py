@@ -223,6 +223,13 @@ def is_false_positive(match_text: str, line: str) -> bool:
     return False
 
 
+def mask_secret(text: str) -> str:
+    """Mask the middle of a secret for safe display."""
+    if len(text) > MASK_THRESHOLD_LENGTH:
+        return text[:MASK_VISIBLE_CHARS] + '*' * (len(text) - MASK_VISIBLE_CHARS * 2) + text[-MASK_VISIBLE_CHARS:]
+    return text[:2] + '*' * (len(text) - 2)
+
+
 def scan_file(file_path: Path) -> list[Finding]:
     """Scan a single file for secrets."""
     findings = []
@@ -244,11 +251,7 @@ def scan_file(file_path: Path) -> list[Finding]:
                 if is_false_positive(match_text, line):
                     continue
 
-                # Mask the middle of the secret for display
-                if len(match_text) > MASK_THRESHOLD_LENGTH:
-                    masked = match_text[:MASK_VISIBLE_CHARS] + '*' * (len(match_text) - MASK_VISIBLE_CHARS * 2) + match_text[-MASK_VISIBLE_CHARS:]
-                else:
-                    masked = match_text[:2] + '*' * (len(match_text) - 2)
+                masked = mask_secret(match_text)
 
                 findings.append(Finding(
                     file=str(file_path),
@@ -282,37 +285,28 @@ def format_text_output(findings: list[Finding]) -> str:
     output = []
     output.append(f"🔴 Found {len(findings)} potential secret(s):\n")
 
-    # Group by severity
-    critical = [finding for finding in findings if finding.severity == "critical"]
-    high = [finding for finding in findings if finding.severity == "high"]
-    medium = [finding for finding in findings if finding.severity == "medium"]
+    severity_groups = [
+        ("critical", "🚨 CRITICAL:"),
+        ("high", "⚠️  HIGH:"),
+        ("medium", "📋 MEDIUM:"),
+    ]
 
-    if critical:
-        output.append("🚨 CRITICAL:")
-        for finding in critical:
-            output.append(f"  {finding.file}:{finding.line}")
-            output.append(f"    Type: {finding.type}")
-            output.append(f"    Found: {finding.match}")
-        output.append("")
+    for severity, label in severity_groups:
+        group = [finding for finding in findings if finding.severity == severity]
+        if group:
+            output.append(label)
+            for finding in group:
+                output.append(f"  {finding.file}:{finding.line}")
+                output.append(f"    Type: {finding.type}")
+                output.append(f"    Found: {finding.match}")
+            output.append("")
 
-    if high:
-        output.append("⚠️  HIGH:")
-        for finding in high:
-            output.append(f"  {finding.file}:{finding.line}")
-            output.append(f"    Type: {finding.type}")
-            output.append(f"    Found: {finding.match}")
-        output.append("")
-
-    if medium:
-        output.append("📋 MEDIUM:")
-        for finding in medium:
-            output.append(f"  {finding.file}:{finding.line}")
-            output.append(f"    Type: {finding.type}")
-            output.append(f"    Found: {finding.match}")
-        output.append("")
+    critical_count = sum(1 for f in findings if f.severity == "critical")
+    high_count = sum(1 for f in findings if f.severity == "high")
+    medium_count = sum(1 for f in findings if f.severity == "medium")
 
     output.append("─" * 50)
-    output.append(f"Summary: {len(critical)} critical, {len(high)} high, {len(medium)} medium")
+    output.append(f"Summary: {critical_count} critical, {high_count} high, {medium_count} medium")
     output.append("\n⚠️  IMPORTANT:")
     output.append("  1. Rotate any exposed secrets immediately")
     output.append("  2. Remove secrets from code and history")

@@ -275,46 +275,38 @@ def find_commented_code(filepath: str, content: str) -> List[CommentedCode]:
     i = 0
     while i < len(lines):
         line = lines[i]
-        
-        # Check for single-line comment that looks like code
-        is_commented_code = False
-        for pattern in code_patterns:
-            if re.match(pattern, line):
-                is_commented_code = True
-                break
-        
-        if is_commented_code:
-            start_line = i + 1
-            end_line = start_line
-            
-            # Extend to find consecutive commented code
-            j = i + 1
-            while j < len(lines):
-                next_line = lines[j]
-                if next_line.strip().startswith('//') or next_line.strip().startswith('#'):
-                    end_line = j + 1
-                    j += 1
-                elif not next_line.strip():  # Allow blank lines within block
-                    j += 1
-                else:
-                    break
-            
-            # Only report if it's a significant block (3+ lines)
-            if end_line - start_line >= MIN_COMMENTED_BLOCK_LINES:
-                preview = lines[i].strip()[:PREVIEW_MAX_LENGTH]
-                if len(lines[i].strip()) > PREVIEW_MAX_LENGTH:
-                    preview += '...'
-                    
-                commented.append(CommentedCode(
-                    file=filepath,
-                    start_line=start_line,
-                    end_line=end_line,
-                    preview=preview,
-                ))
-            
-            i = j
-        else:
+
+        if not any(re.match(pattern, line) for pattern in code_patterns):
             i += 1
+            continue
+
+        start_line = i + 1
+        end_line = start_line
+
+        j = i + 1
+        while j < len(lines):
+            next_line = lines[j]
+            if next_line.strip().startswith('//') or next_line.strip().startswith('#'):
+                end_line = j + 1
+                j += 1
+            elif not next_line.strip():
+                j += 1
+            else:
+                break
+
+        if end_line - start_line >= MIN_COMMENTED_BLOCK_LINES:
+            preview = lines[i].strip()[:PREVIEW_MAX_LENGTH]
+            if len(lines[i].strip()) > PREVIEW_MAX_LENGTH:
+                preview += '...'
+
+            commented.append(CommentedCode(
+                file=filepath,
+                start_line=start_line,
+                end_line=end_line,
+                preview=preview,
+            ))
+
+        i = j
     
     return commented
 

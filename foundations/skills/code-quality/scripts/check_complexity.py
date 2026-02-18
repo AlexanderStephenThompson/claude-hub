@@ -80,62 +80,63 @@ def detect_functions_python(filepath: str) -> List[FunctionInfo]:
         stripped = line.rstrip()
 
         match = re.match(r'^(\s*)def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)', stripped)
-        if match:
-            indent = len(match.group(1))
-            name = match.group(2)
-            param_text = match.group(3)
+        if not match:
+            i += 1
+            continue
 
-            while ')' not in param_text and i + 1 < len(lines):
-                i += 1
-                param_text += lines[i].strip()
+        indent = len(match.group(1))
+        name = match.group(2)
+        param_text = match.group(3)
 
-            param_count = count_params(param_text.split(')')[0])
+        while ')' not in param_text and i + 1 < len(lines):
+            i += 1
+            param_text += lines[i].strip()
 
-            start_line = i + 1
-            func_lines = []
-            max_depth = 0
-            j = i + 1
+        param_count = count_params(param_text.split(')')[0])
 
-            while j < len(lines):
-                func_line = lines[j]
-                func_stripped = func_line.rstrip()
+        start_line = i + 1
+        func_lines = []
+        max_depth = 0
+        j = i + 1
 
-                if not func_stripped:
-                    func_lines.append(func_stripped)
-                    j += 1
-                    continue
+        while j < len(lines):
+            func_line = lines[j]
+            func_stripped = func_line.rstrip()
 
-                line_indent = len(func_line) - len(func_line.lstrip())
-
-                # Function ends at same or lower indent (excluding blanks and comments)
-                if line_indent <= indent and func_stripped and not func_stripped.startswith('#'):
-                    break
-
+            if not func_stripped:
                 func_lines.append(func_stripped)
-
-                # Calculate nesting depth relative to function body
-                if func_stripped and not func_stripped.startswith('#'):
-                    body_indent = indent + 4  # Expected body indent
-                    relative_depth = max(0, (line_indent - body_indent) // 4) + 1
-                    max_depth = max(max_depth, relative_depth)
-
                 j += 1
+                continue
 
-            # Count non-blank, non-comment lines
-            code_lines = [
-                func_line for func_line in func_lines
-                if func_line.strip() and not func_line.strip().startswith('#')
-            ]
+            line_indent = len(func_line) - len(func_line.lstrip())
 
-            functions.append(FunctionInfo(
-                name=name,
-                file=filepath,
-                start_line=start_line,
-                end_line=j,
-                param_count=param_count,
-                max_depth=max_depth,
-                line_count=len(code_lines),
-            ))
+            # Function ends at same or lower indent (excluding blanks and comments)
+            if line_indent <= indent and func_stripped and not func_stripped.startswith('#'):
+                break
+
+            func_lines.append(func_stripped)
+
+            if func_stripped and not func_stripped.startswith('#'):
+                body_indent = indent + 4
+                relative_depth = max(0, (line_indent - body_indent) // 4) + 1
+                max_depth = max(max_depth, relative_depth)
+
+            j += 1
+
+        code_lines = [
+            func_line for func_line in func_lines
+            if func_line.strip() and not func_line.strip().startswith('#')
+        ]
+
+        functions.append(FunctionInfo(
+            name=name,
+            file=filepath,
+            start_line=start_line,
+            end_line=j,
+            param_count=param_count,
+            max_depth=max_depth,
+            line_count=len(code_lines),
+        ))
 
         i += 1
 
