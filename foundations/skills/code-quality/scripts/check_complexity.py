@@ -79,22 +79,18 @@ def detect_functions_python(filepath: str) -> List[FunctionInfo]:
         line = lines[i]
         stripped = line.rstrip()
 
-        # Match function/method definitions
         match = re.match(r'^(\s*)def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)', stripped)
         if match:
             indent = len(match.group(1))
             name = match.group(2)
             param_text = match.group(3)
 
-            # Collect multi-line parameter definitions
             while ')' not in param_text and i + 1 < len(lines):
                 i += 1
                 param_text += lines[i].strip()
 
-            # Count parameters
             param_count = count_params(param_text.split(')')[0])
 
-            # Find function end (next line at same or lower indent, or EOF)
             start_line = i + 1
             func_lines = []
             max_depth = 0
@@ -104,17 +100,14 @@ def detect_functions_python(filepath: str) -> List[FunctionInfo]:
                 func_line = lines[j]
                 func_stripped = func_line.rstrip()
 
-                # Skip blank lines
                 if not func_stripped:
                     func_lines.append(func_stripped)
                     j += 1
                     continue
 
-                # Check indentation
                 line_indent = len(func_line) - len(func_line.lstrip())
 
-                # Function ends when we hit a line at same or lower indent
-                # (that isn't blank or a decorator)
+                # Function ends at same or lower indent (excluding blanks and comments)
                 if line_indent <= indent and func_stripped and not func_stripped.startswith('#'):
                     break
 
@@ -305,7 +298,6 @@ def validate_directory(
             filepath = os.path.join(root, file)
             result.files_checked += 1
 
-            # Detect functions based on language
             if ext in python_extensions:
                 functions = detect_functions_python(filepath)
             else:

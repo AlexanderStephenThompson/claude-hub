@@ -69,28 +69,23 @@ def extract_imported_names(import_line: str) -> List[str]:
     """Extract the names being imported from an import statement."""
     names = []
     
-    # import x from 'y' or import x = require('y')
     match = re.match(r'import\s+(\w+)\s+from', import_line)
     if match:
         names.append(match.group(1))
-    
-    # import { a, b, c } from 'y'
+
     match = re.search(r'import\s*{([^}]+)}', import_line)
     if match:
         for name in match.group(1).split(','):
             name = name.strip()
-            # Handle 'x as y' - we care about 'y'
             if ' as ' in name:
                 name = name.split(' as ')[1].strip()
             if name:
                 names.append(name)
-    
-    # import * as x from 'y'
+
     match = re.search(r'import\s*\*\s*as\s+(\w+)', import_line)
     if match:
         names.append(match.group(1))
-    
-    # from x import y, z (Python)
+
     match = re.match(r'from\s+\S+\s+import\s+(.+)', import_line)
     if match:
         for name in match.group(1).split(','):
@@ -99,8 +94,7 @@ def extract_imported_names(import_line: str) -> List[str]:
                 name = name.split(' as ')[1].strip()
             if name and name != '*':
                 names.append(name)
-    
-    # import x, y, z (Python)
+
     match = re.match(r'^import\s+([^{][^;]+)$', import_line)
     if match and 'from' not in import_line:
         for name in match.group(1).split(','):
@@ -118,7 +112,6 @@ def find_unused_imports(filepath: str, content: str) -> List[UnusedImport]:
     unused = []
     lines = content.split('\n')
     
-    # Collect all imports and their line numbers
     imports = []
     for i, line in enumerate(lines):
         stripped = line.strip()
@@ -127,7 +120,6 @@ def find_unused_imports(filepath: str, content: str) -> List[UnusedImport]:
             if names:
                 imports.append((i + 1, stripped, names))
     
-    # Get the rest of the code (excluding imports and comments)
     code_lines = []
     in_multiline_comment = False
     for line in lines:
@@ -147,13 +139,10 @@ def find_unused_imports(filepath: str, content: str) -> List[UnusedImport]:
             code_lines.append(line)
     
     code_text = '\n'.join(code_lines)
-    
-    # Check each imported name
+
     for line_num, import_stmt, names in imports:
         unused_names = []
         for name in names:
-            # Check if the name appears elsewhere in the code
-            # Use word boundary to avoid partial matches
             pattern = rf'\b{re.escape(name)}\b'
             if not re.search(pattern, code_text):
                 unused_names.append(name)

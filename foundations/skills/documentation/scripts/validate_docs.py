@@ -320,9 +320,9 @@ def format_text_output(issues: list[Issue], doc_root: Path) -> str:
                 output.append(f"    Fix: {item.fix}")
             output.append("")
 
-    append_issue_group(errors, "ERRORS", "ERROR")
-    append_issue_group(warnings, "WARNINGS", "WARNING")
-    append_issue_group(info, "INFO", "INFO")
+    append_issue_group(errors, "ERRORS", "❌")
+    append_issue_group(warnings, "WARNINGS", "⚠️")
+    append_issue_group(info, "INFO", "ℹ️")
 
     output.append("─" * 50)
     output.append(f"Summary: {len(errors)} error(s), {len(warnings)} warning(s), {len(info)} info")

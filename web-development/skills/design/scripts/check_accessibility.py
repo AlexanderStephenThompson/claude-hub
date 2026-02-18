@@ -371,11 +371,11 @@ def format_text_output(issues: list[Issue]) -> str:
         output.append(f"  {file_path}")
         for issue in file_issues:
             if issue.severity == "error":
-                severity_label = "ERROR"
+                severity_label = "❌"
             elif issue.severity == "warning":
-                severity_label = "WARN"
+                severity_label = "⚠️"
             else:
-                severity_label = "INFO"
+                severity_label = "ℹ️"
 
             output.append(f"  {severity_label} Line {issue.line}: <{issue.element}> {issue.issue}")
             output.append(f"         Fix: {issue.fix}")

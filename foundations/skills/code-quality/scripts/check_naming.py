@@ -21,14 +21,12 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, field
 
-# Naming patterns
 PASCAL_CASE = re.compile(r'^[A-Z][a-zA-Z0-9]*$')
 CAMEL_CASE = re.compile(r'^[a-z][a-zA-Z0-9]*$')
 SNAKE_CASE = re.compile(r'^[a-z][a-z0-9_]*$')
 KEBAB_CASE = re.compile(r'^[a-z][a-z0-9-]*$')
 UPPER_SNAKE = re.compile(r'^[A-Z][A-Z0-9_]*$')
 
-# Common abbreviations to flag
 ABBREVIATIONS = {
     'usr': 'user',
     'btn': 'button',
@@ -66,10 +64,8 @@ ABBREVIATIONS = {
     'spec': 'specification',
 }
 
-# Boolean prefixes
 BOOLEAN_PREFIXES = ('is', 'has', 'should', 'can', 'will', 'did', 'was', 'are')
 
-# Verb prefixes for functions
 VERB_PREFIXES = (
     'get', 'set', 'create', 'update', 'delete', 'remove', 'add', 'insert',
     'find', 'search', 'fetch', 'load', 'save', 'store', 'send', 'receive',
@@ -121,11 +117,9 @@ def check_boolean_naming(name: str) -> bool:
     """Check if boolean-like name has proper prefix."""
     name_lower = name.lower()
 
-    # Skip if already has good prefix
     if name_lower.startswith(BOOLEAN_PREFIXES):
         return True
 
-    # Flag suspicious boolean names
     boolean_indicators = ('active', 'enabled', 'disabled', 'visible', 'hidden',
                          'valid', 'invalid', 'empty', 'full', 'ready', 'done',
                          'loading', 'loaded', 'open', 'closed', 'selected')
@@ -141,17 +135,14 @@ def check_function_naming(name: str) -> bool:
     """Check if function name starts with a verb."""
     name_lower = name.lower()
 
-    # Skip private/magic methods
     if name.startswith('_'):
         return True
 
-    # Skip React lifecycle methods
     react_methods = ('componentDidMount', 'componentWillUnmount', 'render',
                     'shouldComponentUpdate', 'getDerivedStateFromProps')
     if name in react_methods:
         return True
 
-    # Check for verb prefix
     return name_lower.startswith(VERB_PREFIXES)
 
 
@@ -265,15 +256,10 @@ def to_kebab_case(name: str) -> str:
 def validate_file(filepath: str, fix_suggestions: bool) -> List[NamingIssue]:
     """Validate naming in a single file."""
     issues = []
-
-    # Check file naming
     issues.extend(check_file_naming(filepath))
-
-    # Check names in file content
     names = extract_names(filepath)
 
     for line_num, name, name_type in names:
-        # Check for abbreviations
         abbrev_result = check_abbreviations(name)
         if abbrev_result:
             abbrev, full = abbrev_result
@@ -286,7 +272,6 @@ def validate_file(filepath: str, fix_suggestions: bool) -> List[NamingIssue]:
                 suggestion=name.replace(abbrev, full) if fix_suggestions else None
             ))
 
-        # Check boolean naming
         if name_type == 'boolean' and not check_boolean_naming(name):
             issues.append(NamingIssue(
                 file=filepath,
@@ -297,7 +282,6 @@ def validate_file(filepath: str, fix_suggestions: bool) -> List[NamingIssue]:
                 suggestion=f"is{name[0].upper()}{name[1:]}" if fix_suggestions else None
             ))
 
-        # Check function naming
         if name_type == 'function' and not check_function_naming(name):
             issues.append(NamingIssue(
                 file=filepath,
@@ -308,7 +292,6 @@ def validate_file(filepath: str, fix_suggestions: bool) -> List[NamingIssue]:
                 suggestion=None
             ))
 
-        # Check class naming
         if name_type == 'class' and not PASCAL_CASE.match(name):
             issues.append(NamingIssue(
                 file=filepath,

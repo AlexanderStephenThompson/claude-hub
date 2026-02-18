@@ -304,7 +304,6 @@ function checkCSS(filepath, content) {
         const lineNum = i + 1;
         const raw = lines[i];
 
-        // Inline suppression: check-disable, check-enable, check-disable-next-line
         if (/\/\*\s*check-disable\b/.test(raw) && !/check-disable-next-line/.test(raw)) disabled = true;
         if (/\/\*\s*check-enable\b/.test(raw)) disabled = false;
 
@@ -910,7 +909,7 @@ function checkJS(filepath, content) {
 
         if (isSkipped) continue;
 
-        /* Strip string contents for most checks (preserve raw for secret detection) */
+        /* Preserve raw line for secret detection, use stripped for other checks */
         const stripped = line
             .replace(/`[^`]*`/g, '``')
             .replace(/"[^"]*"/g, '""')

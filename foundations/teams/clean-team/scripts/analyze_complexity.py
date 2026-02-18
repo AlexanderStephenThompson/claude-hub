@@ -258,8 +258,7 @@ def analyze_file(filepath: str) -> Optional[FileMetrics]:
             comment_lines += 1
     
     code_lines = total_lines - blank_lines - comment_lines
-    
-    # Count imports
+
     import_patterns = [
         r'^import\s+',
         r'^from\s+\S+\s+import',
@@ -270,7 +269,6 @@ def analyze_file(filepath: str) -> Optional[FileMetrics]:
         if any(re.match(pattern, line.strip()) for pattern in import_patterns)
     )
     
-    # Extract functions based on file type
     ext = Path(filepath).suffix.lower()
     if ext in ['.js', '.ts', '.jsx', '.tsx', '.mjs']:
         functions = extract_functions_js_ts(content)

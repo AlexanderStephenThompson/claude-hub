@@ -343,10 +343,10 @@ def format_text_output(results: dict) -> str:
                         output.append(f"     Fix: Upgrade to {vuln.fix_version}")
                 output.append("")
 
-        append_vulnerability_group(critical, "CRITICAL", "CRITICAL")
-        append_vulnerability_group(high, "HIGH", "HIGH")
-        append_vulnerability_group(medium, "MEDIUM", "MEDIUM")
-        append_vulnerability_group(low, "LOW", "LOW")
+        append_vulnerability_group(critical, "CRITICAL", "🚨")
+        append_vulnerability_group(high, "HIGH", "⚠️")
+        append_vulnerability_group(medium, "MEDIUM", "📋")
+        append_vulnerability_group(low, "LOW", "ℹ️")
 
     if results["other"]:
         output.append("📝 Other ecosystems detected (manual check recommended):")

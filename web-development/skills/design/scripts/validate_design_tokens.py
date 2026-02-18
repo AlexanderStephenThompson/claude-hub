@@ -230,7 +230,7 @@ def format_text_output(violations: list[Violation]) -> str:
     for file_path, file_violations in by_file.items():
         output.append(f"  {file_path}")
         for violation in file_violations:
-            severity_label = "ERROR" if violation.severity == "error" else "WARN"
+            severity_label = "❌" if violation.severity == "error" else "⚠️"
             output.append(f"  {severity_label} Line {violation.line}: {violation.property}: {violation.value}")
             output.append(f"         {violation.suggestion}")
         output.append("")

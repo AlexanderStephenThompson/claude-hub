@@ -213,10 +213,10 @@ def is_false_positive(match_text: str, line: str) -> bool:
         if re.search(pattern, lower_line) or re.search(pattern, lower_match):
             return True
 
-    # Skip if in a comment (basic check)
+    # Commented-out secrets may still need rotation, so only skip
+    # comments that don't contain TODO/FIXME markers
     stripped = line.strip()
     if stripped.startswith('#') or stripped.startswith('//') or stripped.startswith('*'):
-        # Unless it looks like an actual secret was commented out
         if 'TODO' not in line and 'FIXME' not in line:
             return True
 
@@ -288,7 +288,7 @@ def format_text_output(findings: list[Finding]) -> str:
     medium = [finding for finding in findings if finding.severity == "medium"]
 
     if critical:
-        output.append("CRITICAL:")
+        output.append("🚨 CRITICAL:")
         for finding in critical:
             output.append(f"  {finding.file}:{finding.line}")
             output.append(f"    Type: {finding.type}")
@@ -296,7 +296,7 @@ def format_text_output(findings: list[Finding]) -> str:
         output.append("")
 
     if high:
-        output.append("HIGH:")
+        output.append("⚠️  HIGH:")
         for finding in high:
             output.append(f"  {finding.file}:{finding.line}")
             output.append(f"    Type: {finding.type}")
@@ -304,14 +304,14 @@ def format_text_output(findings: list[Finding]) -> str:
         output.append("")
 
     if medium:
-        output.append("MEDIUM:")
+        output.append("📋 MEDIUM:")
         for finding in medium:
             output.append(f"  {finding.file}:{finding.line}")
             output.append(f"    Type: {finding.type}")
             output.append(f"    Found: {finding.match}")
         output.append("")
 
-    output.append("-" * 50)
+    output.append("─" * 50)
     output.append(f"Summary: {len(critical)} critical, {len(high)} high, {len(medium)} medium")
     output.append("\n⚠️  IMPORTANT:")
     output.append("  1. Rotate any exposed secrets immediately")
@@ -352,7 +352,6 @@ def main():
         print(f"Error: Path does not exist: {path}", file=sys.stderr)
         sys.exit(1)
 
-    # Find and scan files
     files = find_files(path)
 
     if not files:
@@ -364,7 +363,6 @@ def main():
         findings = scan_file(file_path)
         all_findings.extend(findings)
 
-    # Output
     if args.format == "json":
         print(format_json_output(all_findings))
     else:
