@@ -4,18 +4,48 @@ Personal Claude Code customizations: multi-agent teams, shared skills, standalon
 
 ---
 
+## Web Development
+
+Web-specific tools: a cleanup team, standalone agents, and skills.
+
+### Team: clean-web
+
+A 4-agent pipeline for cleaning web projects, backed by deterministic scripts for double coverage.
+
+| Command | What It Does |
+|---------|-------------|
+| `/clean-web:clean` | Full pipeline — restructure → CSS → HTML → code |
+| `/clean-web:clean src/` | Scoped to a directory |
+
+**Pipeline:** `web-restructure → css-improver → html-improver → code-improver`
+
+The orchestrator runs deterministic scripts first (check.js, complexity analysis, dependency analysis, dead code detection), then passes findings to each agent. Agents fix the deterministic violations first, then do their own probabilistic scan on top.
+
+**Scripts** (also runnable standalone):
+```bash
+node web-development/teams/clean-web/scripts/check.js                       # 36 design system rules
+python web-development/teams/clean-web/scripts/analyze_complexity.py <path> # High-complexity functions
+python web-development/teams/clean-web/scripts/analyze_dependencies.py <path> # Circular dependencies
+python web-development/teams/clean-web/scripts/detect_dead_code.py <path>   # Unused exports
+```
+
+### Agents
+
+Standalone agents that load their skill files automatically. Invoke directly with `@agent-name`.
+
+| Agent | Domain | Phases | Skills Loaded |
+|-------|--------|--------|---------------|
+| [css-improver](web-development/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `web-css`, `code-quality` |
+| [html-improver](web-development/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `design`, `web-accessibility`, `code-quality` |
+| [web-restructure](web-development/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` |
+
+Skills: architecture, design, web-css, web-accessibility, web-performance
+
+---
+
 ## Foundations
 
 Universal tools that apply to any project.
-
-### Teams
-
-| Command | Agents | Workflow |
-|---------|--------|----------|
-| `/clean-team:clean [scope\|audit [focus]]` | 8 | Full pipeline, audit-only, or resume — one command, three modes |
-| `/clean-web:clean [scope]` | 4 | Restructure → CSS → HTML → Code — web project cleanup |
-| `/implement-team:implement <feature>` | 5 | Plan → Challenge → Implement (TDD) → Security → Refactor |
-| `/diagnose-team:diagnose <problem>` | 5 | Clarify → Investigate → Hypothesize → Resolve → Validate |
 
 ### Commands
 
@@ -23,6 +53,7 @@ Universal tools that apply to any project.
 |---------|--------------|
 | `/commit` | Stage changes, craft a conventional commit message |
 | `/orient` | Orient yourself to a new project |
+| `/sync` | Deploy all customizations to `~/.claude/` |
 
 ### Agents
 
@@ -31,103 +62,7 @@ Universal tools that apply to any project.
 | [new-codebase-scout](foundations/agents/new-codebase-scout.md) | Explore and document unfamiliar codebases, generate CLAUDE.md |
 | [code-improver](foundations/agents/code-improver.md) | Fix naming, magic values, comments, nesting, error handling, docstrings |
 
-Skills: architecture, code-quality, documentation, security
-
----
-
-## Agents
-
-Standalone agents that each own a specific domain and load their skill files automatically. Invoke directly on any project with `@agent-name`.
-
-| Agent | Domain | Phases | Skills Loaded | Invocation |
-|-------|--------|--------|---------------|------------|
-| [css-improver](web-development/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `web-css`, `code-quality` | `@css-improver` |
-| [html-improver](web-development/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `design`, `web-accessibility`, `code-quality` | `@html-improver` |
-| [code-improver](foundations/agents/code-improver.md) | Code readability & clarity | 9 | `code-quality` | `@code-improver` |
-| [web-restructure](web-development/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` | `@web-restructure` |
-
----
-
-### CSS Improver
-
-Takes CSS from any state to a clean, tokenized architecture. The core problem it solves: AI-generated CSS drifts across sessions — similar components end up with slightly different padding, colors, and spacing. One edit becomes a partial fix because `#fff`, `white`, and `rgb(255,255,255)` are the same color in different formats. This agent unifies everything into shared token-based rules so one edit propagates everywhere.
-
-No Tailwind, no PostCSS. Vanilla CSS with design tokens.
-
-| Phase | What It Does |
-|-------|-------------|
-| 1. Baseline | Inventory CSS files, count hardcoded values, detect existing tokens |
-| 2. Structure | Migrate to 5-file architecture (`reset → global → layouts → components → overrides`) |
-| 3. Dead CSS | Remove unused selectors, duplicates, empty rules, commented-out blocks |
-| 4. Consistency | Hunt near-duplicates — group by visual role, normalize values, merge 80%+ identical rules |
-| 5. Tokenize | Replace repeated hardcoded values with CSS variables in `:root` |
-| 6. Property Order | Normalize to 5-group convention (positioning → box model → typography → visual → animation) |
-| 7. Component States | Ensure all interactive elements have default, hover, active, focus, disabled |
-| 8. Responsive | Convert `max-width` queries to mobile-first `min-width`, standardize breakpoints |
-| 9. Validate | Re-run baseline scans, compare before vs after — every metric should improve |
-| 10. Report | Before/after summary with per-merge detail for near-duplicate consolidation |
-
-**Reads:** `web-css/references/file-architecture.md`, `web-css/assets/token-reference.md`, `web-css/assets/css-patterns.md`
-
----
-
-### HTML Improver
-
-Makes HTML semantic and accessible. Replaces div-soup with correct elements, fixes heading hierarchy, ensures interactive elements are proper buttons/links, adds form labels, and cleans up class bloat. If Tailwind utility chains are present, extracts them into semantic CSS classes rather than extending them.
-
-| Phase | What It Does |
-|-------|-------------|
-| 1. Scan | Find all HTML/JSX/TSX files, count violations by category |
-| 2. Landmarks | Replace `<div>` wrappers with `<nav>`, `<main>`, `<article>`, `<header>`, `<footer>` |
-| 3. Headings | Fix heading hierarchy — one `<h1>` per page, no skipped levels |
-| 4. Interactive | Convert clickable divs/spans to `<button>`, navigation divs to `<a>`, add keyboard support |
-| 5. Forms | Add `<label>` to every input, group with `<fieldset>`, use correct input types |
-| 6. Images | Add meaningful `alt` text, mark decorative images with `alt=""`, use `<figure>` where appropriate |
-| 7. Lists & Data | Replace div-lists with `<ul>`/`<ol>`, div-tables with `<table>`, use `<dl>` for key-value pairs |
-| 8. Content | Fix `<b>` → `<strong>`, `<i>` → `<em>`, add `<time>`, `<address>`, `<abbr>` where applicable |
-| 9. Class Discipline | Reduce to 1-3 classes per element, extract Tailwind chains into semantic CSS classes |
-| 10. Report | Before/after counts per violation category |
-
-**Reads:** `design/references/semantic-html.md`, `design/references/accessibility-guide.md`, `design/assets/component-states-checklist.md`, `design/assets/anti-patterns.md`
-
----
-
-### Code Improver
-
-Language-agnostic code readability cleanup. Makes code that works into code that communicates. Detects the project's language(s) and adapts naming conventions (Python `snake_case` vs JS `camelCase` vs C# `PascalCase`). Doesn't change behavior — tests must still pass after every phase.
-
-| Phase | What It Does |
-|-------|-------------|
-| 1. Scan | Detect language(s), count magic values, abbreviations, generic names, dead code, deep nesting |
-| 2. Naming | Fix abbreviations (`usr` → `user`), generic names, booleans without prefix, directional clarity |
-| 3. Magic Values | Extract hardcoded numbers and strings into named constants |
-| 4. Dead Code | Remove commented-out code, unused imports/variables, contextless TODOs |
-| 5. Comments | Remove "what" comments, fix stale comments, add "why" comments where needed |
-| 6. Function Clarity | Early returns over nesting, extract large functions, simplify complex expressions |
-| 7. Error Handling | Fix empty catches, generic exceptions, add boundary validation |
-| 8. Docstrings | Add documentation to public APIs (purpose, params, returns, errors, examples) |
-| 9. Report | Before/after metrics with change counts per category |
-
-**Reads:** `code-quality/references/naming-reference.md`, `code-quality/references/error-handling-reference.md`, `code-quality/assets/docstring-templates.md`
-
----
-
-### Web Restructure
-
-Reorganizes a web project into the 3-tier architecture (`source/01-presentation/` → `source/02-logic/` → `source/03-data/`) and cleans the project root. All source code goes behind one `source/` door; tests, public, and docs stay at root. Moves files bottom-up (data tier first, then logic, then presentation) so dependencies always point downward. Uses `git mv` for every move to preserve history. After tier moves, enforces a lean root — removes stale dirs, artifacts, and flags anything not in the allowlist.
-
-| Phase | What It Does |
-|-------|-------------|
-| 1. Inventory | Find every source file and audit root — classify every root item against allowlist |
-| 2. Tier Mapping | Classify each file into presentation, logic, or data using placement guide |
-| 3. Dependency Check | Map imports, flag circular dependencies that will break during moves |
-| 4. Create Structure | Rename `src/` → `source/`, create tier directories inside `source/` |
-| 5. Move Files | `git mv` files bottom-up — data tier first, logic second, presentation last |
-| 6. Clean Up | Root hygiene (gitignore, stale dirs, renames, artifacts), then entry points and imports |
-| 7. Verify | Confirm project builds/runs, all imports resolve, no circular dependencies |
-| 8. Report | Tier distribution, root hygiene summary, flagged unknowns |
-
-**Reads:** `architecture/references/web.md`
+Skills: code-quality, documentation, security
 
 ---
 
@@ -169,9 +104,9 @@ Skills: data-python, data-sql, data-pipelines, data-aws, data-iac
 # Deploy skills, commands, and agents
 /sync deploy
 
-# Install team plugins (one-time)
+# Install team plugin (one-time)
 claude plugin marketplace add https://github.com/AlexanderStephenThompson/claude-hub
-claude plugin install clean-team implement-team diagnose-team
+claude plugin install clean-web
 ```
 
 Skills are the single source of truth. Teams reference `~/.claude/skills/`, not embedded copies. Updating a skill and running `/sync deploy` propagates the change everywhere.

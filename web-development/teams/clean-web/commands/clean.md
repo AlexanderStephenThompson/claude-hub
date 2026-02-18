@@ -102,6 +102,55 @@ If ALL four agents would be skipped, report "Project is already clean — nothin
 
 ---
 
+## Deterministic Scan
+
+Before launching any agent, run the automated scripts to establish a deterministic baseline. These catch exact-match violations that agents should fix, not rediscover.
+
+**Run check.js** (36 rules across CSS, HTML, JS, and project structure):
+
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1
+```
+
+Where `<team-scripts>` is the path to this team's `scripts/` directory (resolve from the plugin installation path or the repo).
+
+**Run Python analysis** (if Python files exist, or JS/TS files exist for complexity/dependencies):
+
+```bash
+python <team-scripts>/analyze_complexity.py <project-path> 2>&1
+python <team-scripts>/analyze_dependencies.py <project-path> 2>&1
+python <team-scripts>/detect_dead_code.py <project-path> 2>&1
+```
+
+**Parse results into agent-specific findings:**
+
+| check.js rule category | Pass to |
+|------------------------|---------|
+| CSS rules (12) + `css-file-count` + `css-file-names` | css-improver |
+| HTML rules (11) | html-improver |
+| JS rules (10) | code-improver |
+| `tier-structure` | web-restructure |
+
+| Python script | Pass to |
+|--------------|---------|
+| `analyze_complexity.py` (high-complexity functions) | code-improver |
+| `analyze_dependencies.py` (circular deps) | web-restructure |
+| `detect_dead_code.py` (unused exports) | code-improver |
+
+**Present a summary** to the user:
+
+```
+Deterministic scan:
+  check.js:    [N] errors, [N] warnings across [N] files
+  Complexity:  [N] high-complexity functions found
+  Dependencies: [N] circular dependencies found
+  Dead code:   [N] unused exports found
+```
+
+If check.js or the Python scripts aren't available (e.g., no Node.js or Python installed), skip the deterministic scan and note it: "Deterministic scan skipped — node/python not available. Agents will scan probabilistically."
+
+---
+
 ## Progress Tracking
 
 Create a todo list showing the full pipeline before starting:
@@ -125,7 +174,7 @@ Mark skipped agents as completed immediately with a note. Update each to in_prog
 
 Tell the user: "Step 1/4: web-restructure — Moving files into 3-tier architecture and cleaning the project root."
 
-Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`.
+Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`. If the deterministic scan ran, include: "check.js found these tier-structure violations: [list]. analyze_dependencies.py found these circular dependencies: [list]. Fix these first, then proceed with your normal phases."
 
 **After it returns:**
 - Read its handoff for: tier paths, build status, CSS file locations, unknown root items
@@ -142,7 +191,7 @@ Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`.
 
 Tell the user: "Step 2/4: css-improver — Consolidating CSS to 5-file architecture and replacing hardcoded values with design tokens."
 
-Invoke the **@css-improver** agent. If web-restructure ran, pass in the context: "CSS files may have moved to `source/01-presentation/styles/`. The project now uses 3-tier architecture."
+Invoke the **@css-improver** agent. If web-restructure ran, pass in the context: "CSS files may have moved to `source/01-presentation/styles/`. The project now uses 3-tier architecture." If the deterministic scan ran, include: "check.js found these CSS violations: [list the 12 CSS rule findings + css-file-count + css-file-names]. Fix these deterministic findings first, then proceed with your normal phases."
 
 **After it returns:**
 - Read its handoff for: canonical CSS file list, deleted/renamed selectors, token system info
@@ -158,7 +207,7 @@ Invoke the **@css-improver** agent. If web-restructure ran, pass in the context:
 
 Tell the user: "Step 3/4: html-improver — Replacing div-soup with semantic landmarks, fixing interactive elements, and cleaning class bloat."
 
-Invoke the **@html-improver** agent. If css-improver ran, pass in the context: "css-improver deleted/renamed these selectors: [list from handoff]. In Phase 9 (Class Discipline), do not remove classes that were renamed — only remove classes confirmed as unused."
+Invoke the **@html-improver** agent. If css-improver ran, pass in the context: "css-improver deleted/renamed these selectors: [list from handoff]. In Phase 9 (Class Discipline), do not remove classes that were renamed — only remove classes confirmed as unused." If the deterministic scan ran, include: "check.js found these HTML violations: [list the 11 HTML rule findings]. Fix these deterministic findings first, then proceed with your normal phases."
 
 **After it returns:**
 - Read its handoff for: files modified, Tailwind migration status
@@ -173,7 +222,7 @@ Invoke the **@html-improver** agent. If css-improver ran, pass in the context: "
 
 Tell the user: "Step 4/4: code-improver — Fixing naming, extracting magic values, flattening nesting, and improving error handling."
 
-Invoke the **@code-improver** agent. If web-restructure ran, pass in the context: "The project uses 3-tier architecture. Source files are in `source/01-presentation/`, `source/02-logic/`, `source/03-data/`."
+Invoke the **@code-improver** agent. If web-restructure ran, pass in the context: "The project uses 3-tier architecture. Source files are in `source/01-presentation/`, `source/02-logic/`, `source/03-data/`." If the deterministic scan ran, include: "check.js found these JS violations: [list the 10 JS rule findings]. analyze_complexity.py found these high-complexity functions: [list]. detect_dead_code.py found these unused exports: [list]. Fix these deterministic findings first, then proceed with your normal phases."
 
 **After it returns:**
 - Read its handoff for: languages, files modified, key metrics
@@ -186,6 +235,12 @@ After all agents complete, compile a single report from their handoffs:
 
 ```
 CLEAN-WEB PIPELINE COMPLETE
+
+Deterministic scan:
+  check.js:         [N] errors, [N] warnings → [N] fixed by agents
+  Complexity:       [N] high-complexity functions → [N] addressed
+  Dependencies:     [N] circular deps → [N] resolved
+  Dead code:        [N] unused exports → [N] removed
 
 Agents:
   web-restructure:  [ran — N commits / SKIPPED]

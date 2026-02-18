@@ -10,8 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Domain | Contents |
 |--------|----------|
-| `foundations/` | Universal skills, 3 teams (clean, implement, diagnose), commands, agents, scripts, templates |
-| `web-development/` | Web skills, agents (css-improver, html-improver, web-restructure) |
+| `foundations/` | Universal skills, commands, agents, templates |
+| `web-development/` | Web skills, agents, clean-web team |
 | `world-building/` | Unity + VRChat skills |
 | `data/` | Data engineering skills (Python, SQL, pipelines, AWS, IaC) |
 | `productivity/` | Thinking and communication tools (explaining, organize skills; improve-prompt, explain, organize commands) |
@@ -34,37 +34,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Team | Agents | Workflow |
 |------|--------|----------|
-| clean-team | 8 | Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier |
 | clean-web | 4 | Web Restructure → CSS Improver → HTML Improver → Code Improver |
-| implement-team | 5 | Planner → Challenger → Implementor → Security → Refactorer |
-| diagnose-team | 5 | Clarifier → Investigator → Hypothesizer → Resolver → Validator |
 
-### When to Use Which Team
+### When to Use
 
-| Situation | Team | Command |
-|-----------|------|---------|
-| Quick codebase health check | clean-team | `/clean-team:clean audit` |
-| Focused audit (CSS, a11y, perf, structure) | clean-team | `/clean-team:clean audit [focus]` |
-| Quick codebase tidying | clean-team | `/clean-team:clean` |
-| CSS file sprawl (>5 files) | clean-web | `/clean-web:clean` |
-| Web project needs full cleanup (structure + CSS + HTML + code) | clean-web | `/clean-web:clean` |
-| Existing codebase needs deep refactoring | clean-team | `/clean-team:clean` |
-| Legacy code modernization | clean-team | `/clean-team:clean` |
-| New feature implementation | implement-team | `/implement-team:implement` |
-| Bug fix with design decisions | implement-team | `/implement-team:implement` |
-| Security-sensitive features | implement-team | triggers Security agent |
-| Stubborn bug that won't stay fixed | diagnose-team | `/diagnose-team:diagnose` |
-| "It works but not how I wanted" | diagnose-team | `/diagnose-team:diagnose` |
-| Root cause is unclear after multiple attempts | diagnose-team | `/diagnose-team:diagnose` |
-
-### Clean-Team Pipeline
-
-One command with three modes. Auto-detects existing audit reports for resume:
-
-```
-/clean-team:clean [scope]        → Full 8-agent pipeline with checkpoint after audit
-/clean-team:clean audit [focus]  → Read-only audit (parallel sub-agents, focus modes)
-```
+| Situation | Command |
+|-----------|---------|
+| Web project needs full cleanup (structure + CSS + HTML + code) | `/clean-web:clean` |
+| CSS file sprawl (>5 files) | `/clean-web:clean` |
+| Scoped cleanup (e.g., just src/) | `/clean-web:clean src/` |
 
 ## Common Commands
 
@@ -80,13 +58,13 @@ One command with three modes. Auto-detects existing audit reports for resume:
 
 Deploy covers: flat files (skills, agents, commands) + `claude plugin marketplace update` + team plugin reinstall + cache cleanup + reference validation. See [sync.md](.claude/commands/sync.md) for full steps.
 
-### Analysis Scripts (clean-team)
+### Analysis Scripts (clean-web)
 ```bash
-python foundations/teams/clean-team/scripts/analyze_complexity.py <path>     # High-complexity functions
-python foundations/teams/clean-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
-python foundations/teams/clean-team/scripts/detect_dead_code.py <path>       # Unused code
-node foundations/teams/clean-team/scripts/check.js                           # Design system compliance (36 rules)
-node foundations/teams/clean-team/scripts/check.js --validate-registry       # Verify rule ↔ skill links
+node web-development/teams/clean-web/scripts/check.js                           # Design system compliance (36 rules)
+node web-development/teams/clean-web/scripts/check.js --validate-registry       # Verify rule ↔ skill links
+python web-development/teams/clean-web/scripts/analyze_complexity.py <path>     # High-complexity functions
+python web-development/teams/clean-web/scripts/analyze_dependencies.py <path>   # Circular dependencies
+python web-development/teams/clean-web/scripts/detect_dead_code.py <path>       # Unused code
 ```
 
 ### Rule ↔ Skill Sync
@@ -120,5 +98,4 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 - Commands: lowercase (`commit.md`, `clean.md`)
 - Agents: kebab-case (`new-codebase-scout.md`)
 - Skills: `<domain>/skills/<name>/SKILL.md` as main file
-- Audit reports: `AUDIT-REPORT-[YYYY-MM-DD].md`
 - Domain folders: lowercase with hyphens (`foundations`, `web-development`, `world-building`, `data`, `productivity`)
