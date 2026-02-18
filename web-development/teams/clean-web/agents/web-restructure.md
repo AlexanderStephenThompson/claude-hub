@@ -239,7 +239,12 @@ Before moving anything, verify the mapping doesn't create reverse dependencies.
 
 ## Phase 4: Create Structure
 
-Create the tier directories inside `source/`.
+Create the tier directories inside `source/` — or verify them if they already exist.
+
+**If tiers already exist** (`source/01-presentation/`, `source/02-logic/`, `source/03-data/` all present with files):
+- Skip directory creation — the structure is in place
+- Still proceed to Phase 5 to check for stray files that should be inside tiers but aren't
+- Still proceed to Phase 6 for root hygiene, naming conventions, and import fixes
 
 **If the project has an existing `src/` directory**, rename it first to preserve git history:
 
@@ -268,13 +273,15 @@ mkdir -p source/config
 
 Only create directories that will actually have files. Don't create empty placeholder folders.
 
-**Commit:** `chore(structure): create 3-tier directory structure`
+**Commit:** `chore(structure): create 3-tier directory structure` (skip if no directories were created)
 
 ---
 
 ## Phase 5: Move Files
 
 Move files tier by tier, bottom-up: **Data → Logic → Presentation → Cross-cutting**.
+
+**If tiers already exist:** Check the Phase 2 mapping for files that are outside tiers or in the wrong tier. If every file is already in the correct tier, skip to Phase 6. Otherwise, move only the files that need it.
 
 ### 5a. Data tier (`source/03-data/`)
 
@@ -427,12 +434,13 @@ Compare your inventory from Phase 1 against the current state. Every file should
 
 ```
 WEB RESTRUCTURE COMPLETE
+Mode: [created tiers from scratch / audited existing tiers]
 
 Files moved:
-  source/01-presentation/    [N] files
-  source/02-logic/           [N] files
-  source/03-data/            [N] files
-  source/config/             [N] files
+  source/01-presentation/    [N] files ([N] moved, [N] already in place)
+  source/02-logic/           [N] files ([N] moved, [N] already in place)
+  source/03-data/            [N] files ([N] moved, [N] already in place)
+  source/config/             [N] files ([N] moved, [N] already in place)
   tests/                     [N] files
 
 Root hygiene:

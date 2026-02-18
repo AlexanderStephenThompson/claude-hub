@@ -50,11 +50,13 @@ git status --porcelain
 
 Detect what work is needed before launching any agent. All detection is read-only.
 
-**1. Check for 3-tier structure:**
+**1. Check for web source files:**
 
-Use Glob to check if `source/01-presentation/`, `source/02-logic/`, `source/03-data/` exist with files in them.
-- All three exist with files → `SKIP_RESTRUCTURE = true`
-- Otherwise → `SKIP_RESTRUCTURE = false`
+Use Glob to check if the project has any source files (`.js`, `.ts`, `.jsx`, `.tsx`, `.html`, `.css` — excluding `node_modules/`, `dist/`, `build/`).
+- No source files at all → `SKIP_RESTRUCTURE = true`
+- Source files exist → `SKIP_RESTRUCTURE = false`
+
+> **Note:** Do NOT skip web-restructure just because 3-tier directories exist. Even with tiers in place, there may be stray files outside the tier structure, files with naming convention violations, reverse-direction imports, or circular dependencies. web-restructure's Phase 1 inventory will detect what (if anything) needs attention.
 
 **2. Check for CSS files:**
 
@@ -86,7 +88,8 @@ Show the user what was detected and what will run:
 
 ```
 Project shape:
-  3-tier structure:  [exists — skipping restructure / not found — will restructure]
+  Source files:      [N found / none — skipping restructure]
+  3-tier structure:  [exists — restructure will audit / not found — restructure will create]
   CSS files:         [N found / none — skipping css-improver]
   HTML/JSX/TSX:      [N found / none — skipping html-improver]
   JS/TS files:       [N found / none — skipping code-improver]
@@ -168,7 +171,7 @@ Mark skipped agents as completed immediately with a note. Update each to in_prog
 
 ## Step 1: web-restructure
 
-**Skip if** `SKIP_RESTRUCTURE = true`. Mark as completed: "SKIPPED (3-tier structure already exists)"
+**Skip if** `SKIP_RESTRUCTURE = true`. Mark as completed: "SKIPPED (no source files found)"
 
 **If running:**
 
