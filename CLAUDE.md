@@ -35,6 +35,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Team | Agents | Workflow |
 |------|--------|----------|
 | clean-team | 8 | Organizer → Formatter → Auditor → [checkpoint] → Tester → Planner → Challenger → Refactorer → Verifier |
+| clean-web | 4 | Web Restructure → CSS Improver → HTML Improver → Code Improver |
 | implement-team | 5 | Planner → Challenger → Implementor → Security → Refactorer |
 | diagnose-team | 5 | Clarifier → Investigator → Hypothesizer → Resolver → Validator |
 
@@ -45,7 +46,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Quick codebase health check | clean-team | `/clean-team:clean audit` |
 | Focused audit (CSS, a11y, perf, structure) | clean-team | `/clean-team:clean audit [focus]` |
 | Quick codebase tidying | clean-team | `/clean-team:clean` |
-| CSS file sprawl (>5 files) | clean-team | `/clean-team:clean` |
+| CSS file sprawl (>5 files) | clean-web | `/clean-web:clean` |
+| Web project needs full cleanup (structure + CSS + HTML + code) | clean-web | `/clean-web:clean` |
 | Existing codebase needs deep refactoring | clean-team | `/clean-team:clean` |
 | Legacy code modernization | clean-team | `/clean-team:clean` |
 | New feature implementation | implement-team | `/implement-team:implement` |

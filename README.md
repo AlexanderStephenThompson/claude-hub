@@ -13,6 +13,7 @@ Universal tools that apply to any project.
 | Command | Agents | Workflow |
 |---------|--------|----------|
 | `/clean-team:clean [scope\|audit [focus]]` | 8 | Full pipeline, audit-only, or resume — one command, three modes |
+| `/clean-web:clean [scope]` | 4 | Restructure → CSS → HTML → Code — web project cleanup |
 | `/implement-team:implement <feature>` | 5 | Plan → Challenge → Implement (TDD) → Security → Refactor |
 | `/diagnose-team:diagnose <problem>` | 5 | Clarify → Investigate → Hypothesize → Resolve → Validate |
 
@@ -34,27 +35,9 @@ Skills: architecture, code-quality, documentation, security
 
 ---
 
-## Web
+## Agents
 
-Web development tools — CSS, HTML, accessibility, and frontend performance.
-
-### Agents
-
-| Agent | What It Does |
-|-------|--------------|
-| [css-improver](web-development/agents/css-improver.md) | Consolidate CSS to 5-file architecture with design tokens |
-| [html-improver](web-development/agents/html-improver.md) | Replace div-soup with semantic, accessible HTML |
-| [web-restructure](web-development/agents/web-restructure.md) | Reorganize a web project into 3-tier architecture |
-
-Skills: architecture, design, web-accessibility, web-css, web-performance
-
----
-
-## Standalone Agents (WIP — Clean Team)
-
-These four agents are standalone, testable pieces of what will become the clean-team pipeline. Each owns a specific domain, loads its skill files automatically, and can be invoked directly on any project with `@agent-name`. The goal: confirm each piece works independently before composing them into a cohesive team.
-
-### Overview
+Standalone agents that each own a specific domain and load their skill files automatically. Invoke directly on any project with `@agent-name`.
 
 | Agent | Domain | Phases | Skills Loaded | Invocation |
 |-------|--------|--------|---------------|------------|

@@ -1,0 +1,11 @@
+{
+  "name": "clean-web",
+  "version": "1.0.0",
+  "description": "A 4-agent pipeline for cleaning web projects: web-restructure → css-improver → html-improver → code-improver. Structure first, then CSS, then markup, then code clarity.",
+  "agents": [
+    "./agents/web-restructure.md",
+    "./agents/css-improver.md",
+    "./agents/html-improver.md",
+    "./agents/code-improver.md"
+  ]
+}

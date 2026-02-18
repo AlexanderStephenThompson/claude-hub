@@ -24,6 +24,12 @@
       "version": "1.0.0",
       "description": "A 5-agent diagnostic team for stubborn bugs and implementation mismatches: clarify → investigate → hypothesize → resolve → validate",
       "source": "./foundations/teams/diagnose-team"
+    },
+    {
+      "name": "clean-web",
+      "version": "1.0.0",
+      "description": "A 4-agent pipeline for cleaning web projects: web-restructure → css-improver → html-improver → code-improver",
+      "source": "./foundations/teams/clean-web"
     }
   ]
 }
