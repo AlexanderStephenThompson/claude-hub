@@ -134,7 +134,31 @@ Produce a root inventory table:
 | dist/ | dir | output-dir | Verify gitignored |
 ```
 
-**Output:** Full inventory + root audit — no changes, no commits.
+**1e. File naming conventions:**
+
+Check all source files for naming consistency. Detect the dominant convention and flag deviations.
+
+| Convention | Expected Pattern | Example |
+|------------|-----------------|---------|
+| Components (React/Vue) | `PascalCase` | `UserProfile.tsx`, `NavBar.jsx` |
+| Hooks | `camelCase` with `use` prefix | `useAuth.ts`, `useModal.ts` |
+| Services, utilities, helpers | `camelCase` or `kebab-case` (match project) | `authService.ts`, `date-utils.ts` |
+| CSS files | `kebab-case` | `global.css`, `user-card.css` |
+| Config files | `kebab-case` or `dot.notation` | `vite.config.ts`, `.eslintrc.js` |
+| Test files | Match source + `.test` or `.spec` | `UserProfile.test.tsx` |
+
+**What to flag:**
+
+| Issue | Example | Fix |
+|-------|---------|-----|
+| File name doesn't match primary export | `helper.ts` exports `AuthService` | Rename to `auth-service.ts` or `AuthService.ts` |
+| Mixed casing conventions | `UserProfile.tsx` alongside `user-profile.tsx` | Standardize to the dominant pattern |
+| Generic names | `utils.ts`, `helpers.ts`, `misc.ts` | Rename to describe contents (`formatters.ts`, `validators.ts`) |
+| Numbered names | `api2.ts`, `styles-new.css` | Rename to describe purpose |
+
+Record naming issues for Phase 6f. Don't rename yet — moves happen first.
+
+**Output:** Full inventory + root audit + naming issues — no changes, no commits.
 
 ---
 
@@ -359,7 +383,19 @@ If any scripts reference old paths, update them.
 
 Any remaining references to old paths should be fixed.
 
-**Commit:** `chore(structure): remove empty directories and update entry points`
+### 6f. Fix file naming conventions
+
+Apply the naming fixes identified in Phase 1e. Now that files are in their final tier locations, renames won't conflict with moves.
+
+1. Use `git mv` for each rename to preserve history
+2. Update all imports referencing the old filename
+3. Verify no broken references remain
+
+Only rename files where the issue is clear (generic names, mismatched exports, inconsistent casing). Don't rename files where the current name is reasonable even if it doesn't match the dominant convention.
+
+**Commit:** `chore(structure): standardize file naming conventions`
+
+**Combined commit for all Phase 6 work:** `chore(structure): clean project root, update entry points, standardize naming`
 
 ---
 
@@ -408,6 +444,9 @@ Root hygiene:
   Unknown flagged:    [N] items
   [If unknowns exist:]
     <filename> — not in allowlist, needs manual decision
+
+File naming:
+  Files renamed:      [N] (conventions standardized)
 
 Imports updated:      [N] paths
 Reverse dependencies: 0 (verified)

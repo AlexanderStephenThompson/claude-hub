@@ -62,6 +62,7 @@ Use Grep across all source files to count:
 - **Generic names** — `data`, `info`, `temp`, `stuff`, `result`, `output`, `item`, `thing` as variable names
 - **Commented-out code** — Lines that look like disabled code (e.g., `// functionCall(`, `# def old_function`)
 - **TODO/FIXME without context** — `TODO` or `FIXME` without a ticket reference or explanation
+- **Debug statements** — `console.log`, `console.debug`, `console.warn` (non-error), `print()` (Python), `Debug.Log` (C#)
 - **Empty catch blocks** — `catch {}`, `except:`, `except Exception: pass`
 - **Deep nesting** — Indentation beyond 4 levels
 
@@ -153,6 +154,7 @@ Remove code that doesn't execute or serve a purpose.
 | Unused variables (assigned but never read) | Remove |
 | Unreachable code after `return`/`throw`/`break` | Remove |
 | Empty functions with only `pass` or `TODO` | Remove if unused, add a real TODO with context if planned |
+| Debug statements (`console.log`, `console.debug`, `console.warn` used for debugging, `print()` in Python, `Debug.Log` in C#) | Remove — use a proper logger if logging is needed |
 
 ### What to Keep
 
@@ -365,6 +367,7 @@ Magic strings:          [N]    → [N]
 Abbreviated names:      [N]    → [N]
 Generic names:          [N]    → [N]
 Commented-out code:     [N]    → [N]
+Debug statements:       [N]    → [N]
 Contextless TODOs:      [N]    → [N]
 Empty catch blocks:     [N]    → [N]
 Deep nesting (4+):      [N]    → [N]
@@ -372,7 +375,7 @@ Deep nesting (4+):      [N]    → [N]
 Changes:
   Names improved:       [N] variables/functions renamed
   Constants extracted:  [N] magic values named
-  Dead code removed:    [N] lines
+  Dead code removed:    [N] lines (includes [N] debug statements)
   Comments cleaned:     [N] removed, [N] added
   Functions extracted:  [N] new focused functions
   Errors fixed:         [N] catch blocks improved
