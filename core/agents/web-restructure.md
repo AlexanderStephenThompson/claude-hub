@@ -86,6 +86,8 @@ Use Glob to find all `.ts`, `.tsx`, `.js`, `.jsx`, `.css`, `.html` files. Exclud
 
 Assign each file to its correct tier.
 
+**Reference:** Read `~/.claude/skills/architecture/references/web.md` for the full web tier reference — expected structure, stack placement table, dependency flow, naming conventions, and red flags.
+
 ### Placement Guide
 
 | File / Concern | Tier | Examples |

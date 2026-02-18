@@ -77,6 +77,8 @@ Record these numbers — they're your "before" snapshot.
 
 Fix names that don't communicate intent. This is the highest-impact change.
 
+**Reference:** Read `~/.claude/skills/code-quality/references/naming-reference.md` for directional patterns, the read-aloud test, abbreviation rules, and anti-patterns.
+
 ### What to Fix
 
 | Pattern | Fix |
@@ -269,6 +271,8 @@ const names = authorizedUsers.map(user => user.name);
 
 Fix error handling that hides problems.
 
+**Reference:** Read `~/.claude/skills/code-quality/references/error-handling-reference.md` for error hierarchies, retry/fallback patterns, and error boundaries.
+
 ### What to Fix
 
 | Pattern | Fix |
@@ -313,6 +317,8 @@ Only add validation at **boundaries** — where external input enters your syste
 ## Phase 8: Docstrings
 
 Add documentation to public APIs.
+
+**Reference:** Read `~/.claude/skills/code-quality/assets/docstring-templates.md` for copy-paste templates in Python, JS/TS, C#, Rust, and Go.
 
 ### What Needs Docstrings
 

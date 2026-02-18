@@ -70,6 +70,8 @@ Record these numbers — they're your "before" snapshot.
 
 Replace `<div>` wrappers with correct landmark elements.
 
+**Reference:** Read `~/.claude/skills/design/references/semantic-html.md` for the complete element replacement guide and landmark rules.
+
 ### Element Replacements
 
 Search for these patterns and replace:
@@ -115,6 +117,8 @@ Fix heading levels so the document has a navigable outline.
 ## Phase 4: Interactive Elements
 
 Fix elements that users click, tap, or interact with.
+
+**Reference:** Read `~/.claude/skills/design/references/accessibility-guide.md` for ARIA patterns, keyboard navigation, and focus management. Read `~/.claude/skills/design/assets/component-states-checklist.md` for required interactive states.
 
 ### Clickable Divs → Buttons
 
@@ -285,6 +289,8 @@ Only fix these if you encounter them. Don't grep the entire codebase for every `
 ## Phase 9: Class Discipline
 
 Clean up class bloat. This phase is about making HTML readable, not about CSS.
+
+**Reference:** Read `~/.claude/skills/design/assets/anti-patterns.md` for common class bloat patterns and fixes.
 
 ### What to Fix
 
