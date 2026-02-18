@@ -131,18 +131,18 @@ Language-agnostic code readability cleanup. Makes code that works into code that
 
 ### Web Restructure
 
-Reorganizes a web project into the 3-tier architecture (`01-presentation/` → `02-logic/` → `03-data/`). No auto-detection guesswork — you invoke it knowing it's a web project. Moves files bottom-up (data tier first, then logic, then presentation) so dependencies always point downward. Uses `git mv` for every move to preserve history.
+Reorganizes a web project into the 3-tier architecture (`01-presentation/` → `02-logic/` → `03-data/`) and cleans the project root. Moves files bottom-up (data tier first, then logic, then presentation) so dependencies always point downward. Uses `git mv` for every move to preserve history. After tier moves, enforces a lean root — removes stale dirs, artifacts, and flags anything not in the allowlist.
 
 | Phase | What It Does |
 |-------|-------------|
-| 1. Inventory | Find every source file, record current location and what it does |
+| 1. Inventory | Find every source file and audit root — classify every root item against allowlist |
 | 2. Tier Mapping | Classify each file into presentation, logic, or data using placement guide |
 | 3. Dependency Check | Map imports, flag circular dependencies that will break during moves |
 | 4. Create Structure | Create `01-presentation/`, `02-logic/`, `03-data/` directories |
 | 5. Move Files | `git mv` files bottom-up — data tier first, logic second, presentation last |
-| 6. Clean Up | Remove empty directories, update entry points and configs |
+| 6. Clean Up | Root hygiene (gitignore, stale dirs, renames, artifacts), then entry points and imports |
 | 7. Verify | Confirm project builds/runs, all imports resolve, no circular dependencies |
-| 8. Report | File movement summary, tier distribution, any unresolved issues |
+| 8. Report | Tier distribution, root hygiene summary, flagged unknowns |
 
 **Reads:** `architecture/references/web.md`
 

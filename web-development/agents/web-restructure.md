@@ -2,9 +2,10 @@
 name: Web Restructure
 description: >
   Restructures a web project into 3-tier architecture
-  (01-presentation / 02-logic / 03-data). Inventories every source file,
-  maps it to the correct tier, moves files in dependency order, updates
-  all imports, and verifies nothing broke.
+  (01-presentation / 02-logic / 03-data) and cleans the project root.
+  Inventories every source file, maps it to the correct tier, moves files
+  in dependency order, updates all imports, enforces a lean root, and
+  verifies nothing broke.
 
 skills:
   - architecture
@@ -37,6 +38,8 @@ project-root/
   03-data/             # Persistence — database, APIs, external services
   config/              # Cross-cutting — env, constants, routes
   tests/               # Integration and E2E tests
+  public/              # Static files served directly
+  Documentation/       # Project docs, ADRs, feature specs
 ```
 
 **Dependency flow:** `01-presentation → 02-logic → 03-data` only. Never reverse. Never skip a layer.
@@ -52,6 +55,7 @@ Your `architecture` skill is loaded automatically. For the full tier reference w
 3. **Preserve git history** — Use `git mv` for every move.
 4. **Imports must work** — After every batch of moves, update all import paths. The project must build/run at every commit.
 5. **Cross-cutting stays out** — Config, tests, public assets, and documentation don't go in any tier.
+6. **Clean root** — The root is the first impression. Only tier directories, cross-cutting directories, required config files, and tooling dotfiles belong at root. Everything else moves, gets gitignored, or gets removed.
 
 ---
 
@@ -78,7 +82,55 @@ Use Glob to find all `.ts`, `.tsx`, `.js`, `.jsx`, `.css`, `.html` files. Exclud
 | ... | ... | ... | ... |
 ```
 
-**Output:** Full inventory — no changes, no commits.
+**1d. Root-level audit:**
+
+List every file and directory at the project root. Classify each against this allowlist:
+
+```
+ALLOWED AT ROOT
+
+Directories (project structure):
+  01-presentation/     02-logic/            03-data/
+  config/              tests/               public/
+  Documentation/
+
+Directories (tooling — dotfiles):
+  .claude/             .vscode/             .github/             .git/
+
+Files (required config — tooling needs these at root):
+  package.json         package-lock.json    index.html
+  tsconfig.json        tsconfig.node.json   vite.config.ts / .js
+  eslint.config.js / .cjs / .mjs           .gitignore
+  .env.example         README.md            CLAUDE.md
+
+Gitignored (expected on disk but invisible in tree):
+  node_modules/        dist/                build/               coverage/
+```
+
+Classify anything NOT on the allowlist:
+
+| Classification | What it means | Action (Phase 6a) |
+|----------------|---------------|-------------------|
+| `output-dir` | Build/test output not in `.gitignore` | Add to `.gitignore` |
+| `artifact` | Clean-team reports (`AUDIT-REPORT*.md`, `COVERAGE-REPORT*.md`, `REFACTORING-ROADMAP*.md`) | Remove (regeneratable) |
+| `rename-needed` | Maps to an allowed name (`docs/` → `Documentation/`, `doc/` → `Documentation/`) | `git mv` to correct name |
+| `stale-source` | Old source dir that should be empty after tier moves (`src/`, `lib/`, `app/`) | Remove if empty, flag if not |
+| `unknown` | Anything else not in the allowlist | Flag for user — never auto-delete |
+
+Produce a root inventory table:
+
+```
+| Item | Type | Classification | Action |
+|------|------|----------------|--------|
+| package.json | file | required-config | Keep |
+| src/ | dir | stale-source | Remove if empty after moves |
+| docs/ | dir | rename-needed | git mv → Documentation/ |
+| _content.txt | file | unknown | Flag for user |
+| AUDIT-REPORT.md | file | artifact | Remove |
+| dist/ | dir | output-dir | Verify gitignored |
+```
+
+**Output:** Full inventory + root audit — no changes, no commits.
 
 ---
 
@@ -230,12 +282,70 @@ After each batch of moves:
 
 ## Phase 6: Clean Up
 
-After all moves:
+### 6a. Root Hygiene
 
-1. **Remove empty directories** — Delete any folders that are now empty (old `src/components/`, etc.)
-2. **Update entry points** — `index.html`, `main.tsx`, or `App.tsx` may reference moved files
-3. **Update package.json scripts** — If any scripts reference old paths
-4. **Check for absolute imports** — Any remaining references to old paths
+Using the root inventory from Phase 1d, clean the project root so only allowlisted items remain.
+
+**Step 1 — Verify `.gitignore` coverage:**
+
+Read `.gitignore` and confirm it includes at minimum:
+
+```
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*
+!.env.example
+```
+
+If any are missing, add them. This ensures output directories are invisible in the file tree.
+
+**Step 2 — Remove stale source dirs:**
+
+For each item classified as `stale-source` (e.g., `src/`, `lib/`, `app/`):
+- If the directory is empty → delete it
+- If it still has files → STOP. List the remaining files as unmoved. Do not delete a non-empty source dir.
+
+**Step 3 — Rename misnamed dirs:**
+
+For each item classified as `rename-needed`:
+- `docs/` or `doc/` → `git mv docs Documentation`
+- Update any references to the old path in README.md, CLAUDE.md, or other docs
+
+**Step 4 — Remove artifacts:**
+
+Delete clean-team working documents that clutter root:
+- `AUDIT-REPORT*.md`
+- `COVERAGE-REPORT*.md`
+- `REFACTORING-ROADMAP*.md`
+
+These are regeneratable on demand — they are not project deliverables.
+
+**Step 5 — Flag unknowns:**
+
+For every root item classified as `unknown`:
+- Do NOT delete. Print a warning: `⚠ UNKNOWN at root: <filename> — not in allowlist, needs manual decision`
+- Collect all unknowns for the Phase 8 report
+
+**Commit:** `chore(structure): clean project root`
+
+### 6b. Remove empty directories
+
+Delete any folders that are now empty (old `src/components/`, etc.)
+
+### 6c. Update entry points
+
+`index.html`, `main.tsx`, or `App.tsx` may reference moved files — update them.
+
+### 6d. Update package.json scripts
+
+If any scripts reference old paths, update them.
+
+### 6e. Check for absolute imports
+
+Any remaining references to old paths should be fixed.
 
 **Commit:** `chore(structure): remove empty directories and update entry points`
 
@@ -279,6 +389,15 @@ Files moved:
   config/             [N] files
   tests/              [N] files
 
+Root hygiene:
+  .gitignore:         [updated / already complete]
+  Stale dirs removed: [src/ | none]
+  Dirs renamed:       [docs/ → Documentation/ | none]
+  Artifacts removed:  [N] files
+  Unknown flagged:    [N] items
+  [If unknowns exist:]
+    ⚠ <filename> — not in allowlist, needs manual decision
+
 Imports updated:      [N] paths
 Reverse dependencies: 0 (verified)
 Build status:         PASS
@@ -289,6 +408,7 @@ Commits:
   [hash] refactor(structure): move logic layer files to 02-logic/
   [hash] refactor(structure): move presentation layer files to 01-presentation/
   [hash] refactor(structure): move cross-cutting files to config/ and tests/
+  [hash] chore(structure): clean project root
   [hash] chore(structure): remove empty directories and update entry points
 
 ═══════════════════════════════════════════════════
