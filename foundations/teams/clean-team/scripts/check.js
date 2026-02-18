@@ -373,9 +373,9 @@ function checkCSS(filepath, content) {
         const importMatch = strippedLine.match(/@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/);
         if (importMatch) {
             const importFile = path.basename(importMatch[1], '.css');
-            const idx = CSS_CASCADE_MAP.get(importFile);
-            if (idx !== undefined) {
-                if (idx < lastCascadeIdx) {
+            const cascadePosition = CSS_CASCADE_MAP.get(importFile);
+            if (cascadePosition !== undefined) {
+                if (cascadePosition < lastCascadeIdx) {
                     issues.push({
                         line: lineNum,
                         col: raw.indexOf(importMatch[1]) + 1,
@@ -385,7 +385,7 @@ function checkCSS(filepath, content) {
                         skill: RULE_SKILLS['css-import-order'],
                     });
                 }
-                lastCascadeIdx = idx;
+                lastCascadeIdx = cascadePosition;
                 lastCascadeName = importFile;
             }
         }
@@ -1237,11 +1237,11 @@ function main() {
     /* --validate-registry: self-check that every rule ID used in checker
        functions is registered in RULE_SKILLS (dev-time safeguard) */
     if (args.includes('--validate-registry')) {
-        const src = fs.readFileSync(__filename, 'utf8');
+        const sourceCode = fs.readFileSync(__filename, 'utf8');
         const usedRules = new Set();
         /* Build regex dynamically to avoid self-matching */
         const ruleRe = new RegExp("rule:\\s*'([a-zA-Z][a-zA-Z0-9-]+)'", 'g');
-        for (const ruleMatch of src.matchAll(ruleRe)) {
+        for (const ruleMatch of sourceCode.matchAll(ruleRe)) {
             usedRules.add(ruleMatch[1]);
         }
         const registered = new Set(Object.keys(RULE_SKILLS));
