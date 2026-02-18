@@ -410,6 +410,20 @@ We follow S-Tier SaaS standards (Stripe, Airbnb, Linear):
 
 ---
 
+## Enforced Rules
+
+These rules are deterministically checked by `check.js` (clean-team). When updating these standards, update the corresponding check.js rules to match — and vice versa.
+
+| Rule ID | Severity | What It Checks |
+|---------|----------|---------------|
+| `no-inline-style` | error | `style="..."` attributes in HTML |
+| `no-jsx-inline-style` | warn | `style={{...}}` in JSX |
+| `button-type-required` | error | `<button>` without `type` attribute |
+| `doctype-required` | error | Missing `<!DOCTYPE html>` |
+| `max-classes` | warn | More than 4 classes on an element |
+
+---
+
 ## References
 
 - `references/semantic-html.md` — Complete semantic HTML guide

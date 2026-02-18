@@ -463,6 +463,18 @@ def log_security_event(event_type: str, user_id: str, details: dict):
 
 ---
 
+## Enforced Rules
+
+These rules are deterministically checked by `check.js` (clean-team). When updating these standards, update the corresponding check.js rules to match — and vice versa.
+
+| Rule ID | Severity | What It Checks |
+|---------|----------|---------------|
+| `no-document-write` | error | `document.write()` usage (DOM injection risk) |
+| `no-hardcoded-secrets` | error | API keys, tokens, passwords in string literals |
+| `no-innerHTML` | warn | `.innerHTML` assignment (XSS risk) |
+
+---
+
 ## References
 
 - `references/owasp-top-10.md` — Detailed OWASP vulnerability guide

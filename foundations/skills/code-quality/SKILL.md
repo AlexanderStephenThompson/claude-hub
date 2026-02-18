@@ -412,6 +412,20 @@ def sell_item_to(self, item_id: str, buyer: Customer) -> Receipt:
 
 ---
 
+## Enforced Rules
+
+These rules are deterministically checked by `check.js` (clean-team). When updating these standards, update the corresponding check.js rules to match — and vice versa.
+
+| Rule ID | Severity | What It Checks |
+|---------|----------|---------------|
+| `no-debugger` | error | `debugger` statements left in code |
+| `no-var` | error | `var` declarations (use `const`/`let`) |
+| `no-empty-catch` | error | Empty `catch` blocks with no handling |
+| `no-console` | warn | `console.log`/warn/error statements |
+| `no-double-equals` | warn | `==`/`!=` instead of strict equality (allows `== null`) |
+
+---
+
 ## References
 
 - `references/testing-reference.md` — Testing pyramid deep-dive, mocking guidelines, anti-patterns

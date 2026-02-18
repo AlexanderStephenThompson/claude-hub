@@ -324,6 +324,17 @@ Stop and reconsider when you see:
 
 ---
 
+## Enforced Rules
+
+These rules are deterministically checked by `check.js` (clean-team). When updating these standards, update the corresponding check.js rules to match — and vice versa.
+
+| Rule ID | Severity | What It Checks |
+|---------|----------|---------------|
+| `tier-imports` | error | Imports that violate 01→02→03 dependency direction |
+| `tier-structure` | error | Missing or incomplete 3-tier folder structure in web projects |
+
+---
+
 ## References
 
 - `references/module-boundaries.md` — Module structure, boundary rules, communication patterns

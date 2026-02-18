@@ -665,6 +665,21 @@ it('has no accessibility violations', async () => {
 
 ---
 
+## Enforced Rules
+
+These rules are deterministically checked by `check.js` (clean-team). When updating these standards, update the corresponding check.js rules to match — and vice versa.
+
+| Rule ID | Severity | What It Checks |
+|---------|----------|---------------|
+| `img-alt-required` | error | `<img>` without `alt` attribute |
+| `title-required` | error | Missing `<title>` element |
+| `tabindex-no-positive` | error | Positive `tabindex` values (breaks tab order) |
+| `heading-order` | warn | Heading levels that skip (h1 → h3) |
+| `single-h1` | warn | Multiple `<h1>` elements per page |
+| `no-div-as-button` | warn | `<div>`/`<span>` with onclick handler |
+
+---
+
 ## Resources
 
 - [WCAG 2.1 Quick Reference](https://www.w3.org/WAI/WCAG21/quickref/)

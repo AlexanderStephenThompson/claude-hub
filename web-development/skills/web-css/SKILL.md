@@ -276,6 +276,29 @@ This design system uses **vanilla CSS with design tokens**. No build tools, no u
 
 ---
 
+## Enforced Rules
+
+These rules are deterministically checked by `check.js` (clean-team). When updating these standards, update the corresponding check.js rules to match — and vice versa.
+
+| Rule ID | Severity | What It Checks |
+|---------|----------|---------------|
+| `no-hardcoded-color` | error | Hex/rgb/hsl/named colors outside `var(--color-*)` |
+| `no-hardcoded-spacing` | warn | Raw px spacing (>=4px) outside `var(--space-*)` |
+| `no-hardcoded-font-size` | warn | Font sizes outside `var(--font-size-*)` |
+| `no-hardcoded-radius` | warn | Border-radius outside `var(--radius-*)` |
+| `no-hardcoded-shadow` | warn | Box/text-shadow outside `var(--shadow-*)` |
+| `no-hardcoded-z-index` | warn | Z-index outside `var(--z-*)` |
+| `css-property-order` | warn | Properties not in group order (Position > Box Model > Typography > Visual > Animation) |
+| `css-import-order` | warn | `@import`/`<link>` order doesn't match cascade sequence |
+| `mobile-first` | warn | `max-width` media queries instead of `min-width` |
+| `no-important` | warn | `!important` usage |
+| `no-id-selector` | warn | `#id` selectors (specificity wars) |
+| `unit-zero` | warn | `0px`/`0rem` instead of unitless `0` |
+| `css-file-count` | warn/error | More than 5 (warn) or 7 (error) CSS files |
+| `css-file-names` | warn | No canonical CSS file names (reset/global/layouts/components/overrides) |
+
+---
+
 ## References
 
 - `references/file-architecture.md` — Detailed descriptions of each CSS file

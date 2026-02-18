@@ -6,6 +6,9 @@
  * Deterministic enforcement of design tokens, HTML quality, and JS hygiene.
  * Works alongside AI skill enforcement (probabilistic) for double coverage.
  *
+ * Each rule maps to a skill via RULE_SKILLS. When adding/removing rules,
+ * update BOTH the registry here AND the skill's "## Enforced Rules" section.
+ *
  * CSS rules (12):
  *   no-hardcoded-color     (error)  Hex, rgb(), hsl(), named colors outside :root
  *   no-hardcoded-spacing   (warn)   Raw px >= 4 on margin/padding/gap
@@ -74,6 +77,58 @@ let ROOT = process.cwd(); /* set in main() — overridable with --root */
 const IGNORE = new Set(['node_modules', '.git', '~Transfer', 'dist', 'build', 'tests']);
 const ERROR = 'error';
 const WARN = 'warn';
+
+/**
+ * Rule → Skill mapping.
+ * Every check.js rule links to the skill it enforces.
+ * When adding/removing rules, update BOTH this registry AND the skill's
+ * "## Enforced Rules" section. See CLAUDE.md for the sync convention.
+ */
+const RULE_SKILLS = {
+    // CSS (12) — web-css
+    'no-hardcoded-color':     'web-css',
+    'no-hardcoded-spacing':   'web-css',
+    'no-hardcoded-font-size': 'web-css',
+    'no-hardcoded-radius':    'web-css',
+    'no-hardcoded-shadow':    'web-css',
+    'no-hardcoded-z-index':   'web-css',
+    'css-property-order':     'web-css',
+    'css-import-order':       'web-css',
+    'mobile-first':           'web-css',
+    'no-important':           'web-css',
+    'no-id-selector':         'web-css',
+    'unit-zero':              'web-css',
+
+    // HTML (11) — design, web-accessibility
+    'no-inline-style':        'design',
+    'img-alt-required':       'web-accessibility',
+    'button-type-required':   'design',
+    'doctype-required':       'design',
+    'title-required':         'web-accessibility',
+    'tabindex-no-positive':   'web-accessibility',
+    'max-classes':            'design',
+    'heading-order':          'web-accessibility',
+    'single-h1':             'web-accessibility',
+    'no-div-as-button':       'web-accessibility',
+    'wiki-page-attr':          null, // project-specific, no skill
+
+    // JS (10) — code-quality, security, architecture, design
+    'no-debugger':            'code-quality',
+    'no-var':                 'code-quality',
+    'no-empty-catch':         'code-quality',
+    'no-document-write':      'security',
+    'no-hardcoded-secrets':   'security',
+    'tier-imports':           'architecture',
+    'no-console':             'code-quality',
+    'no-double-equals':       'code-quality',
+    'no-innerHTML':           'security',
+    'no-jsx-inline-style':    'design',
+
+    // Project (3) — web-css, architecture
+    'css-file-count':         'web-css',
+    'css-file-names':         'web-css',
+    'tier-structure':         'architecture',
+};
 
 const MAX_CLASSES = 4;
 const SPACING_PX_THRESHOLD = 4;
@@ -327,6 +382,7 @@ function checkCSS(filepath, content) {
                         severity: WARN,
                         message: `'${importFile}.css' imported after '${lastCascadeName}.css' — expected order: reset → global → layouts → components → overrides`,
                         rule: 'css-import-order',
+                        skill: RULE_SKILLS['css-import-order'],
                     });
                 }
                 lastCascadeIdx = idx;
@@ -343,6 +399,7 @@ function checkCSS(filepath, content) {
                 severity: WARN,
                 message: `ID selector '#${idSelectorMatch[2]}' — use classes to avoid specificity wars`,
                 rule: 'no-id-selector',
+                skill: RULE_SKILLS['no-id-selector'],
             });
         }
 
@@ -354,6 +411,7 @@ function checkCSS(filepath, content) {
                 severity: WARN,
                 message: 'max-width media query — use min-width (mobile-first)',
                 rule: 'mobile-first',
+                skill: RULE_SKILLS['mobile-first'],
             });
         }
 
@@ -381,6 +439,7 @@ function checkCSS(filepath, content) {
                     severity: WARN,
                     message: `'${prop}' (${PROPERTY_GROUP_NAMES[group]}) after '${block.lastGroupProp}' (${PROPERTY_GROUP_NAMES[block.lastGroup]}) — expected: Positioning → Box Model → Typography → Visual → Animation`,
                     rule: 'css-property-order',
+                    skill: RULE_SKILLS['css-property-order'],
                 });
             }
             if (group >= block.lastGroup) {
@@ -398,6 +457,7 @@ function checkCSS(filepath, content) {
                 severity: WARN,
                 message: '!important — avoid unless absolutely necessary',
                 rule: 'no-important',
+                skill: RULE_SKILLS['no-important'],
             });
         }
 
@@ -409,6 +469,7 @@ function checkCSS(filepath, content) {
                 severity: ERROR,
                 message: `Hardcoded color '${m[0]}' — use var(--color-*)`,
                 rule: 'no-hardcoded-color',
+                skill: RULE_SKILLS['no-hardcoded-color'],
             });
         }
 
@@ -421,6 +482,7 @@ function checkCSS(filepath, content) {
                 severity: ERROR,
                 message: 'Hardcoded rgb()/rgba() — use var(--color-*)',
                 rule: 'no-hardcoded-color',
+                skill: RULE_SKILLS['no-hardcoded-color'],
             });
         }
 
@@ -433,6 +495,7 @@ function checkCSS(filepath, content) {
                 severity: ERROR,
                 message: 'Hardcoded hsl()/hsla() — use var(--color-*)',
                 rule: 'no-hardcoded-color',
+                skill: RULE_SKILLS['no-hardcoded-color'],
             });
         }
 
@@ -447,6 +510,7 @@ function checkCSS(filepath, content) {
                         severity: ERROR,
                         message: `Named color '${word}' — use var(--color-*)`,
                         rule: 'no-hardcoded-color',
+                        skill: RULE_SKILLS['no-hardcoded-color'],
                     });
                 }
             }
@@ -463,6 +527,7 @@ function checkCSS(filepath, content) {
                         severity: WARN,
                         message: `Hardcoded spacing '${m[0]}' — use var(--space-*)`,
                         rule: 'no-hardcoded-spacing',
+                        skill: RULE_SKILLS['no-hardcoded-spacing'],
                     });
                 }
             }
@@ -481,6 +546,7 @@ function checkCSS(filepath, content) {
                     severity: WARN,
                     message: `Hardcoded font-size '${trimmed}' — use var(--font-size-*)`,
                     rule: 'no-hardcoded-font-size',
+                    skill: RULE_SKILLS['no-hardcoded-font-size'],
                 });
             }
         }
@@ -498,6 +564,7 @@ function checkCSS(filepath, content) {
                     severity: WARN,
                     message: `Hardcoded border-radius '${trimmed}' — use var(--radius-*)`,
                     rule: 'no-hardcoded-radius',
+                    skill: RULE_SKILLS['no-hardcoded-radius'],
                 });
             }
         }
@@ -515,6 +582,7 @@ function checkCSS(filepath, content) {
                     severity: WARN,
                     message: `Hardcoded ${prop} — use var(--shadow-*)`,
                     rule: 'no-hardcoded-shadow',
+                    skill: RULE_SKILLS['no-hardcoded-shadow'],
                 });
             }
         }
@@ -531,6 +599,7 @@ function checkCSS(filepath, content) {
                     severity: WARN,
                     message: `Hardcoded z-index '${trimmed}' — use var(--z-*)`,
                     rule: 'no-hardcoded-z-index',
+                    skill: RULE_SKILLS['no-hardcoded-z-index'],
                 });
             }
         }
@@ -543,6 +612,7 @@ function checkCSS(filepath, content) {
                 severity: WARN,
                 message: `'${um[0]}' — use unitless 0`,
                 rule: 'unit-zero',
+                skill: RULE_SKILLS['unit-zero'],
             });
         }
     }
@@ -606,6 +676,7 @@ function checkHTML(filepath, content) {
                     severity: WARN,
                     message: `'${linkFile}.css' linked after '${lastLinkCascadeName}.css' — expected order: reset → global → layouts → components → overrides`,
                     rule: 'css-import-order',
+                    skill: RULE_SKILLS['css-import-order'],
                 });
             }
             lastLinkCascadeIdx = idx;
@@ -624,6 +695,7 @@ function checkHTML(filepath, content) {
                 severity: ERROR,
                 message: 'Inline style — move to CSS file',
                 rule: 'no-inline-style',
+                skill: RULE_SKILLS['no-inline-style'],
             });
         }
     }
@@ -641,6 +713,7 @@ function checkHTML(filepath, content) {
                 severity: ERROR,
                 message: '<img> missing alt attribute',
                 rule: 'img-alt-required',
+                skill: RULE_SKILLS['img-alt-required'],
             });
         }
     }
@@ -658,6 +731,7 @@ function checkHTML(filepath, content) {
                 severity: WARN,
                 message: `${classes.length} classes on element (max ${MAX_CLASSES}) — consolidate into semantic class`,
                 rule: 'max-classes',
+                skill: RULE_SKILLS['max-classes'],
             });
         }
     }
@@ -670,6 +744,7 @@ function checkHTML(filepath, content) {
             severity: ERROR,
             message: 'Missing <!DOCTYPE html>',
             rule: 'doctype-required',
+            skill: RULE_SKILLS['doctype-required'],
         });
     }
 
@@ -681,6 +756,7 @@ function checkHTML(filepath, content) {
             severity: ERROR,
             message: 'Missing or empty <title> element',
             rule: 'title-required',
+            skill: RULE_SKILLS['title-required'],
         });
     }
 
@@ -693,6 +769,7 @@ function checkHTML(filepath, content) {
             severity: WARN,
             message: 'Missing data-wiki-page attribute on <body>',
             rule: 'wiki-page-attr',
+            skill: RULE_SKILLS['wiki-page-attr'],
         });
     }
 
@@ -708,6 +785,7 @@ function checkHTML(filepath, content) {
                 severity: ERROR,
                 message: '<button> missing type — add type="button" or type="submit"',
                 rule: 'button-type-required',
+                skill: RULE_SKILLS['button-type-required'],
             });
         }
     }
@@ -728,6 +806,7 @@ function checkHTML(filepath, content) {
                 severity: WARN,
                 message: `<h${level}> skips level — expected <h${lastHeadingLevel + 1}> after <h${lastHeadingLevel}>`,
                 rule: 'heading-order',
+                skill: RULE_SKILLS['heading-order'],
             });
         }
         lastHeadingLevel = level;
@@ -741,6 +820,7 @@ function checkHTML(filepath, content) {
             severity: WARN,
             message: `${h1Count} <h1> elements — use exactly one per page`,
             rule: 'single-h1',
+            skill: RULE_SKILLS['single-h1'],
         });
     }
 
@@ -755,6 +835,7 @@ function checkHTML(filepath, content) {
             severity: WARN,
             message: `<${m[1]}> with onclick — use <button type="button"> instead`,
             rule: 'no-div-as-button',
+            skill: RULE_SKILLS['no-div-as-button'],
         });
     }
 
@@ -771,6 +852,7 @@ function checkHTML(filepath, content) {
                 severity: ERROR,
                 message: `tabindex="${val}" — positive values break natural tab order, use 0 or -1`,
                 rule: 'tabindex-no-positive',
+                skill: RULE_SKILLS['tabindex-no-positive'],
             });
         }
     }
@@ -841,6 +923,7 @@ function checkJS(filepath, content) {
                 severity: ERROR,
                 message: 'debugger statement — remove before committing',
                 rule: 'no-debugger',
+                skill: RULE_SKILLS['no-debugger'],
             });
         }
 
@@ -853,6 +936,7 @@ function checkJS(filepath, content) {
                 severity: WARN,
                 message: `console.${cm[1]}() — use a proper logger or remove`,
                 rule: 'no-console',
+                skill: RULE_SKILLS['no-console'],
             });
         }
 
@@ -864,6 +948,7 @@ function checkJS(filepath, content) {
                 severity: ERROR,
                 message: 'var declaration — use const or let',
                 rule: 'no-var',
+                skill: RULE_SKILLS['no-var'],
             });
         }
 
@@ -882,6 +967,7 @@ function checkJS(filepath, content) {
                     severity: WARN,
                     message: `'${eqMatch[1]}' — use strict equality (${eqMatch[1]}=)`,
                     rule: 'no-double-equals',
+                    skill: RULE_SKILLS['no-double-equals'],
                 });
             }
         }
@@ -894,6 +980,7 @@ function checkJS(filepath, content) {
                 severity: ERROR,
                 message: 'Empty catch block — handle the error or add a comment explaining why',
                 rule: 'no-empty-catch',
+                skill: RULE_SKILLS['no-empty-catch'],
             });
         }
 
@@ -905,6 +992,7 @@ function checkJS(filepath, content) {
                 severity: ERROR,
                 message: 'document.write() — use DOM manipulation instead',
                 rule: 'no-document-write',
+                skill: RULE_SKILLS['no-document-write'],
             });
         }
 
@@ -916,6 +1004,7 @@ function checkJS(filepath, content) {
                 severity: WARN,
                 message: '.innerHTML assignment — XSS risk, use textContent or DOM methods',
                 rule: 'no-innerHTML',
+                skill: RULE_SKILLS['no-innerHTML'],
             });
         }
 
@@ -927,6 +1016,7 @@ function checkJS(filepath, content) {
                 severity: WARN,
                 message: 'JSX inline style — move to CSS file or styled component',
                 rule: 'no-jsx-inline-style',
+                skill: RULE_SKILLS['no-jsx-inline-style'],
             });
         }
 
@@ -939,6 +1029,7 @@ function checkJS(filepath, content) {
                     severity: ERROR,
                     message: 'Possible hardcoded secret — use environment variables',
                     rule: 'no-hardcoded-secrets',
+                    skill: RULE_SKILLS['no-hardcoded-secrets'],
                 });
                 break; /* one report per line is enough */
             }
@@ -963,6 +1054,7 @@ function checkJS(filepath, content) {
                                 severity: ERROR,
                                 message: `Reverse tier import — ${fileTierMatch[0].slice(1, -1)} cannot import from ${importTierMatch[0]}`,
                                 rule: 'tier-imports',
+                                skill: RULE_SKILLS['tier-imports'],
                             });
                         } else if (isSkip) {
                             issues.push({
@@ -971,6 +1063,7 @@ function checkJS(filepath, content) {
                                 severity: ERROR,
                                 message: `Layer-skipping import — ${fileTierMatch[0].slice(1, -1)} cannot import directly from ${importTierMatch[0]} (must go through 02-logic)`,
                                 rule: 'tier-imports',
+                                skill: RULE_SKILLS['tier-imports'],
                             });
                         }
                     }
@@ -995,6 +1088,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
             severity: ERROR,
             message: `${count} CSS files — 5-file architecture recommends reset/global/layouts/components/overrides`,
             rule: 'css-file-count',
+            skill: RULE_SKILLS['css-file-count'],
         });
     } else if (count > MAX_CSS_FILES_WARN) {
         issues.push({
@@ -1003,6 +1097,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
             severity: WARN,
             message: `${count} CSS files — consider consolidating toward 5-file architecture (reset/global/layouts/components/overrides)`,
             rule: 'css-file-count',
+            skill: RULE_SKILLS['css-file-count'],
         });
     }
 
@@ -1018,6 +1113,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
                 severity: WARN,
                 message: `No canonical CSS file names found — expected: reset.css, global.css, layouts.css, components.css, overrides.css`,
                 rule: 'css-file-names',
+                skill: RULE_SKILLS['css-file-names'],
             });
         }
     }
@@ -1043,6 +1139,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
                 severity: ERROR,
                 message: `Web project without 3-tier architecture — expected: 01-presentation/, 02-logic/, 03-data/`,
                 rule: 'tier-structure',
+                skill: RULE_SKILLS['tier-structure'],
             });
         } else if (existingTiers.length > 0 && existingTiers.length < 3) {
             const missing = TIER_DIRS.filter((t) => !existingTiers.includes(t));
@@ -1052,6 +1149,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
                 severity: ERROR,
                 message: `Incomplete tier structure: found ${existingTiers.join(', ')} — missing: ${missing.join(', ')}`,
                 rule: 'tier-structure',
+                skill: RULE_SKILLS['tier-structure'],
             });
         }
     }
@@ -1081,7 +1179,8 @@ function report(allResults, quiet) {
                     ? c.red(issue.severity.padEnd(6))
                     : c.yellow(issue.severity.padEnd(6));
             const rule = c.dim(issue.rule);
-            console.log(`    ${loc} ${sev} ${issue.message}  ${rule}`);
+            const skill = issue.skill ? c.dim(`[${issue.skill}]`) : '';
+            console.log(`    ${loc} ${sev} ${issue.message}  ${rule}  ${skill}`);
 
             if (issue.severity === ERROR) errors++;
             else warnings++;
@@ -1128,10 +1227,41 @@ function main() {
     node check.js --root <dir> Set project root (default: cwd)
     node check.js file.css     Check specific file(s)
     node check.js --help       Show this help
+    node check.js --validate-registry  Verify all rules are in RULE_SKILLS
 
   Exit: 0 = clean, 1 = errors found (warnings alone don't fail)
 `);
         process.exit(0);
+    }
+
+    /* --validate-registry: self-check that every rule ID used in checker
+       functions is registered in RULE_SKILLS (dev-time safeguard) */
+    if (args.includes('--validate-registry')) {
+        const src = fs.readFileSync(__filename, 'utf8');
+        const usedRules = new Set();
+        /* Build regex dynamically to avoid self-matching */
+        const ruleRe = new RegExp("rule:\\s*'([a-zA-Z][a-zA-Z0-9-]+)'", 'g');
+        for (const m of src.matchAll(ruleRe)) {
+            usedRules.add(m[1]);
+        }
+        const registered = new Set(Object.keys(RULE_SKILLS));
+        let ok = true;
+        for (const rule of usedRules) {
+            if (!registered.has(rule)) {
+                console.log(c.red(`  Missing from RULE_SKILLS: '${rule}'`));
+                ok = false;
+            }
+        }
+        for (const rule of registered) {
+            if (!usedRules.has(rule)) {
+                console.log(c.yellow(`  In RULE_SKILLS but never used: '${rule}'`));
+                ok = false;
+            }
+        }
+        if (ok) {
+            console.log(c.green(`  ✔ All ${registered.size} rules registered and used`));
+        }
+        process.exit(ok ? 0 : 1);
     }
 
     const selfPath = path.resolve(__filename);

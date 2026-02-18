@@ -84,7 +84,17 @@ python foundations/teams/clean-team/scripts/analyze_complexity.py <path>     # H
 python foundations/teams/clean-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
 python foundations/teams/clean-team/scripts/detect_dead_code.py <path>       # Unused code
 node foundations/teams/clean-team/scripts/check.js                           # Design system compliance (36 rules)
+node foundations/teams/clean-team/scripts/check.js --validate-registry       # Verify rule ↔ skill links
 ```
+
+### Rule ↔ Skill Sync
+
+check.js rules and skill files are **linked by rule IDs**. When modifying either:
+- **Adding a check.js rule:** Add it to `RULE_SKILLS` registry AND the skill's `## Enforced Rules` table
+- **Removing a check.js rule:** Remove from both `RULE_SKILLS` and the skill file
+- **Changing severity:** Update both check.js and the skill's table
+- **Adding a skill guideline that's automatable:** Consider adding a check.js rule for it
+- **Verify links:** `node check.js --validate-registry` confirms all 36 rules are registered
 
 ## Development
 
