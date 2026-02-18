@@ -29,7 +29,7 @@
       "name": "clean-web",
       "version": "1.0.0",
       "description": "A 4-agent pipeline for cleaning web projects: web-restructure → css-improver → html-improver → code-improver",
-      "source": "./foundations/teams/clean-web"
+      "source": "./web-development/teams/clean-web"
     }
   ]
 }
