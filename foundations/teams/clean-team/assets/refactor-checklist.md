@@ -100,7 +100,8 @@ Before starting refactoring:
 - [ ] Variables have descriptive names
 - [ ] Functions have verb-phrase names
 - [ ] Booleans prefixed with is/has/should/can
-- [ ] No abbreviations or single letters (except loop indices)
+- [ ] No abbreviations — write the full word (`dependency` not `dep`)
+- [ ] No single-character variables — use descriptive names (`row_index` not `i`)
 - [ ] Names reveal intent, not implementation
 
 ### Dead Code Removal

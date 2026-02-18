@@ -170,7 +170,8 @@ Only widely-understood technical abbreviations:
 | `api` | Application Programming Interface | Tech |
 | `db` | Database | Backend |
 | `io` | Input/Output | Systems |
-| `i`, `j`, `k` | Loop counters | Loops only |
+
+**No single-character variables.** Use descriptive loop names: `row_index`, `column_index`, `item`, `character`, `element`.
 
 ### Common Abbreviations to Flag
 

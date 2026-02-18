@@ -174,7 +174,20 @@ def create_user(email, name):
 
 ### Specific Errors Over Generic
 
-Catch what you expect. Re-raise what you don't.
+Catch what you expect. Re-raise what you don't. **Never write `except Exception`** — identify the actual failure mode first.
+
+**Match the exception type to the operation:**
+
+| Operation | Catch | Why |
+|-----------|-------|-----|
+| File open/read/write | `OSError` | Covers FileNotFoundError, PermissionError, IsADirectoryError |
+| File read + parse content | `(OSError, UnicodeDecodeError)` | File may exist but contain invalid encoding |
+| JSON/YAML parsing | `(json.JSONDecodeError, ValueError)` | Malformed content |
+| String → number conversion | `ValueError` | Invalid format |
+| Dict/list access | `(KeyError, IndexError)` | Missing key or out-of-range index |
+| Network requests | `(ConnectionError, TimeoutError)` | Network-specific failures |
+| Subprocess execution | `(subprocess.SubprocessError, OSError)` | Process launch or execution failure |
+| Regex operations | `re.error` | Invalid pattern |
 
 **Bad — swallows everything:**
 ```python
@@ -194,6 +207,8 @@ except ValidationError as e:
     return error_response(e.message)
 # Unexpected errors propagate up
 ```
+
+**When broad catch IS acceptable:** Only at top-level application boundaries (CLI `main()`, API request handlers) where the alternative is an unhandled crash. Even then, log the full exception before continuing.
 
 ### Never Swallow Errors
 
@@ -268,14 +283,63 @@ should_refresh = True
 | `noun.verb_to(target)` | Object performs action toward target | `cart.transfer_to(order)` |
 | `verb(noun, to=target)` | Named parameter clarifies | `assign(task, to=developer)` |
 
+### Never Abbreviate
+
+Write the full word. Every time. The only acceptable abbreviations are universally understood technical terms: `id`, `url`, `api`, `db`, `io`.
+
+**No single-character variables.** Not even loop counters. `i` and `j` hide what you're iterating over:
+
+```python
+# Bad — what is i? what is j?
+for i in range(len(rows)):
+    for j in range(len(columns)):
+        grid[i][j] = calculate(i, j)
+
+# Good — names describe the iteration
+for row_index in range(len(rows)):
+    for column_index in range(len(columns)):
+        grid[row_index][column_index] = calculate(row_index, column_index)
+```
+
+**Common violations** — these appear constantly and must always be expanded:
+
+| Write This | Not This |
+|------------|----------|
+| `dependency` | `dep` |
+| `index` / `position` | `idx` |
+| `source` | `src` |
+| `destination` | `dst` |
+| `description` | `desc` |
+| `threshold` | `thresh` |
+| `config` / `configuration` | `cfg` |
+| `message` | `msg` |
+| `request` | `req` |
+| `response` | `res` |
+| `context` | `ctx` |
+| `error` | `err` |
+| `value` | `val` |
+| `count` | `cnt` |
+| `button` | `btn` |
+| `user` | `usr` |
+| `callback` | `cb` |
+| `function` | `fn` |
+| `manager` | `mgr` |
+| `service` | `svc` |
+| `repository` | `repo` |
+| `implementation` | `impl` |
+| `password` | `pwd` |
+| `temporary` | `tmp` |
+| `number` | `num` |
+
+Full list: `references/naming-reference.md`
+
 ### Avoid
 
 | Don't | Instead |
 |-------|---------|
-| Single letters (except loop `i`, `j`) | Full descriptive name |
-| Abbreviations (`cust_id`) | `customer_id` |
-| Generic names (`data`, `list`, `temp`) | `user_data`, `order_list` |
-| Negated booleans (`is_not_disabled`) | `is_enabled` |
+| Single-character names (`i`, `x`, `e`) | Descriptive name (`row_index`, `coordinate`, `error`) |
+| Generic names (`data`, `list`, `temp`) | Specific noun (`user_data`, `order_list`) |
+| Negated booleans (`is_not_disabled`) | Positive form (`is_enabled`) |
 
 ---
 
@@ -283,22 +347,39 @@ should_refresh = True
 
 ### No Magic Values
 
-Every number and string literal should have a name.
+Every number and string literal should have a name. Apply the **extraction test** before writing any literal:
+
+**The Extraction Test:** If a literal isn't `0`, `1`, `-1`, `True`, `False`, `None`, or `""` — it needs a named constant.
+
+This includes:
+- **Thresholds and limits** — `MAX_RETRIES = 3`, `HIGH_COUPLING_THRESHOLD = 10`
+- **Sizes and measurements** — `MIN_FONT_SIZE_PX = 12`, `MASK_VISIBLE_CHARACTERS = 4`
+- **String patterns** — `DEFAULT_ENCODING = "utf-8"`, `CSV_DELIMITER = ","`
+- **Configuration values** — `TOP_RESULTS_DISPLAY_LIMIT = 20`, `SCAN_DEPTH = 3`
+
+**Name the constant by what it means, not what it is.** `THREE = 3` is pointless. `MAX_RETRIES = 3` communicates intent.
 
 **Bad:**
 ```python
 if retry_count > 3:
     sleep(60)
+if len(results) > 20:
+    results = results[:20]
 ```
 
 **Good:**
 ```python
 MAX_RETRIES = 3
 RETRY_DELAY_SECONDS = 60
+TOP_RESULTS_DISPLAY_LIMIT = 20
 
 if retry_count > MAX_RETRIES:
     sleep(RETRY_DELAY_SECONDS)
+if len(results) > TOP_RESULTS_DISPLAY_LIMIT:
+    results = results[:TOP_RESULTS_DISPLAY_LIMIT]
 ```
+
+**Place constants at the top of the module**, grouped by purpose, before any function definitions.
 
 ### Boolean Parameters
 
@@ -379,12 +460,38 @@ def sell_item_to(self, item_id: str, buyer: Customer) -> Receipt:
 
 ### Comments
 
+**Before writing any comment, apply the Delete Test:** mentally delete the comment. Is anything lost? If the code already communicates the same information through naming and structure, don't write the comment.
+
 | Do Comment | Don't Comment |
 |------------|---------------|
 | **Why** — intent, business reason, non-obvious context | **What** — the code already says this |
 | Non-obvious gotchas or edge cases | Obvious operations |
 | Complex algorithm summaries | Bad code to explain it (fix the code instead) |
 | TODO with ticket/issue reference | TODO without context |
+| Regex pattern documentation (what the pattern matches) | Restating a function call (`# Send the email`) |
+
+**Bad — restates the code:**
+```python
+# Get the users
+users = get_users()
+# Filter active users
+active_users = filter_active(users)
+# Count the results
+count = len(active_users)
+```
+
+**Good — no comments needed (the code speaks for itself):**
+```python
+users = get_users()
+active_users = filter_active(users)
+count = len(active_users)
+```
+
+**Good — explains why:**
+```python
+# Offset by 1 because CSS cascade position is 1-indexed but array is 0-indexed
+cascade_position = file_index + 1
+```
 
 **If you need a comment to explain what code does, the code should be clearer.** Rename variables, extract functions, simplify logic — then the comment becomes unnecessary.
 
@@ -400,15 +507,18 @@ def sell_item_to(self, item_id: str, buyer: Customer) -> Receipt:
 - [ ] Functions are short, single-responsibility
 - [ ] Max 3 levels of nesting, early returns used
 - [ ] Errors fail fast at boundaries with specific types
+- [ ] Exception types match the operation (no bare `except Exception`)
 - [ ] No empty catch/except blocks
 - [ ] Names pass the read-aloud test
+- [ ] No single-character variables — use descriptive names
+- [ ] No abbreviated names — write the full word (`dependency` not `dep`)
 - [ ] Directional clarity in method names (to/from)
 - [ ] Booleans prefixed with is/has/should/can
-- [ ] No abbreviations, no generic names
-- [ ] No magic numbers or strings — constants extracted
+- [ ] Every literal passes the extraction test — named constant if not 0/1/True/False/None/""
+- [ ] Constants at module top, grouped by purpose
 - [ ] Boolean parameters use named args or options
 - [ ] All public APIs have complete docstrings
-- [ ] Comments explain why, not what
+- [ ] Comments pass the delete test — only explain why, never what
 
 ---
 
