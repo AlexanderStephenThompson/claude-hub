@@ -56,7 +56,10 @@ Use Grep across all markup files to count:
 - `<input` without a nearby `<label` (unlabeled inputs)
 - `<button` without `type=` (missing button type)
 - `<img` without `alt=` (missing alt text)
+- `<img` without `loading="lazy"` (below-fold images missing lazy load)
 - Elements with 4+ classes (class bloat)
+- Redundant boolean attributes (`disabled="disabled"`, `hidden="true"`)
+- Empty attributes (`class=""`, `id=""`, `title=""`)
 
 Record these numbers — they're your "before" snapshot.
 
@@ -210,12 +213,26 @@ Icon-only buttons/links need an accessible label:
 <button aria-label="Close"><svg aria-hidden="true">...</svg></button>
 ```
 
+### Lazy Loading
+
+Add `loading="lazy"` to images that aren't above the fold (hero images, logos in the header). This defers loading until the image is near the viewport.
+
+```jsx
+// Above the fold — load immediately (default behavior)
+<img src="hero.jpg" alt="Welcome banner" />
+
+// Below the fold — lazy load
+<img src="chart.png" alt="Revenue chart" loading="lazy" />
+```
+
+**Don't** add `loading="lazy"` to the first visible image on the page (LCP candidate) — that slows initial render.
+
 ### Figures
 
 Images with captions should use `<figure>` and `<figcaption>`:
 ```jsx
 <figure>
-  <img src="chart.png" alt="Revenue growth Q1-Q4" />
+  <img src="chart.png" alt="Revenue growth Q1-Q4" loading="lazy" />
   <figcaption>Revenue doubled in Q3 after the product launch</figcaption>
 </figure>
 ```
@@ -332,7 +349,21 @@ Don't rewrite every Tailwind class at once — extract them as you encounter the
 
 Move inline `style=` attributes to CSS classes. Exception: truly dynamic values computed at runtime (`style={{ width: calculatedWidth }}`).
 
-**Commit:** `refactor(html): clean up class bloat and inline styles`
+### Attribute Hygiene
+
+Clean up redundant or empty attributes that add noise to the markup.
+
+| Pattern | Fix |
+|---------|-----|
+| `disabled="disabled"` | `disabled` (boolean attributes don't need values) |
+| `hidden="true"` | `hidden` |
+| `readonly="readonly"` | `readonly` |
+| `class=""` or `className=""` | Remove the empty attribute entirely |
+| `id=""`, `title=""`, `style=""` | Remove — empty attributes are noise |
+
+**Don't** touch `data-*` attributes unless they're clearly orphaned (no JavaScript references them). These are often used by frameworks or tests.
+
+**Commit:** `refactor(html): clean up class bloat, inline styles, and attribute noise`
 
 ---
 
@@ -349,7 +380,9 @@ Div-as-landmark:        [N]    → [N]
 Unlabeled inputs:       [N]    → [N]
 Missing button types:   [N]    → [N]
 Missing alt text:       [N]    → [N]
+Missing lazy loading:   [N]    → [N]
 Elements w/ 4+ classes: [N]    → [N]
+Redundant attributes:   [N]    → [N]
 
 Changes:
   Landmarks added:     [N] semantic elements
@@ -357,8 +390,10 @@ Changes:
   Buttons fixed:       [N] divs → buttons, types added
   Labels added:        [N] form inputs
   Alt text added:      [N] images
+  Lazy loading added:  [N] below-fold images
   Lists converted:     [N] div-lists → ul/ol
   Classes cleaned:     [N] elements simplified
+  Attributes cleaned:  [N] redundant/empty attributes fixed
 
 Commits:
   [hash] refactor(html): replace div wrappers with semantic landmarks
@@ -368,7 +403,7 @@ Commits:
   [hash] refactor(html): add alt text, label icons, use figure elements
   [hash] refactor(html): use semantic list and data elements
   [hash] refactor(html): use semantic content elements
-  [hash] refactor(html): clean up class bloat and inline styles
+  [hash] refactor(html): clean up class bloat, inline styles, and attribute noise
 ```
 
 ## Handoff
