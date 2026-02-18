@@ -18,6 +18,9 @@ from pathlib import Path
 from typing import NamedTuple, Optional
 
 
+DESCRIPTION_MAX_LENGTH = 200
+AUDIT_TIMEOUT_SECONDS = 120
+
 class Vulnerability(NamedTuple):
     package: str
     version: str
@@ -65,7 +68,7 @@ def classify_manifest(file_path: Path, manifests: dict):
         manifests["javascript"].append(file_path)
     elif name == "yarn.lock":
         manifests["javascript"].append(file_path)
-    elif name == "package.json" and "package-lock.json" not in [f.name for f in file_path.parent.iterdir()]:
+    elif name == "package.json" and "package-lock.json" not in [sibling.name for sibling in file_path.parent.iterdir()]:
         manifests["javascript"].append(file_path)
 
     # Ruby
@@ -94,7 +97,7 @@ def check_python_pip_audit(requirements_path: Path) -> list[Vulnerability]:
             ["pip-audit", "-r", str(requirements_path), "--format", "json"],
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=AUDIT_TIMEOUT_SECONDS,
         )
 
         if result.returncode != 0 and not result.stdout:
@@ -110,7 +113,7 @@ def check_python_pip_audit(requirements_path: Path) -> list[Vulnerability]:
                 version=vuln.get("version", "unknown"),
                 vulnerability_id=vuln.get("id", "unknown"),
                 severity=vuln.get("severity", "unknown"),
-                description=vuln.get("description", "")[:200],
+                description=vuln.get("description", "")[:DESCRIPTION_MAX_LENGTH],
                 fix_version=fix_versions[0] if fix_versions else None,
             ))
 
@@ -135,7 +138,7 @@ def check_python_safety(requirements_path: Path) -> list[Vulnerability]:
             ["safety", "check", "-r", str(requirements_path), "--json"],
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=AUDIT_TIMEOUT_SECONDS,
         )
 
         if result.stdout:
@@ -146,7 +149,7 @@ def check_python_safety(requirements_path: Path) -> list[Vulnerability]:
                     version=vuln.get("analyzed_version", "unknown"),
                     vulnerability_id=vuln.get("vulnerability_id", "unknown"),
                     severity=vuln.get("severity", "unknown"),
-                    description=vuln.get("advisory", "")[:200],
+                    description=vuln.get("advisory", "")[:DESCRIPTION_MAX_LENGTH],
                     fix_version=vuln.get("fixed_versions", [None])[0] if vuln.get("fixed_versions") else None,
                 ))
 
@@ -168,7 +171,7 @@ def check_npm_audit(package_path: Path) -> list[Vulnerability]:
             ["npm", "audit", "--json"],
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=AUDIT_TIMEOUT_SECONDS,
             cwd=package_path.parent,
         )
 
@@ -189,7 +192,7 @@ def check_npm_audit(package_path: Path) -> list[Vulnerability]:
                     version=vuln_info.get("range", "unknown"),
                     vulnerability_id=str(advisory.get("source", "unknown")),
                     severity=severity,
-                    description=advisory.get("title", "")[:200] if isinstance(advisory, dict) else str(via)[:200],
+                    description=advisory.get("title", "")[:DESCRIPTION_MAX_LENGTH] if isinstance(advisory, dict) else str(via)[:DESCRIPTION_MAX_LENGTH],
                     fix_version=vuln_info.get("fixAvailable", {}).get("version") if isinstance(vuln_info.get("fixAvailable"), dict) else None,
                 ))
 
@@ -214,7 +217,7 @@ def check_yarn_audit(lock_path: Path) -> list[Vulnerability]:
             ["yarn", "audit", "--json"],
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=AUDIT_TIMEOUT_SECONDS,
             cwd=lock_path.parent,
         )
 
@@ -231,7 +234,7 @@ def check_yarn_audit(lock_path: Path) -> list[Vulnerability]:
                         version=advisory.get("vulnerable_versions", "unknown"),
                         vulnerability_id=str(advisory.get("id", "unknown")),
                         severity=advisory.get("severity", "unknown"),
-                        description=advisory.get("title", "")[:200],
+                        description=advisory.get("title", "")[:DESCRIPTION_MAX_LENGTH],
                         fix_version=advisory.get("patched_versions"),
                     ))
             except json.JSONDecodeError:
@@ -277,7 +280,7 @@ def check_dependencies(path: Path) -> dict:
         if manifests[ecosystem]:
             results["other"].append({
                 "ecosystem": ecosystem,
-                "files": [str(f) for f in manifests[ecosystem]],
+                "files": [str(manifest) for manifest in manifests[ecosystem]],
                 "note": f"Manual audit recommended. Use: {get_audit_command(ecosystem)}",
             })
 
@@ -319,31 +322,31 @@ def format_text_output(results: dict) -> str:
 
     if all_vulns:
         # Sort by severity
-        sorted_vulns = sorted(all_vulns, key=lambda v: severity_order(v.severity), reverse=True)
+        sorted_vulns = sorted(all_vulns, key=lambda vuln: severity_order(vuln.severity), reverse=True)
 
-        output.append(f"🔴 Found {len(all_vulns)} vulnerable package(s):\n")
+        output.append(f"Found {len(all_vulns)} vulnerable package(s):\n")
 
-        critical = [v for v in sorted_vulns if v.severity.lower() == "critical"]
-        high = [v for v in sorted_vulns if v.severity.lower() == "high"]
-        medium = [v for v in sorted_vulns if v.severity.lower() in ("medium", "moderate")]
-        low = [v for v in sorted_vulns if v.severity.lower() in ("low", "info")]
+        critical = [vuln for vuln in sorted_vulns if vuln.severity.lower() == "critical"]
+        high = [vuln for vuln in sorted_vulns if vuln.severity.lower() == "high"]
+        medium = [vuln for vuln in sorted_vulns if vuln.severity.lower() in ("medium", "moderate")]
+        low = [vuln for vuln in sorted_vulns if vuln.severity.lower() in ("low", "info")]
 
-        def format_vulns(vulns, label, icon):
-            if vulns:
+        def append_vulnerability_group(vulnerabilities, label, icon):
+            if vulnerabilities:
                 output.append(f"{icon} {label}:")
-                for v in vulns:
-                    output.append(f"  📦 {v.package} @ {v.version}")
-                    output.append(f"     ID: {v.vulnerability_id}")
-                    if v.description:
-                        output.append(f"     {v.description[:80]}...")
-                    if v.fix_version:
-                        output.append(f"     Fix: Upgrade to {v.fix_version}")
+                for vuln in vulnerabilities:
+                    output.append(f"  {vuln.package} @ {vuln.version}")
+                    output.append(f"     ID: {vuln.vulnerability_id}")
+                    if vuln.description:
+                        output.append(f"     {vuln.description[:80]}...")
+                    if vuln.fix_version:
+                        output.append(f"     Fix: Upgrade to {vuln.fix_version}")
                 output.append("")
 
-        format_vulns(critical, "CRITICAL", "🚨")
-        format_vulns(high, "HIGH", "⚠️")
-        format_vulns(medium, "MEDIUM", "📋")
-        format_vulns(low, "LOW", "ℹ️")
+        append_vulnerability_group(critical, "CRITICAL", "CRITICAL")
+        append_vulnerability_group(high, "HIGH", "HIGH")
+        append_vulnerability_group(medium, "MEDIUM", "MEDIUM")
+        append_vulnerability_group(low, "LOW", "LOW")
 
     if results["other"]:
         output.append("📝 Other ecosystems detected (manual check recommended):")
@@ -354,8 +357,8 @@ def format_text_output(results: dict) -> str:
     output.append("─" * 50)
 
     if all_vulns:
-        critical_count = len([v for v in all_vulns if v.severity.lower() == "critical"])
-        high_count = len([v for v in all_vulns if v.severity.lower() == "high"])
+        critical_count = len([vuln for vuln in all_vulns if vuln.severity.lower() == "critical"])
+        high_count = len([vuln for vuln in all_vulns if vuln.severity.lower() == "high"])
         output.append(f"Summary: {critical_count} critical, {high_count} high, {len(all_vulns) - critical_count - high_count} other")
         output.append("\n🔧 Remediation:")
         output.append("  1. Update vulnerable packages to fixed versions")
@@ -371,13 +374,13 @@ def format_json_output(results: dict) -> str:
 
     return json.dumps({
         "total": len(all_vulns),
-        "critical": len([v for v in all_vulns if v.severity.lower() == "critical"]),
-        "high": len([v for v in all_vulns if v.severity.lower() == "high"]),
-        "medium": len([v for v in all_vulns if v.severity.lower() in ("medium", "moderate")]),
-        "low": len([v for v in all_vulns if v.severity.lower() in ("low", "info")]),
+        "critical": len([vuln for vuln in all_vulns if vuln.severity.lower() == "critical"]),
+        "high": len([vuln for vuln in all_vulns if vuln.severity.lower() == "high"]),
+        "medium": len([vuln for vuln in all_vulns if vuln.severity.lower() in ("medium", "moderate")]),
+        "low": len([vuln for vuln in all_vulns if vuln.severity.lower() in ("low", "info")]),
         "vulnerabilities": {
-            "python": [v._asdict() for v in results["python"]],
-            "javascript": [v._asdict() for v in results["javascript"]],
+            "python": [vuln._asdict() for vuln in results["python"]],
+            "javascript": [vuln._asdict() for vuln in results["javascript"]],
         },
         "other_ecosystems": results["other"],
     }, indent=2)
@@ -413,11 +416,11 @@ def main():
 
     # Exit code based on critical/high vulnerabilities
     all_vulns = results["python"] + results["javascript"]
-    critical_or_high = len([
-        v for v in all_vulns
-        if v.severity.lower() in ("critical", "high")
+    critical_or_high_count = len([
+        vuln for vuln in all_vulns
+        if vuln.severity.lower() in ("critical", "high")
     ])
-    sys.exit(1 if critical_or_high > 0 else 0)
+    sys.exit(1 if critical_or_high_count > 0 else 0)
 
 
 if __name__ == "__main__":

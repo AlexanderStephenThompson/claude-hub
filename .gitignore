@@ -8,6 +8,10 @@ nul
 *.swo
 *~
 
+# Python
+__pycache__/
+*.pyc
+
 # Local development
 .env
 .env.local

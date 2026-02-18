@@ -306,23 +306,23 @@ def format_text_output(issues: list[Issue], doc_root: Path) -> str:
     output.append(f"Found {len(issues)} documentation issue(s):\n")
 
     # Group by severity
-    errors = [i for i in issues if i.severity == "error"]
-    warnings = [i for i in issues if i.severity == "warning"]
-    info = [i for i in issues if i.severity == "info"]
+    errors = [issue for issue in issues if issue.severity == "error"]
+    warnings = [issue for issue in issues if issue.severity == "warning"]
+    info = [issue for issue in issues if issue.severity == "info"]
 
-    def format_issues(items, label, icon):
-        if items:
+    def append_issue_group(grouped_issues, label, icon):
+        if grouped_issues:
             output.append(f"{icon} {label}:")
-            for item in items:
+            for item in grouped_issues:
                 rel_path = item.file.replace(str(doc_root), ".")
                 output.append(f"  {rel_path}")
                 output.append(f"    Issue: {item.issue}")
                 output.append(f"    Fix: {item.fix}")
             output.append("")
 
-    format_issues(errors, "ERRORS", "❌")
-    format_issues(warnings, "WARNINGS", "⚠️")
-    format_issues(info, "INFO", "ℹ️")
+    append_issue_group(errors, "ERRORS", "ERROR")
+    append_issue_group(warnings, "WARNINGS", "WARNING")
+    append_issue_group(info, "INFO", "INFO")
 
     output.append("─" * 50)
     output.append(f"Summary: {len(errors)} error(s), {len(warnings)} warning(s), {len(info)} info")
@@ -339,10 +339,10 @@ def format_json_output(issues: list[Issue]) -> str:
     """Format issues as JSON."""
     return json.dumps({
         "total": len(issues),
-        "errors": sum(1 for i in issues if i.severity == "error"),
-        "warnings": sum(1 for i in issues if i.severity == "warning"),
-        "info": sum(1 for i in issues if i.severity == "info"),
-        "issues": [i._asdict() for i in issues],
+        "errors": sum(1 for issue in issues if issue.severity == "error"),
+        "warnings": sum(1 for issue in issues if issue.severity == "warning"),
+        "info": sum(1 for issue in issues if issue.severity == "info"),
+        "issues": [issue._asdict() for issue in issues],
     }, indent=2)
 
 
@@ -378,7 +378,7 @@ def main():
         print(format_text_output(issues, doc_root))
 
     # Exit code based on errors
-    errors = sum(1 for i in issues if i.severity == "error")
+    errors = sum(1 for issue in issues if issue.severity == "error")
     sys.exit(1 if errors > 0 else 0)
 
 

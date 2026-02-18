@@ -86,8 +86,6 @@ class AccessibilityParser(HTMLParser):
             self._check_html_lang(attrs_dict, line)
         elif tag == "iframe":
             self._check_iframe(attrs_dict, line)
-        elif tag == "form":
-            self._check_form(attrs_dict, line)
         elif tag == "table":
             self._check_table(attrs_dict, line)
 
@@ -256,9 +254,6 @@ class AccessibilityParser(HTMLParser):
                 severity="error"
             ))
 
-    def _check_form(self, attrs: dict, line: int):
-        """Check form accessibility. Placeholder for future form-level checks."""
-
     def _check_table(self, attrs: dict, line: int):
         """Flag tables for manual review."""
         self.issues.append(Issue(
@@ -352,10 +347,10 @@ def find_files(path: Path, extensions: set[str]) -> list[Path]:
         files.extend(path.rglob(f"*{ext}"))
 
     # Skip common directories
-    skip_patterns = {"node_modules", "vendor", ".git", "dist", "build"}
+    skip_directory_names = {"node_modules", "vendor", ".git", "dist", "build"}
     return sorted(
-        f for f in files
-        if not any(p in f.parts for p in skip_patterns)
+        file for file in files
+        if not any(skip_name in file.parts for skip_name in skip_directory_names)
     )
 
 
@@ -373,23 +368,23 @@ def format_text_output(issues: list[Issue]) -> str:
         by_file.setdefault(issue.file, []).append(issue)
 
     for file_path, file_issues in by_file.items():
-        output.append(f"📄 {file_path}")
-        for i in file_issues:
-            if i.severity == "error":
-                icon = "❌"
-            elif i.severity == "warning":
-                icon = "⚠️"
+        output.append(f"  {file_path}")
+        for issue in file_issues:
+            if issue.severity == "error":
+                severity_label = "ERROR"
+            elif issue.severity == "warning":
+                severity_label = "WARN"
             else:
-                icon = "ℹ️"
+                severity_label = "INFO"
 
-            output.append(f"  {icon} Line {i.line}: <{i.element}> {i.issue}")
-            output.append(f"     └─ Fix: {i.fix}")
+            output.append(f"  {severity_label} Line {issue.line}: <{issue.element}> {issue.issue}")
+            output.append(f"         Fix: {issue.fix}")
         output.append("")
 
     # Summary
-    errors = sum(1 for i in issues if i.severity == "error")
-    warnings = sum(1 for i in issues if i.severity == "warning")
-    info = sum(1 for i in issues if i.severity == "info")
+    errors = sum(1 for issue in issues if issue.severity == "error")
+    warnings = sum(1 for issue in issues if issue.severity == "warning")
+    info = sum(1 for issue in issues if issue.severity == "info")
 
     output.append("─" * 50)
     output.append(f"Summary: {errors} error(s), {warnings} warning(s), {info} info")
@@ -410,10 +405,10 @@ def format_json_output(issues: list[Issue]) -> str:
     """Format issues as JSON."""
     return json.dumps({
         "total": len(issues),
-        "errors": sum(1 for i in issues if i.severity == "error"),
-        "warnings": sum(1 for i in issues if i.severity == "warning"),
-        "info": sum(1 for i in issues if i.severity == "info"),
-        "issues": [i._asdict() for i in issues],
+        "errors": sum(1 for issue in issues if issue.severity == "error"),
+        "warnings": sum(1 for issue in issues if issue.severity == "warning"),
+        "info": sum(1 for issue in issues if issue.severity == "info"),
+        "issues": [issue._asdict() for issue in issues],
     }, indent=2)
 
 
@@ -465,7 +460,7 @@ def main():
         print(format_text_output(all_issues))
 
     # Exit code based on errors
-    errors = sum(1 for i in all_issues if i.severity == "error")
+    errors = sum(1 for issue in all_issues if issue.severity == "error")
     sys.exit(1 if errors > 0 else 0)
 
 

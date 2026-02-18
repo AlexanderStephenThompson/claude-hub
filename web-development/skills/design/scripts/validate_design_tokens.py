@@ -224,20 +224,20 @@ def format_text_output(violations: list[Violation]) -> str:
 
     # Group by file
     by_file: dict[str, list[Violation]] = {}
-    for v in violations:
-        by_file.setdefault(v.file, []).append(v)
+    for violation in violations:
+        by_file.setdefault(violation.file, []).append(violation)
 
     for file_path, file_violations in by_file.items():
-        output.append(f"📄 {file_path}")
-        for v in file_violations:
-            icon = "❌" if v.severity == "error" else "⚠️"
-            output.append(f"  {icon} Line {v.line}: {v.property}: {v.value}")
-            output.append(f"     └─ {v.suggestion}")
+        output.append(f"  {file_path}")
+        for violation in file_violations:
+            severity_label = "ERROR" if violation.severity == "error" else "WARN"
+            output.append(f"  {severity_label} Line {violation.line}: {violation.property}: {violation.value}")
+            output.append(f"         {violation.suggestion}")
         output.append("")
 
     # Summary
-    errors = sum(1 for v in violations if v.severity == "error")
-    warnings = sum(1 for v in violations if v.severity == "warning")
+    errors = sum(1 for violation in violations if violation.severity == "error")
+    warnings = sum(1 for violation in violations if violation.severity == "warning")
 
     output.append("─" * 50)
     output.append(f"Summary: {errors} error(s), {warnings} warning(s)")
@@ -254,9 +254,9 @@ def format_json_output(violations: list[Violation]) -> str:
     """Format violations as JSON."""
     return json.dumps({
         "total": len(violations),
-        "errors": sum(1 for v in violations if v.severity == "error"),
-        "warnings": sum(1 for v in violations if v.severity == "warning"),
-        "violations": [v._asdict() for v in violations],
+        "errors": sum(1 for violation in violations if violation.severity == "error"),
+        "warnings": sum(1 for violation in violations if violation.severity == "warning"),
+        "violations": [violation._asdict() for violation in violations],
     }, indent=2)
 
 
@@ -298,7 +298,7 @@ def main():
         print(format_text_output(all_violations))
 
     # Exit code based on errors (not warnings)
-    errors = sum(1 for v in all_violations if v.severity == "error")
+    errors = sum(1 for violation in all_violations if violation.severity == "error")
     sys.exit(1 if errors > 0 else 0)
 
 

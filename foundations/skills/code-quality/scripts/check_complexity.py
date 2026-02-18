@@ -25,6 +25,7 @@ from dataclasses import dataclass, field
 DEFAULT_MAX_LINES = 30
 DEFAULT_MAX_DEPTH = 3
 DEFAULT_MAX_PARAMS = 4
+MAX_FUNCTION_BODY_SCAN = 500
 
 
 @dataclass
@@ -129,8 +130,8 @@ def detect_functions_python(filepath: str) -> List[FunctionInfo]:
 
             # Count non-blank, non-comment lines
             code_lines = [
-                l for l in func_lines
-                if l.strip() and not l.strip().startswith('#')
+                func_line for func_line in func_lines
+                if func_line.strip() and not func_line.strip().startswith('#')
             ]
 
             functions.append(FunctionInfo(
@@ -181,7 +182,7 @@ def detect_functions_js(filepath: str) -> List[FunctionInfo]:
                 max_depth = 0
                 code_lines = 0
 
-                for j in range(i, min(i + 500, len(lines))):
+                for j in range(i, min(i + MAX_FUNCTION_BODY_SCAN, len(lines))):
                     func_line = lines[j]
 
                     for char in func_line:
@@ -364,9 +365,9 @@ def format_output(result: ComplexityResult, format_type: str) -> str:
             label = issue_type.upper().replace('_', ' ')
             lines.append(f"{label} ({len(issues)}):")
             lines.append("-" * 40)
-            for i in sorted(issues, key=lambda x: x.value, reverse=True):
-                lines.append(f"  {i.file}:{i.line}")
-                lines.append(f"    {i.name}: {i.value} (max: {i.threshold})")
+            for issue in sorted(issues, key=lambda x: x.value, reverse=True):
+                lines.append(f"  {issue.file}:{issue.line}")
+                lines.append(f"    {issue.name}: {issue.value} (max: {issue.threshold})")
                 lines.append("")
 
     return "\n".join(lines)

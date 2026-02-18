@@ -27,6 +27,7 @@ from collections import defaultdict
 
 
 MIN_COMMENTED_BLOCK_LINES = 2
+PREVIEW_MAX_LENGTH = 60
 
 
 @dataclass
@@ -311,8 +312,8 @@ def find_commented_code(filepath: str, content: str) -> List[CommentedCode]:
             
             # Only report if it's a significant block (3+ lines)
             if end_line - start_line >= MIN_COMMENTED_BLOCK_LINES:
-                preview = lines[i].strip()[:60]
-                if len(lines[i].strip()) > 60:
+                preview = lines[i].strip()[:PREVIEW_MAX_LENGTH]
+                if len(lines[i].strip()) > PREVIEW_MAX_LENGTH:
                     preview += '...'
                     
                 commented.append(CommentedCode(

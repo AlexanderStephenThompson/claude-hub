@@ -27,7 +27,6 @@ import os
 import re
 import sys
 import time
-from collections import Counter
 from pathlib import Path
 
 CATCH_ALL_NAMES = {
@@ -38,15 +37,13 @@ CATCH_ALL_NAMES = {
     "documents", "my documents", "files", "data",
 }
 
-SYSTEM_PREFIXES = {"_"}
 TRANSIT_PREFIX = "~"
 TRANSIT_STALE_DAYS = 60
+SECONDS_PER_DAY = 86400
 
 PROBLEM_CHARACTERS = re.compile(r"[#%&'\"\(\)@\[\]\{\}!;,=\+]")
 SPACE_PATTERN = re.compile(r"\s")
 NON_ASCII_PATTERN = re.compile(r"[^\x00-\x7F]")
-
-VALID_CONTEXTS = {"code", "personal", "team"}
 
 MAX_ITEMS_PER_FOLDER = 30
 MAX_DEPTH = 4
@@ -156,7 +153,7 @@ def check_transit(abs_path, relative_path, depth, findings):
 
     try:
         mtime = abs_path.stat().st_mtime
-        age_days = (time.time() - mtime) / 86400
+        age_days = (time.time() - mtime) / SECONDS_PER_DAY
     except OSError:
         age_days = 0
 
@@ -255,28 +252,28 @@ def generate_report(findings):
         lines.append(f"  Target: {IDEAL_L1_MIN}-{IDEAL_L1_MAX} arenas, max {L1_ABSOLUTE_MAX}.")
 
     if findings["transit_folders"]:
-        stale = [t for t in findings["transit_folders"] if t["status"] == "stale"]
-        active = [t for t in findings["transit_folders"] if t["status"] == "active"]
+        stale = [folder for folder in findings["transit_folders"] if folder["status"] == "stale"]
+        active = [folder for folder in findings["transit_folders"] if folder["status"] == "active"]
         lines.append("")
         lines.append(f"TRANSIT FOLDERS ({len(findings['transit_folders'])} found)")
         lines.append("-" * 40)
         if stale:
             lines.append(f"  STALE ({len(stale)}):")
-            for t in stale:
-                detail = "; ".join(t["issues"]) if t["issues"] else f"age: {t['age_days']}d"
-                lines.append(f"    {t['path']}  ({detail})")
+            for folder in stale:
+                detail = "; ".join(folder["issues"]) if folder["issues"] else f"age: {folder['age_days']}d"
+                lines.append(f"    {folder['path']}  ({detail})")
             lines.append("  Action: Finish the transfer and delete, or abandon these folders.")
         if active:
             lines.append(f"  ACTIVE ({len(active)}):")
-            for t in active:
-                lines.append(f"    {t['path']}  (age: {t['age_days']}d)")
+            for folder in active:
+                lines.append(f"    {folder['path']}  (age: {folder['age_days']}d)")
 
     if findings["catch_all_folders"]:
         lines.append("")
         lines.append(f"CATCH-ALL FOLDERS ({len(findings['catch_all_folders'])} found)")
         lines.append("-" * 40)
-        for f in findings["catch_all_folders"]:
-            lines.append(f"  {f['path']}  ({f['items']} items)")
+        for catch_all in findings["catch_all_folders"]:
+            lines.append(f"  {catch_all['path']}  ({catch_all['items']} items)")
         lines.append("  Action: Sort contents into real L1/L2 homes, then delete these folders.")
 
     if findings["empty_folders"]:
@@ -293,16 +290,16 @@ def generate_report(findings):
         lines.append("")
         lines.append(f"OVERPOPULATED FOLDERS ({len(findings['overpopulated_folders'])} found)")
         lines.append("-" * 40)
-        for f in sorted(findings["overpopulated_folders"], key=lambda x: -x["items"]):
-            lines.append(f"  {f['path']}  ({f['items']} items, depth {f['depth']})")
+        for crowded in sorted(findings["overpopulated_folders"], key=lambda x: -x["items"]):
+            lines.append(f"  {crowded['path']}  ({crowded['items']} items, depth {crowded['depth']})")
         lines.append(f"  Action: Split into L2 outcomes or L3 subgroups (target: <{MAX_ITEMS_PER_FOLDER} items).")
 
     if findings["deep_folders"]:
         lines.append("")
         lines.append(f"DEEP NESTING ({len(findings['deep_folders'])} folders beyond depth {MAX_DEPTH})")
         lines.append("-" * 40)
-        for f in findings["deep_folders"][:20]:
-            lines.append(f"  {f['path']}  (depth {f['depth']})")
+        for deep in findings["deep_folders"][:20]:
+            lines.append(f"  {deep['path']}  (depth {deep['depth']})")
         if len(findings["deep_folders"]) > 20:
             lines.append(f"  ...and {len(findings['deep_folders']) - 20} more")
         lines.append("  Action: Flatten by combining context into fewer, more descriptive folder names.")
@@ -318,7 +315,7 @@ def generate_report(findings):
             lines.append(f"  ...and {len(findings['naming_issues']) - 30} more")
         lines.append("  Action: Rename to use hyphens, remove special characters, use ASCII only.")
 
-    stale_transit = [t for t in findings["transit_folders"] if t["status"] == "stale"]
+    stale_transit = [folder for folder in findings["transit_folders"] if folder["status"] == "stale"]
     issue_count = (
         len(stale_transit)
         + len(findings["catch_all_folders"])

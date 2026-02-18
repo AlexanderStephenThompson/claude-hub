@@ -29,6 +29,9 @@ MAX_CYCLOMATIC_COMPLEXITY = 10
 MAX_NESTING_DEPTH = 3
 MAX_PARAMETER_COUNT = 5
 LINES_PER_COMPLEXITY_POINT = 100
+TOP_FILES_DISPLAY_LIMIT = 10
+TOP_HOTSPOTS_DISPLAY_LIMIT = 20
+HOTSPOTS_PER_FILE_LIMIT = 3
 
 
 @dataclass
@@ -319,9 +322,9 @@ def format_text_report(files: List[FileMetrics], threshold: int = 10) -> str:
     
     # Summary
     total_files = len(files)
-    total_lines = sum(f.total_lines for f in files)
-    total_functions = sum(f.function_count for f in files)
-    hotspot_files = [f for f in files if f.hotspot_functions]
+    total_lines = sum(file_metric.total_lines for file_metric in files)
+    total_functions = sum(file_metric.function_count for file_metric in files)
+    hotspot_files = [file_metric for file_metric in files if file_metric.hotspot_functions]
     
     output.append("SUMMARY")
     output.append("-" * 40)
@@ -332,32 +335,32 @@ def format_text_report(files: List[FileMetrics], threshold: int = 10) -> str:
     output.append("")
     
     # Sort files by complexity score
-    sorted_files = sorted(files, key=lambda f: f.complexity_score, reverse=True)
-    
+    sorted_files = sorted(files, key=lambda file_metric: file_metric.complexity_score, reverse=True)
+
     # Top complex files
     output.append("TOP COMPLEX FILES")
     output.append("-" * 40)
-    for f in sorted_files[:10]:
-        if f.complexity_score >= threshold:
-            output.append(f"{f.path}")
-            output.append(f"  Lines: {f.total_lines} | Functions: {f.function_count} | Score: {f.complexity_score}")
-            if f.hotspot_functions:
+    for file_metric in sorted_files[:TOP_FILES_DISPLAY_LIMIT]:
+        if file_metric.complexity_score >= threshold:
+            output.append(f"{file_metric.path}")
+            output.append(f"  Lines: {file_metric.total_lines} | Functions: {file_metric.function_count} | Score: {file_metric.complexity_score}")
+            if file_metric.hotspot_functions:
                 output.append("  Hotspots:")
-                for func in f.hotspot_functions[:3]:
+                for func in file_metric.hotspot_functions[:HOTSPOTS_PER_FILE_LIMIT]:
                     output.append(f"    - {func.name}() L{func.start_line}-{func.end_line}: {func.line_count} lines, complexity {func.cyclomatic_complexity}")
             output.append("")
     
     # All hotspot functions
     all_hotspots = []
-    for f in files:
-        for func in f.hotspot_functions:
-            all_hotspots.append((f.path, func))
+    for file_metric in files:
+        for func in file_metric.hotspot_functions:
+            all_hotspots.append((file_metric.path, func))
     
     if all_hotspots:
         output.append("ALL HOTSPOT FUNCTIONS")
         output.append("-" * 40)
         all_hotspots.sort(key=lambda x: x[1].line_count, reverse=True)
-        for path, func in all_hotspots[:20]:
+        for filepath, func in all_hotspots[:TOP_HOTSPOTS_DISPLAY_LIMIT]:
             issues = []
             if func.line_count > MAX_FUNCTION_LINES:
                 issues.append(f"{func.line_count} lines")
@@ -368,7 +371,7 @@ def format_text_report(files: List[FileMetrics], threshold: int = 10) -> str:
             if func.parameter_count > MAX_PARAMETER_COUNT:
                 issues.append(f"{func.parameter_count} params")
             
-            output.append(f"{path}:{func.start_line} {func.name}()")
+            output.append(f"{filepath}:{func.start_line} {func.name}()")
             output.append(f"  Issues: {', '.join(issues)}")
     
     output.append("")
@@ -398,12 +401,12 @@ def main():
     
     if args.format == 'json':
         output = {
-            'files': [asdict(f) for f in files],
+            'files': [asdict(file_metric) for file_metric in files],
             'summary': {
                 'total_files': len(files),
-                'total_lines': sum(f.total_lines for f in files),
-                'total_functions': sum(f.function_count for f in files),
-                'hotspot_files': len([f for f in files if f.hotspot_functions]),
+                'total_lines': sum(file_metric.total_lines for file_metric in files),
+                'total_functions': sum(file_metric.function_count for file_metric in files),
+                'hotspot_files': len([file_metric for file_metric in files if file_metric.hotspot_functions]),
             }
         }
         print(json.dumps(output, indent=2))

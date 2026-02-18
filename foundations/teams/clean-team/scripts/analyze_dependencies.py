@@ -49,6 +49,10 @@ class CircularDependency:
 
 HIGH_COUPLING_THRESHOLD = 5
 TOTAL_COUPLING_THRESHOLD = 10
+MAX_MERMAID_NODES = 30
+TOP_MODULES_DISPLAY_LIMIT = 10
+MAX_COUPLING_DISPLAY = 10
+MAX_VIOLATIONS_DISPLAY = 15
 
 
 @dataclass
@@ -384,7 +388,7 @@ def format_text_report(report: DependencyReport) -> str:
     if report.coupling_issues:
         output.append("🔗 HIGH COUPLING MODULES")
         output.append("-" * 40)
-        for issue in report.coupling_issues[:10]:
+        for issue in report.coupling_issues[:MAX_COUPLING_DISPLAY]:
             hub_marker = " [HUB]" if issue.is_hub else ""
             output.append(f"{issue.module}{hub_marker}")
             output.append(f"  Incoming: {issue.incoming} | Outgoing: {issue.outgoing} | Total: {issue.total}")
@@ -394,7 +398,7 @@ def format_text_report(report: DependencyReport) -> str:
     if report.layer_violations:
         output.append("⚠️ LAYER VIOLATIONS")
         output.append("-" * 40)
-        for source, target, violation_type in report.layer_violations[:15]:
+        for source, target, violation_type in report.layer_violations[:MAX_VIOLATIONS_DISPLAY]:
             output.append(f"{violation_type}")
             output.append(f"  {source}")
             output.append(f"  → {target}")
@@ -408,7 +412,7 @@ def format_text_report(report: DependencyReport) -> str:
         key=lambda x: x.imported_by_count,
         reverse=True
     )
-    for info in sorted_modules[:10]:
+    for info in sorted_modules[:TOP_MODULES_DISPLAY_LIMIT]:
         if info.imported_by_count > 0:
             output.append(f"{info.imported_by_count:3d} imports ← {info.path}")
     output.append("")
@@ -418,7 +422,7 @@ def format_text_report(report: DependencyReport) -> str:
     return '\n'.join(output)
 
 
-def generate_mermaid_graph(report: DependencyReport, max_nodes: int = 30) -> str:
+def generate_mermaid_graph(report: DependencyReport, max_nodes: int = MAX_MERMAID_NODES) -> str:
     """Generate a Mermaid diagram of dependencies."""
     lines = ["graph LR"]
     
@@ -459,8 +463,8 @@ def main():
     if args.format == 'json':
         output = {
             'modules': {k: asdict(v) for k, v in report.modules.items()},
-            'circular_dependencies': [asdict(c) for c in report.circular_dependencies],
-            'coupling_issues': [asdict(c) for c in report.coupling_issues],
+            'circular_dependencies': [asdict(cycle) for cycle in report.circular_dependencies],
+            'coupling_issues': [asdict(coupling) for coupling in report.coupling_issues],
             'layer_violations': report.layer_violations,
         }
         print(json.dumps(output, indent=2))

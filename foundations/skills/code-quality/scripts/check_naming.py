@@ -354,14 +354,14 @@ def format_output(result: NamingResult, format_type: str) -> str:
             'names_checked': result.names_checked,
             'issues': [
                 {
-                    'file': i.file,
-                    'line': i.line,
-                    'name': i.name,
-                    'type': i.issue_type,
-                    'message': i.message,
-                    'suggestion': i.suggestion
+                    'file': issue.file,
+                    'line': issue.line,
+                    'name': issue.name,
+                    'type': issue.issue_type,
+                    'message': issue.message,
+                    'suggestion': issue.suggestion
                 }
-                for i in result.issues
+                for issue in result.issues
             ]
         }, indent=2)
 
@@ -372,7 +372,7 @@ def format_output(result: NamingResult, format_type: str) -> str:
     lines.append("=" * 60)
     lines.append("")
 
-    status = "✅ VALID" if result.is_valid else "❌ ISSUES FOUND"
+    status = "VALID" if result.is_valid else "ISSUES FOUND"
     lines.append(f"Status: {status}")
     lines.append(f"Files checked: {result.files_checked}")
     lines.append(f"Names checked: {result.names_checked}")
@@ -388,12 +388,12 @@ def format_output(result: NamingResult, format_type: str) -> str:
         for issue_type, issues in by_type.items():
             lines.append(f"{issue_type.upper().replace('_', ' ')} ({len(issues)}):")
             lines.append("-" * 40)
-            for i in issues:
-                lines.append(f"  {i.file}:{i.line}")
-                lines.append(f"    Name: {i.name}")
-                lines.append(f"    Issue: {i.message}")
-                if i.suggestion:
-                    lines.append(f"    Suggestion: {i.suggestion}")
+            for issue in issues:
+                lines.append(f"  {issue.file}:{issue.line}")
+                lines.append(f"    Name: {issue.name}")
+                lines.append(f"    Issue: {issue.message}")
+                if issue.suggestion:
+                    lines.append(f"    Suggestion: {issue.suggestion}")
                 lines.append("")
 
     return "\n".join(lines)

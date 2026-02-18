@@ -18,6 +18,9 @@ from pathlib import Path
 from typing import NamedTuple
 
 
+MASK_THRESHOLD_LENGTH = 10
+MASK_VISIBLE_CHARS = 4
+
 class Finding(NamedTuple):
     file: str
     line: int
@@ -242,8 +245,8 @@ def scan_file(file_path: Path) -> list[Finding]:
                     continue
 
                 # Mask the middle of the secret for display
-                if len(match_text) > 10:
-                    masked = match_text[:4] + '*' * (len(match_text) - 8) + match_text[-4:]
+                if len(match_text) > MASK_THRESHOLD_LENGTH:
+                    masked = match_text[:MASK_VISIBLE_CHARS] + '*' * (len(match_text) - MASK_VISIBLE_CHARS * 2) + match_text[-MASK_VISIBLE_CHARS:]
                 else:
                     masked = match_text[:2] + '*' * (len(match_text) - 2)
 
@@ -280,35 +283,35 @@ def format_text_output(findings: list[Finding]) -> str:
     output.append(f"🔴 Found {len(findings)} potential secret(s):\n")
 
     # Group by severity
-    critical = [f for f in findings if f.severity == "critical"]
-    high = [f for f in findings if f.severity == "high"]
-    medium = [f for f in findings if f.severity == "medium"]
+    critical = [finding for finding in findings if finding.severity == "critical"]
+    high = [finding for finding in findings if finding.severity == "high"]
+    medium = [finding for finding in findings if finding.severity == "medium"]
 
     if critical:
-        output.append("🚨 CRITICAL:")
-        for f in critical:
-            output.append(f"  {f.file}:{f.line}")
-            output.append(f"    Type: {f.type}")
-            output.append(f"    Found: {f.match}")
+        output.append("CRITICAL:")
+        for finding in critical:
+            output.append(f"  {finding.file}:{finding.line}")
+            output.append(f"    Type: {finding.type}")
+            output.append(f"    Found: {finding.match}")
         output.append("")
 
     if high:
-        output.append("⚠️  HIGH:")
-        for f in high:
-            output.append(f"  {f.file}:{f.line}")
-            output.append(f"    Type: {f.type}")
-            output.append(f"    Found: {f.match}")
+        output.append("HIGH:")
+        for finding in high:
+            output.append(f"  {finding.file}:{finding.line}")
+            output.append(f"    Type: {finding.type}")
+            output.append(f"    Found: {finding.match}")
         output.append("")
 
     if medium:
-        output.append("📋 MEDIUM:")
-        for f in medium:
-            output.append(f"  {f.file}:{f.line}")
-            output.append(f"    Type: {f.type}")
-            output.append(f"    Found: {f.match}")
+        output.append("MEDIUM:")
+        for finding in medium:
+            output.append(f"  {finding.file}:{finding.line}")
+            output.append(f"    Type: {finding.type}")
+            output.append(f"    Found: {finding.match}")
         output.append("")
 
-    output.append("─" * 50)
+    output.append("-" * 50)
     output.append(f"Summary: {len(critical)} critical, {len(high)} high, {len(medium)} medium")
     output.append("\n⚠️  IMPORTANT:")
     output.append("  1. Rotate any exposed secrets immediately")
@@ -323,10 +326,10 @@ def format_json_output(findings: list[Finding]) -> str:
     """Format findings as JSON."""
     return json.dumps({
         "total": len(findings),
-        "critical": sum(1 for f in findings if f.severity == "critical"),
-        "high": sum(1 for f in findings if f.severity == "high"),
-        "medium": sum(1 for f in findings if f.severity == "medium"),
-        "findings": [f._asdict() for f in findings],
+        "critical": sum(1 for finding in findings if finding.severity == "critical"),
+        "high": sum(1 for finding in findings if finding.severity == "high"),
+        "medium": sum(1 for finding in findings if finding.severity == "medium"),
+        "findings": [finding._asdict() for finding in findings],
     }, indent=2)
 
 
@@ -368,11 +371,11 @@ def main():
         print(format_text_output(all_findings))
 
     # Exit code: 1 if critical/high findings, 0 otherwise
-    critical_or_high = sum(
-        1 for f in all_findings
-        if f.severity in ("critical", "high")
+    critical_or_high_count = sum(
+        1 for finding in all_findings
+        if finding.severity in ("critical", "high")
     )
-    sys.exit(1 if critical_or_high > 0 else 0)
+    sys.exit(1 if critical_or_high_count > 0 else 0)
 
 
 if __name__ == "__main__":

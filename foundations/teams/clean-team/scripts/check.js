@@ -134,6 +134,7 @@ const MAX_CLASSES = 4;
 const SPACING_PX_THRESHOLD = 4;
 const MAX_CSS_FILES_WARN = 5;
 const MAX_CSS_FILES_ERROR = 7;
+const MIN_FILES_FOR_TIER_CHECK = 5;
 
 /* Canonical CSS import order — index = expected position */
 const CSS_CASCADE_ORDER = ['reset', 'global', 'layouts', 'components', 'overrides'];
@@ -149,14 +150,14 @@ const SECRET_PATTERNS = [
 ];
 
 /* ANSI helpers (TTY-aware) */
-const tty = process.stdout.isTTY;
-const c = {
-    red: (s) => (tty ? `\x1b[31m${s}\x1b[0m` : s),
-    yellow: (s) => (tty ? `\x1b[33m${s}\x1b[0m` : s),
-    green: (s) => (tty ? `\x1b[32m${s}\x1b[0m` : s),
-    dim: (s) => (tty ? `\x1b[2m${s}\x1b[0m` : s),
-    bold: (s) => (tty ? `\x1b[1m${s}\x1b[0m` : s),
-    underline: (s) => (tty ? `\x1b[4m${s}\x1b[0m` : s),
+const isTTY = process.stdout.isTTY;
+const ansi = {
+    red: (text) => (isTTY ? `\x1b[31m${text}\x1b[0m` : text),
+    yellow: (text) => (isTTY ? `\x1b[33m${text}\x1b[0m` : text),
+    green: (text) => (isTTY ? `\x1b[32m${text}\x1b[0m` : text),
+    dim: (text) => (isTTY ? `\x1b[2m${text}\x1b[0m` : text),
+    bold: (text) => (isTTY ? `\x1b[1m${text}\x1b[0m` : text),
+    underline: (text) => (isTTY ? `\x1b[4m${text}\x1b[0m` : text),
 };
 
 /* Complete CSS Level 4 named colors */
@@ -335,19 +336,19 @@ function checkCSS(filepath, content) {
             }
         }
 
-        /* Strip string contents and url() bodies */
-        const clean = line
+        /* Strip string contents and url() bodies to avoid false positives */
+        const strippedLine = line
             .replace(/"[^"]*"/g, '""')
             .replace(/'[^']*'/g, "''")
             .replace(/url\([^)]*\)/g, 'url()');
 
         /* ── Track :root scope (always, even when disabled) ── */
-        if (/:\s*root\b/.test(clean) && !/[>+~]/.test(clean)) {
+        if (/:\s*root\b/.test(strippedLine) && !/[>+~]/.test(strippedLine)) {
             rootPending = true;
         }
 
-        for (const ch of clean) {
-            if (ch === '{') {
+        for (const char of strippedLine) {
+            if (char === '{') {
                 if (rootPending) {
                     rootStartDepth = braceDepth;
                     rootPending = false;
@@ -355,7 +356,7 @@ function checkCSS(filepath, content) {
                 braceDepth++;
                 blockOrderStack.push({ lastGroup: 0, lastGroupProp: '', lastGroupLine: 0 });
             }
-            if (ch === '}') {
+            if (char === '}') {
                 braceDepth--;
                 if (blockOrderStack.length > 1) blockOrderStack.pop();
                 if (rootStartDepth >= 0 && braceDepth === rootStartDepth) {
@@ -370,7 +371,7 @@ function checkCSS(filepath, content) {
         if (isSkipped) continue;
 
         /* ── @import cascade order ── */
-        const importMatch = clean.match(/@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/);
+        const importMatch = strippedLine.match(/@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/);
         if (importMatch) {
             const importFile = path.basename(importMatch[1], '.css');
             const idx = CSS_CASCADE_MAP.get(importFile);
@@ -391,8 +392,8 @@ function checkCSS(filepath, content) {
         }
 
         /* ── ID selector (check before skipping root) ── */
-        const idSelectorMatch = clean.match(/(^|[\s,;{}])#([a-zA-Z_][\w-]*)\s*[{,:]/);
-        if (idSelectorMatch && !clean.trim().startsWith('--')) {
+        const idSelectorMatch = strippedLine.match(/(^|[\s,;{}])#([a-zA-Z_][\w-]*)\s*[{,:]/);
+        if (idSelectorMatch && !strippedLine.trim().startsWith('--')) {
             issues.push({
                 line: lineNum,
                 col: raw.indexOf('#' + idSelectorMatch[2]) + 1,
@@ -404,7 +405,7 @@ function checkCSS(filepath, content) {
         }
 
         /* ── @media max-width (check before skipping root) ── */
-        if (/@media\b/.test(clean) && /max-width/.test(clean)) {
+        if (/@media\b/.test(strippedLine) && /max-width/.test(strippedLine)) {
             issues.push({
                 line: lineNum,
                 col: raw.indexOf('max-width') + 1,
@@ -419,10 +420,10 @@ function checkCSS(filepath, content) {
         if (inRoot) continue;
 
         /* Skip custom property declarations (token definitions anywhere) */
-        if (/^\s*--[\w-]+\s*:/.test(clean)) continue;
+        if (/^\s*--[\w-]+\s*:/.test(strippedLine)) continue;
 
         /* ── Extract property: value declaration ── */
-        const declMatch = clean.match(/^\s*([\w-]+)\s*:\s*(.+?)\s*;?\s*$/);
+        const declMatch = strippedLine.match(/^\s*([\w-]+)\s*:\s*(.+?)\s*;?\s*$/);
         if (!declMatch) continue;
 
         const prop = declMatch[1];
@@ -462,12 +463,12 @@ function checkCSS(filepath, content) {
         }
 
         /* ── Hardcoded hex colors ── */
-        for (const m of value.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {
+        for (const hexMatch of value.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {
             issues.push({
                 line: lineNum,
-                col: raw.indexOf(m[0], raw.indexOf(':')) + 1,
+                col: raw.indexOf(hexMatch[0], raw.indexOf(':')) + 1,
                 severity: ERROR,
-                message: `Hardcoded color '${m[0]}' — use var(--color-*)`,
+                message: `Hardcoded color '${hexMatch[0]}' — use var(--color-*)`,
                 rule: 'no-hardcoded-color',
                 skill: RULE_SKILLS['no-hardcoded-color'],
             });
@@ -475,10 +476,10 @@ function checkCSS(filepath, content) {
 
         /* ── Hardcoded rgb()/rgba() ── */
         if (/rgba?\s*\(/.test(value)) {
-            const idx = raw.indexOf('rgb', raw.indexOf(':'));
+            const rgbCol = raw.indexOf('rgb', raw.indexOf(':'));
             issues.push({
                 line: lineNum,
-                col: idx >= 0 ? idx + 1 : 1,
+                col: rgbCol >= 0 ? rgbCol + 1 : 1,
                 severity: ERROR,
                 message: 'Hardcoded rgb()/rgba() — use var(--color-*)',
                 rule: 'no-hardcoded-color',
@@ -488,10 +489,10 @@ function checkCSS(filepath, content) {
 
         /* ── Hardcoded hsl()/hsla() ── */
         if (/hsla?\s*\(/.test(value)) {
-            const idx = raw.indexOf('hsl', raw.indexOf(':'));
+            const hslCol = raw.indexOf('hsl', raw.indexOf(':'));
             issues.push({
                 line: lineNum,
-                col: idx >= 0 ? idx + 1 : 1,
+                col: hslCol >= 0 ? hslCol + 1 : 1,
                 severity: ERROR,
                 message: 'Hardcoded hsl()/hsla() — use var(--color-*)',
                 rule: 'no-hardcoded-color',
@@ -518,14 +519,14 @@ function checkCSS(filepath, content) {
 
         /* ── Hardcoded spacing ── */
         if (SPACING_PROP_RE.test(prop)) {
-            for (const m of value.matchAll(/(\d+(?:\.\d+)?)\s*px/g)) {
-                const px = parseFloat(m[1]);
-                if (px >= SPACING_PX_THRESHOLD) {
+            for (const pxMatch of value.matchAll(/(\d+(?:\.\d+)?)\s*px/g)) {
+                const pxValue = parseFloat(pxMatch[1]);
+                if (pxValue >= SPACING_PX_THRESHOLD) {
                     issues.push({
                         line: lineNum,
-                        col: raw.indexOf(m[0], raw.indexOf(':')) + 1,
+                        col: raw.indexOf(pxMatch[0], raw.indexOf(':')) + 1,
                         severity: WARN,
-                        message: `Hardcoded spacing '${m[0]}' — use var(--space-*)`,
+                        message: `Hardcoded spacing '${pxMatch[0]}' — use var(--space-*)`,
                         rule: 'no-hardcoded-spacing',
                         skill: RULE_SKILLS['no-hardcoded-spacing'],
                     });
@@ -605,12 +606,12 @@ function checkCSS(filepath, content) {
         }
 
         /* ── Redundant unit on zero ── */
-        for (const um of value.matchAll(/\b0(px|em|rem|%|vh|vw|vmin|vmax|ch|ex)\b/g)) {
+        for (const unitMatch of value.matchAll(/\b0(px|em|rem|%|vh|vw|vmin|vmax|ch|ex)\b/g)) {
             issues.push({
                 line: lineNum,
-                col: raw.indexOf(um[0], raw.indexOf(':')) + 1,
+                col: raw.indexOf(unitMatch[0], raw.indexOf(':')) + 1,
                 severity: WARN,
-                message: `'${um[0]}' — use unitless 0`,
+                message: `'${unitMatch[0]}' — use unitless 0`,
                 rule: 'unit-zero',
                 skill: RULE_SKILLS['unit-zero'],
             });
@@ -645,41 +646,41 @@ function checkHTML(filepath, content) {
     let skipNext = false;
 
     for (let i = 0; i < lines.length; i++) {
-        const ln = lines[i];
-        if (/<!--\s*check-disable\s*-->/.test(ln)) disabled = true;
-        if (/<!--\s*check-enable\s*-->/.test(ln)) disabled = false;
+        const htmlLine = lines[i];
+        if (/<!--\s*check-disable\s*-->/.test(htmlLine)) disabled = true;
+        if (/<!--\s*check-enable\s*-->/.test(htmlLine)) disabled = false;
 
         if (disabled || skipNext) {
             suppressed.add(i + 1);
-            if (skipNext && ln.trim().length > 0) skipNext = false;
+            if (skipNext && htmlLine.trim().length > 0) skipNext = false;
         }
 
-        if (/<!--\s*check-disable-next-line\s*-->/.test(ln)) skipNext = true;
+        if (/<!--\s*check-disable-next-line\s*-->/.test(htmlLine)) skipNext = true;
     }
 
     /* ── <link> stylesheet cascade order ── */
     let lastLinkCascadeIdx = -1;
     let lastLinkCascadeName = '';
     const linkRe = /<link\b[^>]*rel\s*=\s*["']stylesheet["'][^>]*href\s*=\s*["']([^"']+)["']|<link\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*rel\s*=\s*["']stylesheet["']/gi;
-    let lm;
-    while ((lm = linkRe.exec(content)) !== null) {
-        const href = lm[1] || lm[2];
-        const line = offsetToLine(content, lm.index);
+    let linkMatch;
+    while ((linkMatch = linkRe.exec(content)) !== null) {
+        const href = linkMatch[1] || linkMatch[2];
+        const line = offsetToLine(content, linkMatch.index);
         if (suppressed.has(line)) continue;
         const linkFile = path.basename(href, '.css');
-        const idx = CSS_CASCADE_MAP.get(linkFile);
-        if (idx !== undefined) {
-            if (idx < lastLinkCascadeIdx) {
+        const cascadeIdx = CSS_CASCADE_MAP.get(linkFile);
+        if (cascadeIdx !== undefined) {
+            if (cascadeIdx < lastLinkCascadeIdx) {
                 issues.push({
                     line,
-                    col: offsetToCol(content, lm.index),
+                    col: offsetToCol(content, linkMatch.index),
                     severity: WARN,
                     message: `'${linkFile}.css' linked after '${lastLinkCascadeName}.css' — expected order: reset → global → layouts → components → overrides`,
                     rule: 'css-import-order',
                     skill: RULE_SKILLS['css-import-order'],
                 });
             }
-            lastLinkCascadeIdx = idx;
+            lastLinkCascadeIdx = cascadeIdx;
             lastLinkCascadeName = linkFile;
         }
     }
@@ -702,14 +703,14 @@ function checkHTML(filepath, content) {
 
     /* ── img alt required ── */
     const imgRe = /<img\b([^>]*)>/gi;
-    let m;
-    while ((m = imgRe.exec(content)) !== null) {
-        const line = offsetToLine(content, m.index);
+    let tagMatch;
+    while ((tagMatch = imgRe.exec(content)) !== null) {
+        const line = offsetToLine(content, tagMatch.index);
         if (suppressed.has(line)) continue;
-        if (!/\balt\s*=/.test(m[1])) {
+        if (!/\balt\s*=/.test(tagMatch[1])) {
             issues.push({
                 line,
-                col: offsetToCol(content, m.index),
+                col: offsetToCol(content, tagMatch.index),
                 severity: ERROR,
                 message: '<img> missing alt attribute',
                 rule: 'img-alt-required',
@@ -720,14 +721,14 @@ function checkHTML(filepath, content) {
 
     /* ── Class bloat ── */
     const classRe = /\bclass\s*=\s*"([^"]*)"/gi;
-    while ((m = classRe.exec(content)) !== null) {
-        const line = offsetToLine(content, m.index);
+    while ((tagMatch = classRe.exec(content)) !== null) {
+        const line = offsetToLine(content, tagMatch.index);
         if (suppressed.has(line)) continue;
-        const classes = m[1].trim().split(/\s+/).filter(Boolean);
+        const classes = tagMatch[1].trim().split(/\s+/).filter(Boolean);
         if (classes.length > MAX_CLASSES) {
             issues.push({
                 line,
-                col: offsetToCol(content, m.index),
+                col: offsetToCol(content, tagMatch.index),
                 severity: WARN,
                 message: `${classes.length} classes on element (max ${MAX_CLASSES}) — consolidate into semantic class`,
                 rule: 'max-classes',
@@ -775,13 +776,13 @@ function checkHTML(filepath, content) {
 
     /* ── button type required ── */
     const buttonRe = /<button\b([^>]*)>/gi;
-    while ((m = buttonRe.exec(content)) !== null) {
-        const line = offsetToLine(content, m.index);
+    while ((tagMatch = buttonRe.exec(content)) !== null) {
+        const line = offsetToLine(content, tagMatch.index);
         if (suppressed.has(line)) continue;
-        if (!/\btype\s*=/.test(m[1])) {
+        if (!/\btype\s*=/.test(tagMatch[1])) {
             issues.push({
                 line,
-                col: offsetToCol(content, m.index),
+                col: offsetToCol(content, tagMatch.index),
                 severity: ERROR,
                 message: '<button> missing type — add type="button" or type="submit"',
                 rule: 'button-type-required',
@@ -794,15 +795,15 @@ function checkHTML(filepath, content) {
     const headingRe = /<h([1-6])\b/gi;
     let lastHeadingLevel = 0;
     let h1Count = 0;
-    while ((m = headingRe.exec(content)) !== null) {
-        const line = offsetToLine(content, m.index);
+    while ((tagMatch = headingRe.exec(content)) !== null) {
+        const line = offsetToLine(content, tagMatch.index);
         if (suppressed.has(line)) continue;
-        const level = parseInt(m[1]);
+        const level = parseInt(tagMatch[1]);
         if (level === 1) h1Count++;
         if (lastHeadingLevel > 0 && level > lastHeadingLevel + 1) {
             issues.push({
                 line,
-                col: offsetToCol(content, m.index),
+                col: offsetToCol(content, tagMatch.index),
                 severity: WARN,
                 message: `<h${level}> skips level — expected <h${lastHeadingLevel + 1}> after <h${lastHeadingLevel}>`,
                 rule: 'heading-order',
@@ -826,14 +827,14 @@ function checkHTML(filepath, content) {
 
     /* ── div/span with onclick ── */
     const clickDivRe = /<(div|span)\b([^>]*?\bonclick\b[^>]*)>/gi;
-    while ((m = clickDivRe.exec(content)) !== null) {
-        const line = offsetToLine(content, m.index);
+    while ((tagMatch = clickDivRe.exec(content)) !== null) {
+        const line = offsetToLine(content, tagMatch.index);
         if (suppressed.has(line)) continue;
         issues.push({
             line,
-            col: offsetToCol(content, m.index),
+            col: offsetToCol(content, tagMatch.index),
             severity: WARN,
-            message: `<${m[1]}> with onclick — use <button type="button"> instead`,
+            message: `<${tagMatch[1]}> with onclick — use <button type="button"> instead`,
             rule: 'no-div-as-button',
             skill: RULE_SKILLS['no-div-as-button'],
         });
@@ -841,16 +842,16 @@ function checkHTML(filepath, content) {
 
     /* ── Positive tabindex ── */
     const tabindexRe = /\btabindex\s*=\s*"(\d+)"/gi;
-    while ((m = tabindexRe.exec(content)) !== null) {
-        const val = parseInt(m[1]);
-        if (val > 0) {
-            const line = offsetToLine(content, m.index);
+    while ((tagMatch = tabindexRe.exec(content)) !== null) {
+        const tabindexValue = parseInt(tagMatch[1]);
+        if (tabindexValue > 0) {
+            const line = offsetToLine(content, tagMatch.index);
             if (suppressed.has(line)) continue;
             issues.push({
                 line,
-                col: offsetToCol(content, m.index),
+                col: offsetToCol(content, tagMatch.index),
                 severity: ERROR,
-                message: `tabindex="${val}" — positive values break natural tab order, use 0 or -1`,
+                message: `tabindex="${tabindexValue}" — positive values break natural tab order, use 0 or -1`,
                 rule: 'tabindex-no-positive',
                 skill: RULE_SKILLS['tabindex-no-positive'],
             });
@@ -929,12 +930,12 @@ function checkJS(filepath, content) {
 
         /* ── no-console ── */
         if (/\bconsole\.(log|warn|error|info|debug|trace|dir|table)\b/.test(stripped)) {
-            const cm = stripped.match(/\bconsole\.(log|warn|error|info|debug|trace|dir|table)\b/);
+            const consoleMatch = stripped.match(/\bconsole\.(log|warn|error|info|debug|trace|dir|table)\b/);
             issues.push({
                 line: lineNum,
                 col: raw.indexOf('console.') + 1,
                 severity: WARN,
-                message: `console.${cm[1]}() — use a proper logger or remove`,
+                message: `console.${consoleMatch[1]}() — use a proper logger or remove`,
                 rule: 'no-console',
                 skill: RULE_SKILLS['no-console'],
             });
@@ -1132,7 +1133,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
 
         const sourceFileCount = count + jsFiles.length + htmlFiles.length;
 
-        if (existingTiers.length === 0 && sourceFileCount > 5) {
+        if (existingTiers.length === 0 && sourceFileCount > MIN_FILES_FOR_TIER_CHECK) {
             issues.push({
                 line: 0,
                 col: 0,
@@ -1168,18 +1169,18 @@ function report(allResults, quiet) {
         if (filtered.length === 0) continue;
 
         const rel = path.relative(ROOT, file).replace(/\\/g, '/');
-        console.log(`\n  ${c.underline(rel)}`);
+        console.log(`\n  ${ansi.underline(rel)}`);
 
         for (const issue of filtered) {
             const loc = issue.line === 0
-                ? c.dim(''.padEnd(8))
-                : c.dim(`${issue.line}:${issue.col}`.padEnd(8));
+                ? ansi.dim(''.padEnd(8))
+                : ansi.dim(`${issue.line}:${issue.col}`.padEnd(8));
             const sev =
                 issue.severity === ERROR
-                    ? c.red(issue.severity.padEnd(6))
-                    : c.yellow(issue.severity.padEnd(6));
-            const rule = c.dim(issue.rule);
-            const skill = issue.skill ? c.dim(`[${issue.skill}]`) : '';
+                    ? ansi.red(issue.severity.padEnd(6))
+                    : ansi.yellow(issue.severity.padEnd(6));
+            const rule = ansi.dim(issue.rule);
+            const skill = issue.skill ? ansi.dim(`[${issue.skill}]`) : '';
             console.log(`    ${loc} ${sev} ${issue.message}  ${rule}  ${skill}`);
 
             if (issue.severity === ERROR) errors++;
@@ -1188,11 +1189,11 @@ function report(allResults, quiet) {
     }
 
     if (errors + warnings === 0) {
-        console.log(`\n  ${c.green('\u2714')} No issues found\n`);
+        console.log(`\n  ${ansi.green('\u2714')} No issues found\n`);
         return 0;
     }
 
-    const icon = errors > 0 ? c.red('\u2716') : c.yellow('\u26A0');
+    const icon = errors > 0 ? ansi.red('\u2716') : ansi.yellow('\u26A0');
     console.log(`\n  ${icon} ${errors + warnings} problems (${errors} errors, ${warnings} warnings)\n`);
     return errors > 0 ? 1 : 0;
 }
@@ -1241,25 +1242,25 @@ function main() {
         const usedRules = new Set();
         /* Build regex dynamically to avoid self-matching */
         const ruleRe = new RegExp("rule:\\s*'([a-zA-Z][a-zA-Z0-9-]+)'", 'g');
-        for (const m of src.matchAll(ruleRe)) {
-            usedRules.add(m[1]);
+        for (const ruleMatch of src.matchAll(ruleRe)) {
+            usedRules.add(ruleMatch[1]);
         }
         const registered = new Set(Object.keys(RULE_SKILLS));
         let ok = true;
         for (const rule of usedRules) {
             if (!registered.has(rule)) {
-                console.log(c.red(`  Missing from RULE_SKILLS: '${rule}'`));
+                console.log(ansi.red(`  Missing from RULE_SKILLS: '${rule}'`));
                 ok = false;
             }
         }
         for (const rule of registered) {
             if (!usedRules.has(rule)) {
-                console.log(c.yellow(`  In RULE_SKILLS but never used: '${rule}'`));
+                console.log(ansi.yellow(`  In RULE_SKILLS but never used: '${rule}'`));
                 ok = false;
             }
         }
         if (ok) {
-            console.log(c.green(`  ✔ All ${registered.size} rules registered and used`));
+            console.log(ansi.green(`  ✔ All ${registered.size} rules registered and used`));
         }
         process.exit(ok ? 0 : 1);
     }
