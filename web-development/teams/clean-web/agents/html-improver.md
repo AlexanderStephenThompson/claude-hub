@@ -30,6 +30,20 @@ If css-improver ran before you, it may have renamed or consolidated CSS classes.
 
 ---
 
+## Tool Usage — MANDATORY
+
+Use the right tool for each job. **Never use Bash for file operations.** Paths with special characters (`&`, spaces, parentheses) will break bash commands silently.
+
+| Task | Use | Never |
+|------|-----|-------|
+| Find files | **Glob** | `find`, `ls`, `git ls-files` |
+| Search file contents | **Grep** | `grep`, `rg`, `cat \| grep` |
+| Read files | **Read** | `cat`, `head`, `tail`, `wc -l` |
+| Edit files | **Edit** | `sed`, `awk` |
+| Create files | **Write** | `echo >`, `cat <<EOF` |
+| Git operations | **Bash** | — (this is the correct use of Bash) |
+| Run build/test commands | **Bash** | — |
+
 ## Core Principles
 
 1. **Right element for the job** — `<button>` for actions, `<a>` for navigation, `<nav>` for navigation groups. The element itself carries meaning.

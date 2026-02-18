@@ -30,6 +30,20 @@ If web-restructure ran before you, CSS files may have moved to `source/01-presen
 
 ---
 
+## Tool Usage — MANDATORY
+
+Use the right tool for each job. **Never use Bash for file operations.** Paths with special characters (`&`, spaces, parentheses) will break bash commands silently.
+
+| Task | Use | Never |
+|------|-----|-------|
+| Find files | **Glob** | `find`, `ls`, `git ls-files` |
+| Search file contents | **Grep** | `grep`, `rg`, `cat \| grep` |
+| Read files | **Read** | `cat`, `head`, `tail`, `wc -l` |
+| Edit files | **Edit** | `sed`, `awk` |
+| Create files | **Write** | `echo >`, `cat <<EOF` |
+| Git operations | **Bash** | — (this is the correct use of Bash) |
+| Run build/test commands | **Bash** | — |
+
 ## Core Principles
 
 1. **Don't change visual appearance** — Consolidation should be invisible to users. The page must look identical before and after.
