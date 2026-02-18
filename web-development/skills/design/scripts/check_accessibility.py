@@ -288,7 +288,7 @@ def check_css_accessibility(file_path: Path) -> list[Issue]:
 
     try:
         content = file_path.read_text(encoding="utf-8")
-    except Exception:
+    except OSError:
         return issues
 
     lines = content.split("\n")

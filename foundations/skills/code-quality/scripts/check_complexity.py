@@ -71,7 +71,7 @@ def detect_functions_python(filepath: str) -> List[FunctionInfo]:
     try:
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             lines = f.readlines()
-    except Exception:
+    except OSError:
         return functions
 
     i = 0
@@ -150,7 +150,7 @@ def detect_functions_js(filepath: str) -> List[FunctionInfo]:
     try:
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             lines = f.readlines()
-    except Exception:
+    except OSError:
         return functions
 
     for i, line in enumerate(lines):

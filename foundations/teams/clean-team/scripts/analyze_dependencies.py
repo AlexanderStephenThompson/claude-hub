@@ -179,7 +179,7 @@ def analyze_file(filepath: str, base_dir: str) -> Optional[ModuleInfo]:
     try:
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             content = f.read()
-    except Exception:
+    except OSError:
         return None
     
     rel_path = normalize_path(filepath, base_dir)

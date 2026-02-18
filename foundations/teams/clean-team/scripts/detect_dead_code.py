@@ -206,14 +206,14 @@ def find_all_references(directory: str, extensions: List[str] = None) -> Dict[st
                     with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
                         content = f.read()
                     
-                    # Find all word-like tokens
                     tokens = set(re.findall(r'\b([A-Za-z_]\w*)\b', content))
                     for token in tokens:
                         references[token].add(filepath)
-                        
-                except Exception:
+
+                except (OSError, UnicodeDecodeError):
+                    # File unreadable — skip without blocking the full scan
                     pass
-    
+
     return references
 
 
@@ -252,9 +252,10 @@ def find_unused_exports(directory: str) -> List[UnusedExport]:
                                 export_type=export_type,
                             ))
                             
-                except Exception:
+                except (OSError, UnicodeDecodeError):
+                    # File unreadable — skip without blocking the full scan
                     pass
-    
+
     return unused
 
 

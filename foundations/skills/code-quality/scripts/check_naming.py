@@ -226,7 +226,8 @@ def extract_names(filepath: str) -> List[Tuple[int, str, str]]:
                 else:
                     names.append((line_num, name, 'variable'))
 
-    except Exception:
+    except (OSError, UnicodeDecodeError):
+        # File unreadable — return whatever names were collected so far
         pass
 
     return names
