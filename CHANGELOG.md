@@ -68,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > **Note:** v3.0.0–v3.4.0 used the name **refactor-team**. This was renamed to **clean-team** in v4.0.0.
 
 ### Added
-- **Domain folder structure** — Organized repo into `core/`, `web-development/`, `world-building/`, `data/`. Sync deploys flat to `~/.claude/`.
+- **Domain folder structure** — Organized repo into `foundations/` (originally `core/`), `web-development/`, `world-building/`, `data/`. Sync deploys flat to `~/.claude/`.
 - **diagnose-team v1.0.0** — 5-agent diagnostic workflow: Clarifier → Investigator → Hypothesizer → Resolver → Validator
 - **`/refactor-team:audit [focus]`** — Standalone parallel audit command with focus modes (css, a11y, perf, structure, security, testing, documentation, type-safety, error-handling). Absorbs improvement-auditor + web-auditor.
 - Audit checklist assets (`core.md`, `structure.md`, `web.md`) in `refactor-team/assets/audit-checklists/`
@@ -77,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/ui-audit` command — Audit HTML semantics and CSS for consolidation (5-file CSS enforcement)
 - `/orient` command — Orient yourself to this project before starting work
 - Skill inheritance for implement-team and diagnose-team agents
-- Templates: team, agent, command, skill scaffolding (`core/templates/`)
+- Templates: team, agent, command, skill scaffolding (`foundations/templates/`)
 
 ### Changed
 - **refactor-team v3.0.0 → v3.2.0** — 8 agents, 3 entry points (`:audit`, `:clean`, `:refactor`)
@@ -88,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **architecture v3.0** — Absorbed project-structures. Project type profiles and structure evaluation consolidated.
 - **unity-csharp v2.0** — Absorbed unity-performance. VR performance targets and profiling consolidated.
 - **world-building reorganized** — Skills moved into sub-categories (`unity/`, `vr-chat/`). Sync updated for recursive discovery.
-- Moved implement-team from `web-development/teams/` to `core/teams/` (universal, not web-specific)
+- Moved implement-team from `web-development/teams/` to `foundations/teams/` (universal, not web-specific)
 - Voice quality pass across all skills, agents, and commands — instructions explain the pain they prevent, not just what to do
 
 ### Removed

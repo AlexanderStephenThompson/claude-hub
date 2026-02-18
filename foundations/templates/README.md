@@ -16,7 +16,7 @@ Use this template to create a new multi-agent team plugin. A team is a coordinat
 
 **To create a new team:**
 
-1. Copy the entire `team/` folder to `core/teams/[team-name]/`
+1. Copy the entire `team/` folder to `foundations/teams/[team-name]/`
 2. Fill in the README.md template with your team details
 3. Create agents using the agent template (see below)
 4. Create `.claude-plugin/plugin.json` manifest
@@ -37,7 +37,7 @@ Use this template to create agents for teams. An agent is a specialized role in 
 
 **To create a new agent:**
 
-1. Copy `AGENT.md` to `core/teams/[team-name]/agents/[agent-name].md`
+1. Copy `AGENT.md` to `foundations/teams/[team-name]/agents/[agent-name].md`
 2. Fill in the template with your agent details
 3. Ensure skills referenced exist in `skills/`
 4. Run through `CHECKLIST.md` before shipping
@@ -57,7 +57,7 @@ Use this template to create commands for team plugins. A command is an entry poi
 
 **To create a new command:**
 
-1. Copy `COMMAND.md` to `core/teams/[team-name]/commands/[command-name].md`
+1. Copy `COMMAND.md` to `foundations/teams/[team-name]/commands/[command-name].md`
 2. Fill in the template with your command details
 3. Add the command to `.claude-plugin/plugin.json`
 4. Run through `CHECKLIST.md` before shipping
@@ -95,4 +95,4 @@ Use this template to create new skills for teams. A skill is a reusable knowledg
 - Delete `CHECKLIST.md` files after completing them
 - Keep skills under 500 lines / 2000 tokens
 - Document all references, scripts, and assets in SKILL.md
-- Skills live in domain folders (`core/skills/`, `web-development/skills/`, etc.), not inside teams
+- Skills live in domain folders (`foundations/skills/`, `web-development/skills/`, etc.), not inside teams

@@ -10,11 +10,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Domain | Contents |
 |--------|----------|
-| `core/` | Universal skills, 3 teams (clean, implement, diagnose), commands, agents, scripts, templates |
+| `foundations/` | Universal skills, 3 teams (clean, implement, diagnose), commands, agents, scripts, templates |
 | `web-development/` | Web skills, agents (css-improver, html-improver, web-restructure) |
 | `world-building/` | Unity + VRChat skills |
 | `data/` | Data engineering skills (Python, SQL, pipelines, AWS, IaC) |
-| `productivity/` | Thinking and communication tools (explaining skill, improve-prompt, explain commands) |
+| `productivity/` | Thinking and communication tools (explaining, organize skills; improve-prompt, explain, organize commands) |
 
 ### Deployment (flat)
 
@@ -80,23 +80,23 @@ Deploy covers: flat files (skills, agents, commands) + `claude plugin marketplac
 
 ### Analysis Scripts (clean-team)
 ```bash
-python core/teams/clean-team/scripts/analyze_complexity.py <path>     # High-complexity functions
-python core/teams/clean-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
-python core/teams/clean-team/scripts/detect_dead_code.py <path>       # Unused code
-node core/teams/clean-team/scripts/check.js                           # Design system compliance (36 rules)
+python foundations/teams/clean-team/scripts/analyze_complexity.py <path>     # High-complexity functions
+python foundations/teams/clean-team/scripts/analyze_dependencies.py <path>   # Circular dependencies
+python foundations/teams/clean-team/scripts/detect_dead_code.py <path>       # Unused code
+node foundations/teams/clean-team/scripts/check.js                           # Design system compliance (36 rules)
 ```
 
 ## Development
 
 | Change Type | Edit Location | Then |
 |-------------|---------------|------|
-| Core skills | `core/skills/<skill>/` | `/sync deploy` |
+| Foundation skills | `foundations/skills/<skill>/` | `/sync deploy` |
 | Web skills | `web-development/skills/<skill>/` | `/sync deploy` |
 | World-building skills | `world-building/skills/<skill>/` | `/sync deploy` |
 | Data skills | `data/skills/<skill>/` | `/sync deploy` |
 | Teams | `*/teams/<team>/` | Update both `plugin.json` AND `.claude-plugin/marketplace.json` (versions must match), then `/sync push` |
 | Agents | `*/agents/` | `/sync deploy` |
-| Commands | `core/commands/` | `/sync deploy` |
+| Commands | `*/commands/` | `/sync deploy` |
 | Templates | `*/templates/<name>/` | Copy to new project directory |
 
 **New teams require two registrations:**
@@ -109,4 +109,4 @@ node core/teams/clean-team/scripts/check.js                           # Design s
 - Agents: kebab-case (`new-codebase-scout.md`)
 - Skills: `<domain>/skills/<name>/SKILL.md` as main file
 - Audit reports: `AUDIT-REPORT-[YYYY-MM-DD].md`
-- Domain folders: lowercase with hyphens (`core`, `web-development`, `world-building`, `data`)
+- Domain folders: lowercase with hyphens (`foundations`, `web-development`, `world-building`, `data`, `productivity`)

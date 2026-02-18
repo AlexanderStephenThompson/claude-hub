@@ -4,7 +4,7 @@ Personal Claude Code customizations: multi-agent teams, shared skills, standalon
 
 ---
 
-## Core
+## Foundations
 
 Universal tools that apply to any project.
 
@@ -27,8 +27,8 @@ Universal tools that apply to any project.
 
 | Agent | What It Does |
 |-------|--------------|
-| [new-codebase-scout](core/agents/new-codebase-scout.md) | Explore and document unfamiliar codebases, generate CLAUDE.md |
-| [code-improver](core/agents/code-improver.md) | Fix naming, magic values, comments, nesting, error handling, docstrings |
+| [new-codebase-scout](foundations/agents/new-codebase-scout.md) | Explore and document unfamiliar codebases, generate CLAUDE.md |
+| [code-improver](foundations/agents/code-improver.md) | Fix naming, magic values, comments, nesting, error handling, docstrings |
 
 Skills: architecture, code-quality, documentation, security
 
@@ -60,7 +60,7 @@ These four agents are standalone, testable pieces of what will become the clean-
 |-------|--------|--------|---------------|------------|
 | [css-improver](web-development/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `web-css`, `code-quality` | `@css-improver` |
 | [html-improver](web-development/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `design`, `web-accessibility`, `code-quality` | `@html-improver` |
-| [code-improver](core/agents/code-improver.md) | Code readability & clarity | 9 | `code-quality` | `@code-improver` |
+| [code-improver](foundations/agents/code-improver.md) | Code readability & clarity | 9 | `code-quality` | `@code-improver` |
 | [web-restructure](web-development/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` | `@web-restructure` |
 
 ---
@@ -158,8 +158,9 @@ Thinking and communication tools — not tied to any project type.
 |---------|--------------|
 | `/improve-prompt` | Analyze and refine a rough prompt with annotated improvements |
 | `/explain` | Produce a clear explanation using the Subject or Situational framework |
+| `/organize` | Analyze folder structures using L1/L2/L3 framework |
 
-Skills: explaining
+Skills: explaining, organize
 
 ---
 
