@@ -109,21 +109,27 @@ If ALL four agents would be skipped, report "Project is already clean — nothin
 
 Before launching any agent, run the automated scripts to establish a deterministic baseline. These catch exact-match violations that agents should fix, not rediscover.
 
-**Run check.js** (36 rules across CSS, HTML, JS, and project structure):
-
-```bash
-node <team-scripts>/check.js --root <project-path> 2>&1
-```
+**Run all scripts sequentially.** Scripts exit non-zero when they find violations — that's expected, not an error. Append `|| true` to every command so the exit code doesn't abort the scan or cancel sibling calls.
 
 Where `<team-scripts>` is the path to this team's `scripts/` directory (resolve from the plugin installation path or the repo).
 
-**Run Python analysis** (if Python files exist, or JS/TS files exist for complexity/dependencies):
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1 || true
+```
 
 ```bash
-python <team-scripts>/analyze_complexity.py <project-path> 2>&1
-python <team-scripts>/analyze_dependencies.py <project-path> 2>&1
-python <team-scripts>/detect_dead_code.py <project-path> 2>&1
+python <team-scripts>/analyze_complexity.py <project-path> 2>&1 || true
 ```
+
+```bash
+python <team-scripts>/analyze_dependencies.py <project-path> 2>&1 || true
+```
+
+```bash
+python <team-scripts>/detect_dead_code.py <project-path> 2>&1 || true
+```
+
+**Run these sequentially, not in parallel.** If any script fails or returns a non-zero exit code when run in parallel, Claude Code cancels the sibling calls (`Sibling tool call errored`). Sequential execution avoids this.
 
 **Parse results into agent-specific findings:**
 
