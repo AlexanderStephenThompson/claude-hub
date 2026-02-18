@@ -95,4 +95,4 @@ Use this template to create new skills for teams. A skill is a reusable knowledg
 - Delete `CHECKLIST.md` files after completing them
 - Keep skills under 500 lines / 2000 tokens
 - Document all references, scripts, and assets in SKILL.md
-- Skills live in domain folders (`core/skills/`, `web/skills/`, etc.), not inside teams
+- Skills live in domain folders (`core/skills/`, `web-development/skills/`, etc.), not inside teams

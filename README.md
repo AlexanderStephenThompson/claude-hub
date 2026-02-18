@@ -29,7 +29,6 @@ Universal tools that apply to any project.
 |-------|--------------|
 | [new-codebase-scout](core/agents/new-codebase-scout.md) | Explore and document unfamiliar codebases, generate CLAUDE.md |
 | [code-improver](core/agents/code-improver.md) | Fix naming, magic values, comments, nesting, error handling, docstrings |
-| [web-restructure](core/agents/web-restructure.md) | Reorganize a web project into 3-tier architecture |
 
 Skills: architecture, code-quality, documentation, security
 
@@ -43,10 +42,11 @@ Web development tools — CSS, HTML, accessibility, and frontend performance.
 
 | Agent | What It Does |
 |-------|--------------|
-| [css-improver](web/agents/css-improver.md) | Consolidate CSS to 5-file architecture with design tokens |
-| [html-improver](web/agents/html-improver.md) | Replace div-soup with semantic, accessible HTML |
+| [css-improver](web-development/agents/css-improver.md) | Consolidate CSS to 5-file architecture with design tokens |
+| [html-improver](web-development/agents/html-improver.md) | Replace div-soup with semantic, accessible HTML |
+| [web-restructure](web-development/agents/web-restructure.md) | Reorganize a web project into 3-tier architecture |
 
-Skills: design, web-accessibility, web-css, web-performance
+Skills: architecture, design, web-accessibility, web-css, web-performance
 
 ---
 
@@ -58,10 +58,10 @@ These four agents are standalone, testable pieces of what will become the clean-
 
 | Agent | Domain | Phases | Skills Loaded | Invocation |
 |-------|--------|--------|---------------|------------|
-| [css-improver](web/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `web-css`, `code-quality` | `@css-improver` |
-| [html-improver](web/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `design`, `web-accessibility`, `code-quality` | `@html-improver` |
+| [css-improver](web-development/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `web-css`, `code-quality` | `@css-improver` |
+| [html-improver](web-development/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `design`, `web-accessibility`, `code-quality` | `@html-improver` |
 | [code-improver](core/agents/code-improver.md) | Code readability & clarity | 9 | `code-quality` | `@code-improver` |
-| [web-restructure](core/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` | `@web-restructure` |
+| [web-restructure](web-development/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` | `@web-restructure` |
 
 ---
 

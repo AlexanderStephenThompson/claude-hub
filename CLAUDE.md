@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Domain | Contents |
 |--------|----------|
 | `core/` | Universal skills, 3 teams (clean, implement, diagnose), commands, agents, scripts, templates |
-| `web/` | Web skills (7) |
+| `web-development/` | Web skills, agents (css-improver, html-improver, web-restructure) |
 | `world-building/` | Unity + VRChat skills |
 | `data/` | Data engineering skills (Python, SQL, pipelines, AWS, IaC) |
 | `productivity/` | Thinking and communication tools (explaining skill, improve-prompt, explain commands) |
@@ -91,11 +91,11 @@ node core/teams/clean-team/scripts/check.js                           # Design s
 | Change Type | Edit Location | Then |
 |-------------|---------------|------|
 | Core skills | `core/skills/<skill>/` | `/sync deploy` |
-| Web skills | `web/skills/<skill>/` | `/sync deploy` |
+| Web skills | `web-development/skills/<skill>/` | `/sync deploy` |
 | World-building skills | `world-building/skills/<skill>/` | `/sync deploy` |
 | Data skills | `data/skills/<skill>/` | `/sync deploy` |
 | Teams | `*/teams/<team>/` | Update both `plugin.json` AND `.claude-plugin/marketplace.json` (versions must match), then `/sync push` |
-| Agents | `core/agents/` | `/sync deploy` |
+| Agents | `*/agents/` | `/sync deploy` |
 | Commands | `core/commands/` | `/sync deploy` |
 | Templates | `*/templates/<name>/` | Copy to new project directory |
 
@@ -109,4 +109,4 @@ node core/teams/clean-team/scripts/check.js                           # Design s
 - Agents: kebab-case (`new-codebase-scout.md`)
 - Skills: `<domain>/skills/<name>/SKILL.md` as main file
 - Audit reports: `AUDIT-REPORT-[YYYY-MM-DD].md`
-- Domain folders: lowercase with hyphens (`core`, `web`, `world-building`, `data`)
+- Domain folders: lowercase with hyphens (`core`, `web-development`, `world-building`, `data`)

@@ -47,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tier Migration Rules** in Planner Phase 3 — Concrete rules for creating migration slices when audit report identifies tier violations. Sequences Data -> Logic -> Presentation.
 - **Tier Architecture Compliance** checks in Challenger Lens 2 — Import direction, file placement, reverse dependency prevention, migration sequencing. Stop-ship trigger for reverse tier imports.
 - **Tier Architecture (Flag Only)** section in web cleaning profile — Formatter flags violations during cleaning without acting on them.
-- **Web project template** at `web/templates/web-project/` — Project roadmap template + README referencing architecture skill.
+- **Web project template** at `web-development/templates/web-project/` — Project roadmap template + README referencing architecture skill.
 - **Project Infrastructure** section in `architecture/references/web.md` — Documentation/, validators, and getting-started patterns absorbed from Project-Structure.md.
 
 ### Changed
@@ -59,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **audit-checklists/web.md** — Now has 8 auditor sections (was 7). Layer Architecture Auditor added first.
 - **parallel-audit-roster.md** — Now has 12 web auditors (was 11). Layer Architecture Auditor listed first with priority note.
 - **Project-Structure.md** — Deprecated. Replaced with pointer to `architecture/references/web.md`.
-- **project-roadmap-template.md** — Moved to `web/templates/web-project/project-roadmap.md`.
+- **project-roadmap-template.md** — Moved to `web-development/templates/web-project/project-roadmap.md`.
 
 ---
 
@@ -68,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > **Note:** v3.0.0–v3.4.0 used the name **refactor-team**. This was renamed to **clean-team** in v4.0.0.
 
 ### Added
-- **Domain folder structure** — Organized repo into `core/`, `web/`, `world-building/`, `data/`. Sync deploys flat to `~/.claude/`.
+- **Domain folder structure** — Organized repo into `core/`, `web-development/`, `world-building/`, `data/`. Sync deploys flat to `~/.claude/`.
 - **diagnose-team v1.0.0** — 5-agent diagnostic workflow: Clarifier → Investigator → Hypothesizer → Resolver → Validator
 - **`/refactor-team:audit [focus]`** — Standalone parallel audit command with focus modes (css, a11y, perf, structure, security, testing, documentation, type-safety, error-handling). Absorbs improvement-auditor + web-auditor.
 - Audit checklist assets (`core.md`, `structure.md`, `web.md`) in `refactor-team/assets/audit-checklists/`
@@ -88,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **architecture v3.0** — Absorbed project-structures. Project type profiles and structure evaluation consolidated.
 - **unity-csharp v2.0** — Absorbed unity-performance. VR performance targets and profiling consolidated.
 - **world-building reorganized** — Skills moved into sub-categories (`unity/`, `vr-chat/`). Sync updated for recursive discovery.
-- Moved implement-team from `web/teams/` to `core/teams/` (universal, not web-specific)
+- Moved implement-team from `web-development/teams/` to `core/teams/` (universal, not web-specific)
 - Voice quality pass across all skills, agents, and commands — instructions explain the pain they prevent, not just what to do
 
 ### Removed

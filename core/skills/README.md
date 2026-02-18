@@ -10,7 +10,7 @@ Fully developed skills with comprehensive standards, examples, and checklists.
 
 | Skill | Purpose | Status |
 |-------|---------|--------|
-| [architecture](./architecture/) | Architecture principles, module boundaries, design patterns, project structure profiles | Complete |
+| [architecture](./architecture/) | Architecture principles, module boundaries, design patterns. Domain profiles distributed: `web.md` in `web-development/skills/`, `unity/vrchat/blender.md` in `world-building/skills/`, `data-iac.md` in `data/skills/` — all merge on deploy | Complete |
 | [code-quality](./code-quality/) | TDD, naming, conventions, docstrings, 3-tier structure, language references | Complete |
 | [documentation](./documentation/) | SemVer, changelog, feature specs, module templates | Complete |
 | [organize](./organize/) | Folder organization, L1/L2/L3 cognitive-phase framework, drive cleanup | Complete |
@@ -18,14 +18,14 @@ Fully developed skills with comprehensive standards, examples, and checklists.
 
 ### Web Skills
 
-Web-specific skills with comprehensive SKILL.md content. Located in `web/skills/`.
+Web-specific skills with comprehensive SKILL.md content. Located in `web-development/skills/`.
 
 | Skill | Purpose |
 |-------|---------|
-| [design](../../web/skills/design/) | Design system, semantic HTML, CSS formatting, component states |
-| [web-accessibility](../../web/skills/web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management |
-| [web-css](../../web/skills/web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns |
-| [web-performance](../../web/skills/web-performance/) | Performance optimization |
+| [design](../../web-development/skills/design/) | Design system, semantic HTML, CSS formatting, component states |
+| [web-accessibility](../../web-development/skills/web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management |
+| [web-css](../../web-development/skills/web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns |
+| [web-performance](../../web-development/skills/web-performance/) | Performance optimization |
 
 ### Data Engineering Skills
 
