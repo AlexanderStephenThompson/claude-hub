@@ -25,61 +25,63 @@
 
 ```
 project-root/
-  01-presentation/                   # UI layer — what the user sees and interacts with
-    components/                      #   Reusable UI components
-      ComponentName/                 #     Co-located: component + test + styles + types
-        ComponentName.tsx            #       Component implementation
-        ComponentName.test.tsx       #       Unit tests
-        ComponentName.css            #       Component-scoped styles
-        ComponentName.types.ts       #       Props and local types (if complex)
-        index.ts                     #       Clean public export
-    pages/                           #   Route-level views (compose components)
-    layouts/                         #   Shared page layouts (header, sidebar, footer)
-    hooks/                           #   UI-specific hooks (useForm, useModal, useToast)
-    styles/                          #   Global styles, design tokens, CSS variables
-    assets/                          #   Static assets used by UI
-      icons/                         #     SVG icons
-      images/                        #     UI images (logos, illustrations)
-      fonts/                         #     Custom fonts
-  02-logic/                          #  Business logic layer — rules and orchestration
-    services/                        #   Business operations (AuthService, OrderService)
-    use-cases/                       #   Application workflows (CreateOrder, ResetPassword)
-    domain/                          #   Domain models, types, enums
-    api/                             #   API client adapters (REST, GraphQL)
-    state/                           #   State management (stores, contexts, reducers)
-    validators/                      #   Input validation rules
-  03-data/                           # Data layer — persistence and external data
-    repositories/                    #   Data access patterns (UserRepository, OrderRepository)
-    models/                          #   Database schemas (Prisma models, TypeORM entities)
-    migrations/                      #   Schema migrations
-    seeds/                           #   Seed data for development
-  config/                            # Cross-cutting configuration
-    env.ts                           #   Environment variable parsing and validation
-    constants.ts                     #   Application-wide constants
-    routes.ts                        #   Route definitions
-  tests/                             # Integration and E2E tests
-    integration/                     #   Cross-module integration tests
-    e2e/                             #   End-to-end tests (Playwright, Cypress)
-    fixtures/                        #   Shared test data
-    helpers/                         #   Shared test utilities
-  public/                            # Static files served directly (favicon, manifest)
-  Documentation/                     # Project docs (see Project Infrastructure below)
-    project-roadmap.md               #   Milestones, releases, progress tracking
-    changelog.md                     #   Version history (Keep a Changelog format)
-    decisions/                       #   Architecture Decision Records
-    features/                        #   Feature specifications by program/module
+  source/                              # All source code lives here
+    01-presentation/                   # UI layer — what the user sees and interacts with
+      components/                      #   Reusable UI components
+        ComponentName/                 #     Co-located: component + test + styles + types
+          ComponentName.tsx            #       Component implementation
+          ComponentName.test.tsx       #       Unit tests
+          ComponentName.css            #       Component-scoped styles
+          ComponentName.types.ts       #       Props and local types (if complex)
+          index.ts                     #       Clean public export
+      pages/                           #   Route-level views (compose components)
+      layouts/                         #   Shared page layouts (header, sidebar, footer)
+      hooks/                           #   UI-specific hooks (useForm, useModal, useToast)
+      styles/                          #   Global styles, design tokens, CSS variables
+      assets/                          #   Static assets used by UI
+        icons/                         #     SVG icons
+        images/                        #     UI images (logos, illustrations)
+        fonts/                         #     Custom fonts
+    02-logic/                          #  Business logic layer — rules and orchestration
+      services/                        #   Business operations (AuthService, OrderService)
+      use-cases/                       #   Application workflows (CreateOrder, ResetPassword)
+      domain/                          #   Domain models, types, enums
+      api/                             #   API client adapters (REST, GraphQL)
+      state/                           #   State management (stores, contexts, reducers)
+      validators/                      #   Input validation rules
+    03-data/                           # Data layer — persistence and external data
+      repositories/                    #   Data access patterns (UserRepository, OrderRepository)
+      models/                          #   Database schemas (Prisma models, TypeORM entities)
+      migrations/                      #   Schema migrations
+      seeds/                           #   Seed data for development
+    config/                            # Cross-cutting configuration
+      env.ts                           #   Environment variable parsing and validation
+      constants.ts                     #   Application-wide constants
+      routes.ts                        #   Route definitions
+  tests/                               # Integration and E2E tests
+    integration/                       #   Cross-module integration tests
+    e2e/                               #   End-to-end tests (Playwright, Cypress)
+    fixtures/                          #   Shared test data
+    helpers/                           #   Shared test utilities
+  public/                              # Static files served directly (favicon, manifest)
+  Documentation/                       # Project docs (see Project Infrastructure below)
+    project-roadmap.md                 #   Milestones, releases, progress tracking
+    changelog.md                       #   Version history (Keep a Changelog format)
+    decisions/                         #   Architecture Decision Records
+    features/                          #   Feature specifications by program/module
       {program}/
         {module}/
-          _{module}.md               #     Module explainer (underscore sorts first)
-          {feature-name}.md          #     Feature specification
+          _{module}.md                 #     Module explainer (underscore sorts first)
+          {feature-name}.md            #     Feature specification
 ```
 
 **Key principles:**
+- **All source code lives inside `source/`.** Config files at root, code behind one door. Tiers and cross-cutting config go in `source/`; tests, public, and docs stay at root.
 - **01 → 02 → 03 dependency flow only.** Presentation depends on Logic, Logic depends on Data. Never reverse.
-- **Components are thin.** They render UI and delegate to hooks/services. If a component has business logic, it belongs in `02-logic/`.
+- **Components are thin.** They render UI and delegate to hooks/services. If a component has business logic, it belongs in `source/02-logic/`.
 - **Co-location for components.** Each component's test, styles, and types live in its folder — not in a separate `__tests__/` tree.
 - **Integration tests get their own folder.** Unit tests co-locate with source; integration and E2E tests live in `tests/`.
-- **Config is cross-cutting.** Environment parsing, constants, and route definitions don't belong in any tier.
+- **Config is cross-cutting.** Environment parsing, constants, and route definitions live in `source/config/`, not in any tier.
 
 ### Default Stack → Tier Placement
 
@@ -87,25 +89,25 @@ Typical stack choices and where their files land. Use this as a lookup when deci
 
 | Technology | Tier | What goes where |
 |-----------|------|----------------|
-| **React** | `01-presentation/` | Components, pages, layouts, UI hooks (`useForm`, `useModal`) |
+| **React** | `source/01-presentation/` | Components, pages, layouts, UI hooks (`useForm`, `useModal`) |
 | **Vite** | Cross-cutting | `vite.config.ts` stays at project root |
-| **Plain CSS** | `01-presentation/styles/` | Design tokens in `global.css`, component styles co-located |
-| **GraphQL (Apollo Client)** | `02-logic/api/` | Queries, mutations, fragments, client config |
-| **GraphQL (Apollo Server)** | `02-logic/` | Resolvers in `services/`, schema in `domain/` |
-| **Express.js** | `02-logic/` | Route handlers, middleware, server setup |
-| **React Context / state** | `02-logic/state/` | Contexts, reducers, stores — not in components |
-| **Validation (Zod, Yup)** | `02-logic/validators/` | Input schemas, form validation rules |
-| **Prisma** | `03-data/` | Schema in `models/`, migrations in `migrations/`, client in `repositories/` |
-| **Postgres** | `03-data/` | All SQL access through Prisma repositories |
-| **Redis** | `03-data/` | Cache adapters, session stores |
-| **S3 (file storage)** | `03-data/` | Upload/download adapters |
-| **Cognito / Auth** | `02-logic/services/` | Auth service wrapping the provider SDK |
-| **Stripe** | `02-logic/services/` | Payment service; webhooks in `02-logic/api/` |
-| **SES (email)** | `02-logic/services/` | Notification service wrapping the provider SDK |
+| **Plain CSS** | `source/01-presentation/styles/` | Design tokens in `global.css`, component styles co-located |
+| **GraphQL (Apollo Client)** | `source/02-logic/api/` | Queries, mutations, fragments, client config |
+| **GraphQL (Apollo Server)** | `source/02-logic/` | Resolvers in `services/`, schema in `domain/` |
+| **Express.js** | `source/02-logic/` | Route handlers, middleware, server setup |
+| **React Context / state** | `source/02-logic/state/` | Contexts, reducers, stores — not in components |
+| **Validation (Zod, Yup)** | `source/02-logic/validators/` | Input schemas, form validation rules |
+| **Prisma** | `source/03-data/` | Schema in `models/`, migrations in `migrations/`, client in `repositories/` |
+| **Postgres** | `source/03-data/` | All SQL access through Prisma repositories |
+| **Redis** | `source/03-data/` | Cache adapters, session stores |
+| **S3 (file storage)** | `source/03-data/` | Upload/download adapters |
+| **Cognito / Auth** | `source/02-logic/services/` | Auth service wrapping the provider SDK |
+| **Stripe** | `source/02-logic/services/` | Payment service; webhooks in `source/02-logic/api/` |
+| **SES (email)** | `source/02-logic/services/` | Notification service wrapping the provider SDK |
 | **Terraform / CDK** | Outside app | Separate `infrastructure/` directory, not in any tier |
 | **GitHub Actions** | Outside app | `.github/workflows/` at project root |
 
-**The key rule:** SDKs and provider clients go in `03-data/` (they're external data sources). Services that *use* those clients go in `02-logic/` (they contain business rules about *when* and *how* to call them). Components that *trigger* those services go in `01-presentation/` (they handle user interaction).
+**The key rule:** SDKs and provider clients go in `source/03-data/` (they're external data sources). Services that *use* those clients go in `source/02-logic/` (they contain business rules about *when* and *how* to call them). Components that *trigger* those services go in `source/01-presentation/` (they handle user interaction).
 
 ### Dependency Flow
 
@@ -122,7 +124,7 @@ Cross-cutting folders that live alongside the tiers. These are not part of the d
 
 ```
 project-root/
-  ...01-presentation/, 02-logic/, 03-data/, config/, tests/, public/...
+  source/                          # 01-presentation/, 02-logic/, 03-data/, config/
   Documentation/                     # Project planning and feature specs
     project-roadmap.md               #   Living roadmap: milestones, releases, progress
     changelog.md                     #   Keep a Changelog format (Added, Changed, Fixed, Removed)
@@ -177,16 +179,16 @@ Run all validators before feature completion: `npm run validate`
 
 | Red Flag | Root Cause | Fix |
 |----------|-----------|-----|
-| API calls inside React components | Tier violation — UI doing data work | Extract to services in `02-logic/api/` or custom hooks |
-| Business logic in components (validation, calculations, formatting) | No logic layer separation | Move to `02-logic/services/` or `02-logic/validators/` |
-| Direct database access outside `03-data/` | Data layer bypass | All DB queries go through repositories in `03-data/` |
+| API calls inside React components | Tier violation — UI doing data work | Extract to services in `source/02-logic/api/` or custom hooks |
+| Business logic in components (validation, calculations, formatting) | No logic layer separation | Move to `source/02-logic/services/` or `source/02-logic/validators/` |
+| Direct database access outside `source/03-data/` | Data layer bypass | All DB queries go through repositories in `source/03-data/` |
 | `utils/helpers.ts` with 500+ lines of unrelated functions | Dumping ground — no domain ownership | Split by function: `formatDate.ts`, `parseUrl.ts`, `calculateTax.ts` |
 | Components without co-located tests | Testing discipline gap | Add `ComponentName.test.tsx` in the same folder |
 | Tests in a separate `__tests__/` tree mirroring source | Fragile — files get out of sync | Co-locate unit tests with source; keep only integration/E2E in `tests/` |
 | Circular dependencies between services | Service boundaries unclear | Map dependency graph, extract shared logic to a new service |
-| Global styles and component styles both defining the same thing | No single source for design tokens | Centralize tokens in `01-presentation/styles/`, reference from components |
+| Global styles and component styles both defining the same thing | No single source for design tokens | Centralize tokens in `source/01-presentation/styles/`, reference from components |
 | 50+ files in `components/` flat | No sub-grouping | Group by feature or domain: `components/auth/`, `components/orders/` |
-| State management scattered (some in components, some in stores) | No clear state strategy | Centralize in `02-logic/state/`, components only read/dispatch |
+| State management scattered (some in components, some in stores) | No clear state strategy | Centralize in `source/02-logic/state/`, components only read/dispatch |
 | Inline styles or style objects in JSX | CSS/structure separation violated | Move to `.css` files or CSS modules |
 | `.env` file committed to repo | Secrets exposed | Add `.env` to `.gitignore`, provide `.env.example` with placeholder values |
 
@@ -197,9 +199,9 @@ Run all validators before feature completion: `npm run validate`
 | Symptom | Likely Problem | Action |
 |---------|---------------|--------|
 | Every feature change touches 5+ files across tiers | Over-layered for project size | Consider co-locating by feature instead of strict tier separation |
-| `02-logic/services/` has 50+ services | Flat organization doesn't scale | Group by domain: `services/auth/`, `services/orders/`, `services/payments/` |
-| Components exceed 300 lines | Logic leaked into presentation | Extract business logic to hooks or services in `02-logic/` |
+| `source/02-logic/services/` has 50+ services | Flat organization doesn't scale | Group by domain: `services/auth/`, `services/orders/`, `services/payments/` |
+| Components exceed 300 lines | Logic leaked into presentation | Extract business logic to hooks or services in `source/02-logic/` |
 | Adding a new page requires creating 8+ files | Boilerplate overhead | Review if all tiers are needed for simple pages; not every page needs a service |
-| `01-presentation/hooks/` has 30+ hooks | Hooks doing too much | Move business-logic hooks to `02-logic/`, keep only UI hooks in presentation |
-| Imports look like `../../../02-logic/services/` | Deep relative paths | Configure path aliases (`@logic/`, `@data/`, `@presentation/`) |
-| State is passed through 5+ component levels | Prop drilling | Use context or state management in `02-logic/state/` |
+| `source/01-presentation/hooks/` has 30+ hooks | Hooks doing too much | Move business-logic hooks to `source/02-logic/`, keep only UI hooks in presentation |
+| Imports look like `../../../02-logic/services/` | Deep relative paths | Configure path aliases (`@logic/`, `@data/`, `@presentation/`) in tsconfig |
+| State is passed through 5+ component levels | Prop drilling | Use context or state management in `source/02-logic/state/` |

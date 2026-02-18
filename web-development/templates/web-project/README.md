@@ -15,7 +15,7 @@ The code structure follows the architecture skill's web profile:
 `~/.claude/skills/architecture/references/web.md`
 
 That reference defines:
-- **3-tier folder structure:** `01-presentation/` -> `02-logic/` -> `03-data/`
+- **3-tier folder structure:** `source/01-presentation/` -> `source/02-logic/` -> `source/03-data/`
 - **Dependency flow rules:** Presentation -> Logic -> Data (no reverse, no skipping)
 - **Naming conventions:** PascalCase components, PascalCase+Service, PascalCase+Repository
 - **Red flags:** 12 common violations with root causes and fixes
@@ -28,7 +28,7 @@ That reference defines:
 2. Fill in `project-roadmap.md` with your project's specifics
 3. Create the tier folders per the architecture reference:
    ```
-   mkdir 01-presentation 02-logic 03-data config tests Documentation
+   mkdir -p source/01-presentation source/02-logic source/03-data source/config tests Documentation
    ```
 4. Set up validators (`validate:arch`, `validate:tokens`, `validate:naming`)
 5. Start building — Data tier first, Logic second, Presentation last

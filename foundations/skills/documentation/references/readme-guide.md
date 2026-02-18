@@ -280,10 +280,11 @@ A directory tree with one-line explanations. This section answers "I need to cha
 
 ```
 meal-planner/
-  01-presentation/       # UI components and pages
-  02-logic/              # Business rules (meal generation, cost calculation)
-  03-data/               # Database models, repositories, migrations
-  config/                # Environment config, constants
+  source/
+    01-presentation/     # UI components and pages
+    02-logic/            # Business rules (meal generation, cost calculation)
+    03-data/             # Database models, repositories, migrations
+    config/              # Environment config, constants
   tests/                 # Integration and E2E tests
   Documentation/         # Feature specs, architecture docs
 ```

@@ -33,13 +33,14 @@ You don't detect whether this is a web project — the user already decided that
 
 ```
 project-root/
-  01-presentation/     # UI — what the user sees and interacts with
-  02-logic/            # Business rules — validation, orchestration, state
-  03-data/             # Persistence — database, APIs, external services
-  config/              # Cross-cutting — env, constants, routes
-  tests/               # Integration and E2E tests
-  public/              # Static files served directly
-  Documentation/       # Project docs, ADRs, feature specs
+  source/                 # All source code lives here
+    01-presentation/     # UI — what the user sees and interacts with
+    02-logic/            # Business rules — validation, orchestration, state
+    03-data/             # Persistence — database, APIs, external services
+    config/              # Cross-cutting — env, constants, routes
+  tests/                 # Integration and E2E tests
+  public/                # Static files served directly
+  Documentation/         # Project docs, ADRs, feature specs
 ```
 
 **Dependency flow:** `01-presentation → 02-logic → 03-data` only. Never reverse. Never skip a layer.
@@ -54,8 +55,8 @@ Your `architecture` skill is loaded automatically. For the full tier reference w
 2. **Foundation first** — Move data tier files first, then logic, then presentation. Dependencies point downward, so you build from the bottom up.
 3. **Preserve git history** — Use `git mv` for every move.
 4. **Imports must work** — After every batch of moves, update all import paths. The project must build/run at every commit.
-5. **Cross-cutting stays out** — Config, tests, public assets, and documentation don't go in any tier.
-6. **Clean root** — The root is the first impression. Only tier directories, cross-cutting directories, required config files, and tooling dotfiles belong at root. Everything else moves, gets gitignored, or gets removed.
+5. **Cross-cutting stays out of tiers** — Config goes in `source/config/`, not in any tier. Tests, public, and docs stay at root outside `source/`.
+6. **Clean root** — Config files at root, all source code behind one `source/` door. Only `source/`, `tests/`, `public/`, `Documentation/`, config files, and tooling dotfiles belong at root.
 
 ---
 
@@ -90,8 +91,7 @@ List every file and directory at the project root. Classify each against this al
 ALLOWED AT ROOT
 
 Directories (project structure):
-  01-presentation/     02-logic/            03-data/
-  config/              tests/               public/
+  source/                tests/               public/
   Documentation/
 
 Directories (tooling — dotfiles):
@@ -105,6 +105,10 @@ Files (required config — tooling needs these at root):
 
 Gitignored (expected on disk but invisible in tree):
   node_modules/        dist/                build/               coverage/
+
+EXPECTED INSIDE source/
+  01-presentation/     02-logic/            03-data/
+  config/
 ```
 
 Classify anything NOT on the allowlist:
@@ -113,8 +117,8 @@ Classify anything NOT on the allowlist:
 |----------------|---------------|-------------------|
 | `output-dir` | Build/test output not in `.gitignore` | Add to `.gitignore` |
 | `artifact` | Clean-team reports (`AUDIT-REPORT*.md`, `COVERAGE-REPORT*.md`, `REFACTORING-ROADMAP*.md`) | Remove (regeneratable) |
-| `rename-needed` | Maps to an allowed name (`docs/` → `Documentation/`, `doc/` → `Documentation/`) | `git mv` to correct name |
-| `stale-source` | Old source dir that should be empty after tier moves (`src/`, `lib/`, `app/`) | Remove if empty, flag if not |
+| `rename-needed` | Maps to an allowed name (`src/` → `source/`, `docs/` → `Documentation/`) | `git mv` to correct name |
+| `stale-source` | Old source dir that should be empty after tier moves (`lib/`, `app/`) | Remove if empty, flag if not |
 | `unknown` | Anything else not in the allowlist | Flag for user — never auto-delete |
 
 Produce a root inventory table:
@@ -123,8 +127,9 @@ Produce a root inventory table:
 | Item | Type | Classification | Action |
 |------|------|----------------|--------|
 | package.json | file | required-config | Keep |
-| src/ | dir | stale-source | Remove if empty after moves |
+| src/ | dir | rename-needed | git mv → source/ |
 | docs/ | dir | rename-needed | git mv → Documentation/ |
+| lib/ | dir | stale-source | Remove if empty after moves |
 | _content.txt | file | unknown | Flag for user |
 | AUDIT-REPORT.md | file | artifact | Remove |
 | dist/ | dir | output-dir | Verify gitignored |
@@ -144,21 +149,21 @@ Assign each file to its correct tier.
 
 | File / Concern | Tier | Examples |
 |----------------|------|---------|
-| React/Vue/Svelte components, pages, layouts | `01-presentation/components/`, `pages/`, `layouts/` |
-| UI-specific hooks (useForm, useModal, useToast) | `01-presentation/hooks/` |
-| CSS files, design tokens, global styles | `01-presentation/styles/` |
-| Static assets (icons, images, fonts) | `01-presentation/assets/` |
-| Business services (AuthService, OrderService) | `02-logic/services/` |
-| Application workflows, use cases | `02-logic/use-cases/` |
-| Domain models, types, enums | `02-logic/domain/` |
-| API client adapters (REST, GraphQL queries) | `02-logic/api/` |
-| State management (stores, contexts, reducers) | `02-logic/state/` |
-| Input validation (Zod, Yup schemas) | `02-logic/validators/` |
-| Database repositories, query builders | `03-data/repositories/` |
-| Database schemas, models (Prisma, TypeORM) | `03-data/models/` |
-| Migrations, seeds | `03-data/migrations/`, `03-data/seeds/` |
-| External service adapters (S3, Redis, SES) | `03-data/adapters/` |
-| Environment parsing, constants, route defs | `config/` |
+| React/Vue/Svelte components, pages, layouts | `source/01-presentation/components/`, `pages/`, `layouts/` |
+| UI-specific hooks (useForm, useModal, useToast) | `source/01-presentation/hooks/` |
+| CSS files, design tokens, global styles | `source/01-presentation/styles/` |
+| Static assets (icons, images, fonts) | `source/01-presentation/assets/` |
+| Business services (AuthService, OrderService) | `source/02-logic/services/` |
+| Application workflows, use cases | `source/02-logic/use-cases/` |
+| Domain models, types, enums | `source/02-logic/domain/` |
+| API client adapters (REST, GraphQL queries) | `source/02-logic/api/` |
+| State management (stores, contexts, reducers) | `source/02-logic/state/` |
+| Input validation (Zod, Yup schemas) | `source/02-logic/validators/` |
+| Database repositories, query builders | `source/03-data/repositories/` |
+| Database schemas, models (Prisma, TypeORM) | `source/03-data/models/` |
+| Migrations, seeds | `source/03-data/migrations/`, `source/03-data/seeds/` |
+| External service adapters (S3, Redis, SES) | `source/03-data/adapters/` |
+| Environment parsing, constants, route defs | `source/config/` |
 | Integration/E2E tests, fixtures, helpers | `tests/` |
 | Static served files (favicon, manifest) | `public/` |
 | Documentation, changelogs, ADRs | `Documentation/` or project root |
@@ -179,8 +184,8 @@ Assign each file to its correct tier.
 ```
 | File | Current Location | Target Location | Tier |
 |------|-----------------|-----------------|------|
-| App.tsx | src/App.tsx | 01-presentation/App.tsx | Presentation |
-| api.ts | src/api.ts | 02-logic/api/api.ts | Logic |
+| App.tsx | src/App.tsx | source/01-presentation/App.tsx | Presentation |
+| api.ts | src/api.ts | source/02-logic/api/api.ts | Logic |
 | ... | ... | ... | ... |
 ```
 
@@ -211,23 +216,31 @@ Before moving anything, verify the mapping doesn't create reverse dependencies.
 
 ## Phase 4: Create Structure
 
-Create the tier directories.
+Create the tier directories inside `source/`.
+
+**If the project has an existing `src/` directory**, rename it first to preserve git history:
 
 ```bash
-mkdir -p 01-presentation/components
-mkdir -p 01-presentation/pages
-mkdir -p 01-presentation/layouts
-mkdir -p 01-presentation/hooks
-mkdir -p 01-presentation/styles
-mkdir -p 01-presentation/assets
-mkdir -p 02-logic/services
-mkdir -p 02-logic/api
-mkdir -p 02-logic/state
-mkdir -p 02-logic/domain
-mkdir -p 02-logic/validators
-mkdir -p 03-data/repositories
-mkdir -p 03-data/models
-mkdir -p config
+git mv src source
+```
+
+Then create tier subdirectories:
+
+```bash
+mkdir -p source/01-presentation/components
+mkdir -p source/01-presentation/pages
+mkdir -p source/01-presentation/layouts
+mkdir -p source/01-presentation/hooks
+mkdir -p source/01-presentation/styles
+mkdir -p source/01-presentation/assets
+mkdir -p source/02-logic/services
+mkdir -p source/02-logic/api
+mkdir -p source/02-logic/state
+mkdir -p source/02-logic/domain
+mkdir -p source/02-logic/validators
+mkdir -p source/03-data/repositories
+mkdir -p source/03-data/models
+mkdir -p source/config
 ```
 
 Only create directories that will actually have files. Don't create empty placeholder folders.
@@ -240,7 +253,7 @@ Only create directories that will actually have files. Don't create empty placeh
 
 Move files tier by tier, bottom-up: **Data → Logic → Presentation → Cross-cutting**.
 
-### 5a. Data tier (`03-data/`)
+### 5a. Data tier (`source/03-data/`)
 
 ```bash
 git mv <source> <target>
@@ -248,25 +261,25 @@ git mv <source> <target>
 
 After moving all data tier files, update every import that referenced the old paths. Verify the project still compiles/runs.
 
-**Commit:** `refactor(structure): move data layer files to 03-data/`
+**Commit:** `refactor(structure): move data layer files to source/03-data/`
 
-### 5b. Logic tier (`02-logic/`)
+### 5b. Logic tier (`source/02-logic/`)
 
 Move all business logic files. Update imports.
 
-**Commit:** `refactor(structure): move logic layer files to 02-logic/`
+**Commit:** `refactor(structure): move logic layer files to source/02-logic/`
 
-### 5c. Presentation tier (`01-presentation/`)
+### 5c. Presentation tier (`source/01-presentation/`)
 
 Move all UI files. Update imports.
 
-**Commit:** `refactor(structure): move presentation layer files to 01-presentation/`
+**Commit:** `refactor(structure): move presentation layer files to source/01-presentation/`
 
-### 5d. Cross-cutting (`config/`, `tests/`)
+### 5d. Cross-cutting (`source/config/`, `tests/`)
 
 Move config and test files to their appropriate locations. Update imports.
 
-**Commit:** `refactor(structure): move cross-cutting files to config/ and tests/`
+**Commit:** `refactor(structure): move cross-cutting files to source/config/ and tests/`
 
 ### Import Update Process
 
@@ -304,13 +317,13 @@ If any are missing, add them. This ensures output directories are invisible in t
 
 **Step 2 — Remove stale source dirs:**
 
-For each item classified as `stale-source` (e.g., `src/`, `lib/`, `app/`):
+For each item classified as `stale-source` (e.g., `lib/`, `app/`):
 - If the directory is empty → delete it
 - If it still has files → STOP. List the remaining files as unmoved. Do not delete a non-empty source dir.
 
 **Step 3 — Rename misnamed dirs:**
 
-For each item classified as `rename-needed`:
+For each item classified as `rename-needed` (that wasn't already handled in Phase 4):
 - `docs/` or `doc/` → `git mv docs Documentation`
 - Update any references to the old path in README.md, CLAUDE.md, or other docs
 
@@ -365,9 +378,9 @@ If build fails, fix the broken imports. Don't proceed with failures.
 **7b. Dependency direction check:**
 
 Use Grep to verify no reverse imports exist:
-- Search `03-data/` files for imports from `02-logic/` or `01-presentation/` → should find none
-- Search `02-logic/` files for imports from `01-presentation/` → should find none
-- Search `01-presentation/` files for imports from `03-data/` (skipping logic) → should find none
+- Search `source/03-data/` files for imports from `02-logic/` or `01-presentation/` → should find none
+- Search `source/02-logic/` files for imports from `01-presentation/` → should find none
+- Search `source/01-presentation/` files for imports from `03-data/` (skipping logic) → should find none
 
 **7c. File accounting:**
 
@@ -383,15 +396,16 @@ Compare your inventory from Phase 1 against the current state. Every file should
 ═══════════════════════════════════════════════════
 
 Files moved:
-  01-presentation/    [N] files
-  02-logic/           [N] files
-  03-data/            [N] files
-  config/             [N] files
-  tests/              [N] files
+  source/01-presentation/    [N] files
+  source/02-logic/           [N] files
+  source/03-data/            [N] files
+  source/config/             [N] files
+  tests/                     [N] files
 
 Root hygiene:
   .gitignore:         [updated / already complete]
-  Stale dirs removed: [src/ | none]
+  src/ renamed:       [→ source/ | already source/ | N/A]
+  Stale dirs removed: [lib/ | none]
   Dirs renamed:       [docs/ → Documentation/ | none]
   Artifacts removed:  [N] files
   Unknown flagged:    [N] items
@@ -404,10 +418,10 @@ Build status:         PASS
 
 Commits:
   [hash] chore(structure): create 3-tier directory structure
-  [hash] refactor(structure): move data layer files to 03-data/
-  [hash] refactor(structure): move logic layer files to 02-logic/
-  [hash] refactor(structure): move presentation layer files to 01-presentation/
-  [hash] refactor(structure): move cross-cutting files to config/ and tests/
+  [hash] refactor(structure): move data layer files to source/03-data/
+  [hash] refactor(structure): move logic layer files to source/02-logic/
+  [hash] refactor(structure): move presentation layer files to source/01-presentation/
+  [hash] refactor(structure): move cross-cutting files to source/config/ and tests/
   [hash] chore(structure): clean project root
   [hash] chore(structure): remove empty directories and update entry points
 
@@ -420,7 +434,7 @@ Commits:
 
 - **Don't rewrite file internals** — You move files and update import paths. You don't refactor the code inside them.
 - **Don't move node_modules, dist, or build outputs** — Only source files.
-- **Don't create empty tiers** — If the project has no database, don't create `03-data/`.
+- **Don't create empty tiers** — If the project has no database, don't create `source/03-data/`.
 - **Don't break the build** — If the build fails after a move, fix imports before the next commit.
 - **Don't split files during the move** — If a file has mixed concerns (UI + business logic), move it to the dominant tier and note it for a follow-up refactor. Restructuring and refactoring are separate steps.
 - **Don't fight the framework** — If Next.js requires `app/` or `pages/` at the root, keep that convention. Organize within the framework's constraints.

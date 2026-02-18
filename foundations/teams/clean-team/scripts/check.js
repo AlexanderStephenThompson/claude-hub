@@ -1031,7 +1031,7 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
     if (hasPackageJson && hasWebFiles) {
         const TIER_DIRS = ['01-presentation', '02-logic', '03-data'];
         const existingTiers = TIER_DIRS.filter((t) =>
-            fs.existsSync(path.join(ROOT, t)) || fs.existsSync(path.join(ROOT, 'src', t)),
+            fs.existsSync(path.join(ROOT, t)) || fs.existsSync(path.join(ROOT, 'src', t)) || fs.existsSync(path.join(ROOT, 'source', t)),
         );
 
         const sourceFileCount = count + jsFiles.length + htmlFiles.length;

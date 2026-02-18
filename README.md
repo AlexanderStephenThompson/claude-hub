@@ -131,14 +131,14 @@ Language-agnostic code readability cleanup. Makes code that works into code that
 
 ### Web Restructure
 
-Reorganizes a web project into the 3-tier architecture (`01-presentation/` → `02-logic/` → `03-data/`) and cleans the project root. Moves files bottom-up (data tier first, then logic, then presentation) so dependencies always point downward. Uses `git mv` for every move to preserve history. After tier moves, enforces a lean root — removes stale dirs, artifacts, and flags anything not in the allowlist.
+Reorganizes a web project into the 3-tier architecture (`source/01-presentation/` → `source/02-logic/` → `source/03-data/`) and cleans the project root. All source code goes behind one `source/` door; tests, public, and docs stay at root. Moves files bottom-up (data tier first, then logic, then presentation) so dependencies always point downward. Uses `git mv` for every move to preserve history. After tier moves, enforces a lean root — removes stale dirs, artifacts, and flags anything not in the allowlist.
 
 | Phase | What It Does |
 |-------|-------------|
 | 1. Inventory | Find every source file and audit root — classify every root item against allowlist |
 | 2. Tier Mapping | Classify each file into presentation, logic, or data using placement guide |
 | 3. Dependency Check | Map imports, flag circular dependencies that will break during moves |
-| 4. Create Structure | Create `01-presentation/`, `02-logic/`, `03-data/` directories |
+| 4. Create Structure | Rename `src/` → `source/`, create tier directories inside `source/` |
 | 5. Move Files | `git mv` files bottom-up — data tier first, logic second, presentation last |
 | 6. Clean Up | Root hygiene (gitignore, stale dirs, renames, artifacts), then entry points and imports |
 | 7. Verify | Confirm project builds/runs, all imports resolve, no circular dependencies |
