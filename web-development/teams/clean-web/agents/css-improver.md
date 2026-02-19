@@ -47,6 +47,8 @@ If web-restructure ran before you, CSS files may have moved to `source/01-presen
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
 - `node <team-scripts>/sort-css-properties.js <path>` (pre-built property sorter)
+- `node <team-scripts>/unit-zero.js <path>` (strip redundant units from zero values)
+- `node <team-scripts>/fix-imports-order.js <path>` (reorder CSS imports to cascade order)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. You CAN run pre-built team scripts that ship with the pipeline.
 
@@ -160,10 +162,13 @@ When merging, mark where content came from so it's reviewable:
 
 ### Import Order
 
-After consolidation, ensure imports follow the cascade:
+After consolidation, run the pre-built import order fixer:
+
+```bash
+node <team-scripts>/fix-imports-order.js <project-path>
 ```
-reset.css → global.css → layouts.css → components.css → overrides.css
-```
+
+This reorders `@import` statements in CSS files and `<link>` tags in HTML files to the canonical cascade: reset → global → layouts → components → overrides.
 
 **Commit:** `refactor(css): consolidate to 5-file architecture`
 
@@ -295,6 +300,14 @@ For each stray value found, determine: is this intentionally different, or did A
 ## Phase 5: Tokenize
 
 Replace hardcoded values with CSS variables.
+
+**First**, run the unit-zero fixer to clean up redundant units before tokenizing:
+
+```bash
+node <team-scripts>/unit-zero.js <project-css-directory>
+```
+
+This replaces `0px`, `0em`, `0rem`, etc. with unitless `0` across all CSS files. Fewer unique values = better token consolidation.
 
 **Reference:** Read `~/.claude/skills/web-css/assets/token-reference.md` for the canonical token naming convention and complete `:root` definitions.
 

@@ -35,7 +35,12 @@ $ARGUMENTS
 **Bash is ONLY for these operations — nothing else:**
 - `git add`, `git commit` (actual git write operations)
 - `node check.js`, `python scripts/*.py` (run analysis scripts)
-- `node sort-css-properties.js <path>` (pre-built CSS property sorter)
+- `node sort-css-properties.js <path>` (CSS property sorter)
+- `node unit-zero.js <path>` (strip redundant units from zero)
+- `node fix-imports-order.js <path>` (reorder CSS imports to cascade order)
+- `node strip-debug.js <path>` (remove console/debugger statements)
+- `node fix-double-equals.js <path>` (== to ===, != to !==)
+- `node fix-var.js <path>` (var to let)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Agents CAN run pre-built team scripts that ship with the pipeline.

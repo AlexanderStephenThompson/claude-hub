@@ -46,8 +46,11 @@ You run standalone — invoke directly on any project with source files. You det
 **Bash is ONLY for these operations — nothing else:**
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
+- `node <team-scripts>/strip-debug.js <path>` (remove console/debugger statements)
+- `node <team-scripts>/fix-double-equals.js <path>` (== to ===, != to !==)
+- `node <team-scripts>/fix-var.js <path>` (var to let)
 
-**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
+**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. You CAN run pre-built team scripts that ship with the pipeline.
 
 ## Core Principles
 
@@ -163,6 +166,16 @@ Extract hardcoded numbers and strings into named constants.
 ## Phase 4: Dead Code
 
 Remove code that doesn't execute or serve a purpose.
+
+**First**, run the deterministic fix scripts to handle the mechanical cleanup:
+
+```bash
+node <team-scripts>/strip-debug.js <project-source-directory>
+node <team-scripts>/fix-var.js <project-source-directory>
+node <team-scripts>/fix-double-equals.js <project-source-directory>
+```
+
+These handle: console/debugger removal, `var` → `let`, and `==` → `===`. After running, **Read** a few modified files to verify, then proceed with the judgment-based removals below.
 
 ### What to Remove
 
