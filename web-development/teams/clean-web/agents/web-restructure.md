@@ -154,7 +154,18 @@ Produce a root inventory table:
 | dist/ | dir | output-dir | Verify gitignored |
 ```
 
-**1e. File naming conventions:**
+**1e. Audit `public/` contents:**
+
+If `public/` exists, use Glob to list everything inside it. Only static served files belong here (favicon, manifest, robots.txt, images, fonts). Flag anything else for relocation in Phase 5:
+
+| Found in `public/` | Move to |
+|---------------------|---------|
+| `schemas/`, `*.schema.json` | `source/03-data/schemas/` or `source/02-logic/validators/` |
+| `*.js`, `*.ts` source files | Appropriate tier in `source/` |
+| `*.css` stylesheets | `source/01-presentation/styles/` |
+| `data/`, `*.json` data files | `source/03-data/` |
+
+**1f. File naming conventions:**
 
 Check all source files for naming consistency. Detect the dominant convention and flag deviations.
 
@@ -205,6 +216,7 @@ Assign each file to its correct tier.
 | Database repositories, query builders | `source/03-data/repositories/` |
 | Database schemas, models (Prisma, TypeORM) | `source/03-data/models/` |
 | Migrations, seeds | `source/03-data/migrations/`, `source/03-data/seeds/` |
+| Data schemas (JSON Schema, storage definitions) | `source/03-data/schemas/` |
 | External service adapters (S3, Redis, SES) | `source/03-data/adapters/` |
 | Environment parsing, constants, route defs | `source/config/` |
 | Integration/E2E tests, fixtures, helpers | `tests/` |
@@ -220,6 +232,7 @@ Assign each file to its correct tier.
 | A hook that fetches data? | If it wraps an API call, it's logic → `02-logic/`. If it's pure UI (useModal), it's `01-presentation/hooks/`. |
 | A "utils" file with mixed concerns? | Split it. Date formatting → `02-logic/`. DOM helpers → `01-presentation/`. DB helpers → `03-data/`. |
 | Types shared across tiers? | Put them in the tier that owns the concept. If truly shared, `02-logic/domain/`. |
+| Schemas in `public/`? | Not static assets — move to `03-data/schemas/` (storage) or `02-logic/validators/` (validation). |
 | Test files? | Unit tests co-locate with source (same folder). Integration/E2E tests go to `tests/`. |
 
 **Output:** Produce a mapping table:
