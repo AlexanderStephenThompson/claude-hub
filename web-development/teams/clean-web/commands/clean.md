@@ -22,16 +22,20 @@ $ARGUMENTS
 
 ## Tool Usage — MANDATORY
 
-Use the right tool for each job. **Never use Bash for file operations or text parsing.** Paths with special characters (`&`, spaces, parentheses) will break bash commands silently.
+**Never use Bash for file operations or text parsing.** Paths with `&`, spaces, or parentheses break bash silently.
 
-| Task | Use | Never |
-|------|-----|-------|
-| Find files | **Glob** | `find`, `ls`, `git ls-files` |
-| Search file contents | **Grep** | `grep`, `rg`, `cat \| grep` |
-| Read files or script output | **Read** | `cat`, `head`, `tail`, `wc -l` |
+| Task | Correct Tool | BANNED — never use these |
+|------|-------------|-----------------------------|
+| Find/list files or directories | **Glob** | `find`, `ls`, `ls -la`, `git ls-files`, `git ls-tree` |
+| Search file contents | **Grep** | `grep`, `rg`, `cat \| grep`, `git ls-files \| grep` |
+| Read a file or script output | **Read** | `cat`, `head`, `tail` |
+| Count files or lines | **Glob** (count results) / **Read** | `wc -l`, `git ls-files \| wc -l`, `\| wc -l` |
 | Parse/count script results | **Read** the output, then analyze it yourself | `grep -oP`, `sed`, `sort \| uniq -c`, `awk` |
-| Git operations | **Bash** | — (correct use) |
-| Run scripts (check.js, Python) | **Bash** | — (correct use) |
+
+**Bash is ONLY for these operations — nothing else:**
+- `git add`, `git commit` (actual git write operations)
+- `node check.js`, `python scripts/*.py` (run analysis scripts)
+- `npm run build`, `npm run test`, `npm run validate` (run project commands)
 
 ## Operating Rules
 

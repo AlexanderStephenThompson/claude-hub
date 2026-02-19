@@ -32,17 +32,20 @@ If css-improver ran before you, it may have renamed or consolidated CSS classes.
 
 ## Tool Usage — MANDATORY
 
-Use the right tool for each job. **Never use Bash for file operations.** Paths with special characters (`&`, spaces, parentheses) will break bash commands silently.
+**Never use Bash for file operations.** Paths with `&`, spaces, or parentheses break bash silently.
 
-| Task | Use | Never |
-|------|-----|-------|
-| Find files | **Glob** | `find`, `ls`, `git ls-files` |
-| Search file contents | **Grep** | `grep`, `rg`, `cat \| grep` |
-| Read files | **Read** | `cat`, `head`, `tail`, `wc -l` |
-| Edit files | **Edit** | `sed`, `awk` |
-| Create files | **Write** | `echo >`, `cat <<EOF` |
-| Git operations | **Bash** | — (this is the correct use of Bash) |
-| Run build/test commands | **Bash** | — |
+| Task | Correct Tool | BANNED — never use these |
+|------|-------------|--------------------------|
+| Find/list files or directories | **Glob** | `find`, `ls`, `ls -la`, `git ls-files`, `git ls-tree` |
+| Search file contents | **Grep** | `grep`, `rg`, `cat \| grep`, `git ls-files \| grep` |
+| Read a file | **Read** | `cat`, `head`, `tail` |
+| Count files or lines | **Glob** (count results) / **Read** | `wc -l`, `git ls-files \| wc -l`, `\| wc -l` |
+| Edit a file | **Edit** | `sed`, `awk` |
+| Create a file | **Write** | `echo >`, `cat <<EOF` |
+
+**Bash is ONLY for these operations — nothing else:**
+- `git mv`, `git add`, `git commit` (actual git write operations)
+- `npm run build`, `npm run test`, `npm run validate` (run project commands)
 
 ## Core Principles
 
