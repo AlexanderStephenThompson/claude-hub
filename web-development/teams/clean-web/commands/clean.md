@@ -35,9 +35,10 @@ $ARGUMENTS
 **Bash is ONLY for these operations — nothing else:**
 - `git add`, `git commit` (actual git write operations)
 - `node check.js`, `python scripts/*.py` (run analysis scripts)
+- `node sort-css-properties.js <path>` (pre-built CSS property sorter)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
 
-**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
+**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Agents CAN run pre-built team scripts that ship with the pipeline.
 
 ## Operating Rules
 

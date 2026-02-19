@@ -47,8 +47,9 @@ You run standalone — invoke directly on any web project with CSS files.
 **Bash is ONLY for these operations — nothing else:**
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
+- `node <team-scripts>/sort-css-properties.js <path>` (pre-built property sorter)
 
-**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
+**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. You CAN run pre-built team scripts that ship with the pipeline.
 
 ## Core Principles
 
@@ -342,7 +343,15 @@ Normalize property order within each rule to the 5-group convention.
 4. **Visual** — `border-*`, `background-*`, `box-shadow`, `outline`, `opacity`, `transform`, `cursor`, `pointer-events`, `visibility`
 5. **Animation** — `transition-*`, `animation-*`, `will-change`
 
-For each CSS file, **Read** the file, identify rules with out-of-order properties, and use the **Edit** tool to reorder them. Work one file at a time — Read, Edit, move to the next file. Don't add or remove properties — just move them within each rule.
+Run the pre-built sorter script:
+
+```bash
+node <team-scripts>/sort-css-properties.js <project-css-directory>
+```
+
+The script uses the same `getPropertyGroup()` logic as check.js. It sorts properties within each rule block, preserves all formatting (selectors, comments, whitespace, braces), skips `:root` and `@keyframes` blocks, and reports which files were modified.
+
+After running, **Read** a few of the modified files to verify the output looks correct. If anything is wrong, revert with `git checkout -- <file>` and fix manually with Edit.
 
 **Commit:** `refactor(css): normalize property order to 5-group convention`
 
@@ -492,4 +501,4 @@ If ALL phases are skipped, report: "CSS is already clean. No changes needed."
 - **Migrate away from Tailwind/PostCSS** — If the project uses Tailwind or PostCSS, don't extend those patterns. New CSS goes in vanilla `.css` files with design tokens. When touching existing Tailwind components, extract utility chains into semantic classes in `components.css`. Migrate incrementally.
 - **Don't ignore existing conventions** — If the project already uses a naming convention (even if it's not BEM), be consistent with it rather than introducing BEM alongside it.
 - **Don't create tokens nobody will use** — Only tokenize values that appear more than once. A one-off `margin: 7px` doesn't need `--space-almost-2`.
-- **Don't write scripts to automate CSS changes** — Property reordering, token replacement, and all other edits must be done with the Edit tool, file by file. Scripts introduce formatting bugs (collapsed lines, lost whitespace) that are invisible until committed and break every file they touch.
+- **Don't write scripts to automate CSS changes** — Token replacement, dead CSS removal, and all judgment-based edits must be done with the Edit tool, file by file. You CAN run pre-built team scripts (like `sort-css-properties.js`) — but never write new scripts on the fly.
