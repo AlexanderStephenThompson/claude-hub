@@ -28,7 +28,7 @@ $ARGUMENTS
 |------|-------------|-----------------------------|
 | Find/list files or directories | **Glob** | `find`, `ls`, `ls -la`, `git ls-files`, `git ls-tree` |
 | Search file contents | **Grep** | `grep`, `rg`, `cat \| grep`, `git ls-files \| grep` |
-| Read a file or script output | **Read** | `cat`, `head`, `tail` |
+| Read a file or script output | **Read** | `cat`, `head`, `tail`, `git show`, `git diff`, `git cat-file` |
 | Count files or lines | **Glob** (count results) / **Read** | `wc -l`, `git ls-files \| wc -l`, `\| wc -l` |
 | Parse/count script results | **Read** the output, then analyze it yourself | `grep -oP`, `sed`, `sort \| uniq -c`, `awk` |
 
@@ -36,6 +36,8 @@ $ARGUMENTS
 - `git add`, `git commit` (actual git write operations)
 - `node check.js`, `python scripts/*.py` (run analysis scripts)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
+
+**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
 
 ## Operating Rules
 

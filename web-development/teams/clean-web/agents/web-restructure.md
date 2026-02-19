@@ -56,7 +56,7 @@ Your `architecture` skill is loaded automatically. For the full tier reference w
 |------|-------------|--------------------------|
 | Find/list files or directories | **Glob** | `find`, `ls`, `ls -la`, `git ls-files`, `git ls-tree` |
 | Search file contents | **Grep** | `grep`, `rg`, `cat \| grep`, `git ls-files \| grep` |
-| Read a file | **Read** | `cat`, `head`, `tail` |
+| Read a file | **Read** | `cat`, `head`, `tail`, `git show`, `git diff`, `git cat-file` |
 | Count files or lines | **Glob** (count results) / **Read** | `wc -l`, `git ls-files \| wc -l`, `\| wc -l` |
 | Edit a file | **Edit** | `sed`, `awk` |
 | Create a file | **Write** | `echo >`, `cat <<EOF` |
@@ -65,6 +65,8 @@ Your `architecture` skill is loaded automatically. For the full tier reference w
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `mkdir -p` (create directories)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
+
+**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
 
 ## Core Principles
 

@@ -38,7 +38,7 @@ If web-restructure ran before you, CSS files may have moved to `source/01-presen
 |------|-------------|--------------------------|
 | Find/list files or directories | **Glob** | `find`, `ls`, `ls -la`, `git ls-files`, `git ls-tree` |
 | Search file contents | **Grep** | `grep`, `rg`, `cat \| grep`, `git ls-files \| grep` |
-| Read a file | **Read** | `cat`, `head`, `tail` |
+| Read a file | **Read** | `cat`, `head`, `tail`, `git show`, `git diff`, `git cat-file` |
 | Count files or lines | **Glob** (count results) / **Read** | `wc -l`, `git ls-files \| wc -l`, `\| wc -l` |
 | Edit a file | **Edit** | `sed`, `awk` |
 | Create a file | **Write** | `echo >`, `cat <<EOF` |
@@ -46,6 +46,8 @@ If web-restructure ran before you, CSS files may have moved to `source/01-presen
 **Bash is ONLY for these operations — nothing else:**
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
+
+**Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
 
 ## Core Principles
 
@@ -339,7 +341,7 @@ Normalize property order within each rule to the 5-group convention.
 4. **Visual** — `border-*`, `background-*`, `box-shadow`, `outline`, `opacity`, `transform`, `cursor`, `pointer-events`, `visibility`
 5. **Animation** — `transition-*`, `animation-*`, `will-change`
 
-Reorder properties within each rule. Don't add or remove properties — just move them.
+For each CSS file, **Read** the file, identify rules with out-of-order properties, and use the **Edit** tool to reorder them. Work one file at a time — Read, Edit, move to the next file. Don't add or remove properties — just move them within each rule.
 
 **Commit:** `refactor(css): normalize property order to 5-group convention`
 
@@ -495,3 +497,4 @@ If ALL phases are skipped, report: "CSS is already clean. No changes needed."
 - **Migrate away from Tailwind/PostCSS** — If the project uses Tailwind or PostCSS, don't extend those patterns. New CSS goes in vanilla `.css` files with design tokens. When touching existing Tailwind components, extract utility chains into semantic classes in `components.css`. Migrate incrementally.
 - **Don't ignore existing conventions** — If the project already uses a naming convention (even if it's not BEM), be consistent with it rather than introducing BEM alongside it.
 - **Don't create tokens nobody will use** — Only tokenize values that appear more than once. A one-off `margin: 7px` doesn't need `--space-almost-2`.
+- **Don't write scripts to automate CSS changes** — Property reordering, token replacement, and all other edits must be done with the Edit tool, file by file. Scripts introduce formatting bugs (collapsed lines, lost whitespace) that are invisible until committed and break every file they touch.
