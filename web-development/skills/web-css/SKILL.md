@@ -128,6 +128,23 @@ styles/
 
 For detailed descriptions of each file (what goes in, what doesn't, internal organization), see `references/file-architecture.md`.
 
+### Templates
+
+Pre-built template files define the canonical section structure for each CSS file. Projects override values, not structure.
+
+```
+templates/
+├── reset.css       # Full reset (deterministic, same for every project)
+├── global.css      # Token skeleton (:root with 9 categories) + element defaults
+├── layouts.css     # Section headers only (project-specific content)
+├── components.css  # Pattern template (Base → Variants → States per component)
+└── overrides.css   # Section headers + accessibility utilities
+```
+
+**Scaffold command:** `node scaffold-css.js <target-directory>` copies all 5 templates. Never overwrites existing files.
+
+**Enforced by:** `check.js` rules `css-section-order` (warn — major sections out of canonical order) and `token-category-order` (warn — token sub-categories out of order in global.css `:root`).
+
 ### Where Does This Go?
 
 | Ask yourself... | Answer → File |
@@ -290,6 +307,8 @@ These rules are deterministically checked by `check.js` (clean-team). When updat
 | `no-hardcoded-z-index` | warn | Z-index outside `var(--z-*)` |
 | `css-property-order` | warn | Properties not in group order (Position > Box Model > Typography > Visual > Animation) |
 | `css-import-order` | warn | `@import`/`<link>` order doesn't match cascade sequence |
+| `css-section-order` | warn | Major section headers out of canonical order within a file |
+| `token-category-order` | warn | Token sub-categories out of order in global.css `:root` |
 | `mobile-first` | warn | `max-width` media queries instead of `min-width` |
 | `no-important` | warn | `!important` usage |
 | `no-id-selector` | warn | `#id` selectors (specificity wars) |

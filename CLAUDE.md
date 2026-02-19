@@ -60,7 +60,7 @@ Deploy covers: flat files (skills, agents, commands) + `claude plugin marketplac
 
 ### Analysis Scripts (clean-web)
 ```bash
-node web-development/teams/clean-web/scripts/check.js                           # Design system compliance (36 rules)
+node web-development/teams/clean-web/scripts/check.js                           # Design system compliance (38 rules)
 node web-development/teams/clean-web/scripts/check.js --validate-registry       # Verify rule ↔ skill links
 python web-development/teams/clean-web/scripts/analyze_complexity.py <path>     # High-complexity functions
 python web-development/teams/clean-web/scripts/analyze_dependencies.py <path>   # Circular dependencies
@@ -74,7 +74,7 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 - **Removing a check.js rule:** Remove from both `RULE_SKILLS` and the skill file
 - **Changing severity:** Update both check.js and the skill's table
 - **Adding a skill guideline that's automatable:** Consider adding a check.js rule for it
-- **Verify links:** `node check.js --validate-registry` confirms all 36 rules are registered
+- **Verify links:** `node check.js --validate-registry` confirms all 38 rules are registered
 
 ## Development
 

@@ -392,3 +392,19 @@ All 5 files use the same section comment conventions:
 ```
 
 Major sections (`===`) separate distinct categories (e.g., BUTTONS, CARDS, FORMS). Minor sections (`---`) separate sub-groups within a category (e.g., Base, Variants, States). This makes every file scannable at a glance.
+
+**Enforced by:** `check.js` rules `css-section-order` (warns when major sections are out of canonical order) and `token-category-order` (warns when token sub-categories in global.css `:root` are out of order).
+
+---
+
+## Template Files
+
+Pre-built templates at `templates/` define the canonical skeleton for each file. Use `scaffold-css.js` to copy them into a new project. Projects override values and add rules, but keep the section structure intact.
+
+| Template | Content |
+|----------|---------|
+| `reset.css` | Full working reset (deterministic, no tokens, element selectors only) |
+| `global.css` | Complete `:root` token block (9 sub-categories) + element defaults with values from `token-reference.md` |
+| `layouts.css` | Section headers with placeholder comments (project-specific content) |
+| `components.css` | Seed components (Buttons, Cards, Forms, Modals, Navigation) showing Base/Variants/States pattern |
+| `overrides.css` | Accessibility utilities (`.u-visually-hidden`, `.u-hidden`) + section headers for project-specific |

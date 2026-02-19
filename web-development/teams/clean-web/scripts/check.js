@@ -9,7 +9,7 @@
  * Each rule maps to a skill via RULE_SKILLS. When adding/removing rules,
  * update BOTH the registry here AND the skill's "## Enforced Rules" section.
  *
- * CSS rules (12):
+ * CSS rules (14):
  *   no-hardcoded-color     (error)  Hex, rgb(), hsl(), named colors outside :root
  *   no-hardcoded-spacing   (warn)   Raw px >= 4 on margin/padding/gap
  *   no-hardcoded-font-size (warn)   Raw font-size values
@@ -18,6 +18,8 @@
  *   no-hardcoded-z-index   (warn)   Raw z-index numbers
  *   css-property-order     (warn)   Property group ordering (Position → Box Model → Type → Visual → Anim)
  *   css-import-order       (warn)   @import / <link> not in cascade order (reset → global → layouts → components → overrides)
+ *   css-section-order      (warn)   Major section headers out of canonical order within a file
+ *   token-category-order   (warn)   Token sub-categories out of order within :root in global.css
  *   mobile-first           (warn)   max-width media queries
  *   no-important           (warn)   !important usage
  *   no-id-selector         (warn)   #id selectors (specificity wars)
@@ -85,7 +87,7 @@ const WARN = 'warn';
  * "## Enforced Rules" section. See CLAUDE.md for the sync convention.
  */
 const RULE_SKILLS = {
-    // CSS (12) — web-css
+    // CSS (14) — web-css
     'no-hardcoded-color':     'web-css',
     'no-hardcoded-spacing':   'web-css',
     'no-hardcoded-font-size': 'web-css',
@@ -94,6 +96,8 @@ const RULE_SKILLS = {
     'no-hardcoded-z-index':   'web-css',
     'css-property-order':     'web-css',
     'css-import-order':       'web-css',
+    'css-section-order':      'web-css',
+    'token-category-order':   'web-css',
     'mobile-first':           'web-css',
     'no-important':           'web-css',
     'no-id-selector':         'web-css',
@@ -139,6 +143,27 @@ const MIN_FILES_FOR_TIER_CHECK = 5;
 /* Canonical CSS import order — index = expected position */
 const CSS_CASCADE_ORDER = ['reset', 'global', 'layouts', 'components', 'overrides'];
 const CSS_CASCADE_MAP = new Map(CSS_CASCADE_ORDER.map((name, i) => [name, i]));
+
+/* Canonical major section order per file — unknown sections are ignored */
+const FILE_SECTION_ORDER = {
+    'reset.css':      ['BOX MODEL', 'DOCUMENT', 'TYPOGRAPHY', 'MEDIA', 'FORMS', 'TABLES'],
+    'global.css':     ['DESIGN TOKENS', 'ELEMENT DEFAULTS'],
+    'layouts.css':    ['CONTAINERS', 'PAGE LAYOUTS', 'GRIDS', 'SECTIONS', 'RESPONSIVE OVERRIDES'],
+    'overrides.css':  ['UTILITIES', 'PAGE-SPECIFIC', 'PRINT'],
+    /* components.css: alphabetical order (checked dynamically) */
+};
+
+/* Canonical token sub-category order within :root in global.css */
+const TOKEN_CATEGORY_ORDER = [
+    'Colors',
+    'Typography',
+    'Spacing',
+    'Borders',
+    'Shadows',
+    'Animations',
+    'Z-index',
+    'Breakpoints',
+];
 
 /* Secret detection patterns (key = value with string literal) */
 const SECRET_PATTERNS = [
@@ -282,6 +307,152 @@ function findFiles(dir, extensions) {
 
     walk(dir);
     return results.sort();
+}
+
+/* ── CSS section-order helpers ──────────────────────────────────────────── */
+
+/**
+ * Extract major section headers (3-line === pattern) from CSS content.
+ * Returns array of { name, line } objects.
+ */
+function extractMajorSections(content) {
+    const sections = [];
+    const lines = content.split('\n');
+
+    for (let i = 1; i < lines.length - 1; i++) {
+        const prev = lines[i - 1].trim();
+        const curr = lines[i].trim();
+        const next = lines[i + 1] ? lines[i + 1].trim() : '';
+
+        if (/^\/\*\s*={3,}\s*$/.test(prev) && /^={3,}\s*\*\/\s*$/.test(next) && curr.length > 0) {
+            sections.push({ name: curr, line: i + 1 });
+        }
+    }
+
+    return sections;
+}
+
+/**
+ * Check major section ordering within a canonical CSS file.
+ */
+function checkCssSectionOrder(filepath, content) {
+    const issues = [];
+    const basename = path.basename(filepath);
+    const sections = extractMajorSections(content);
+
+    if (sections.length <= 1) return issues;
+
+    if (basename === 'components.css') {
+        /* Alphabetical order check for component sections */
+        for (let i = 1; i < sections.length; i++) {
+            if (sections[i].name.localeCompare(sections[i - 1].name) < 0) {
+                issues.push({
+                    line: sections[i].line,
+                    col: 1,
+                    severity: WARN,
+                    message: `Section '${sections[i].name}' after '${sections[i - 1].name}' — component sections should be alphabetical`,
+                    rule: 'css-section-order',
+                    skill: RULE_SKILLS['css-section-order'],
+                });
+            }
+        }
+    } else if (FILE_SECTION_ORDER[basename]) {
+        const expected = FILE_SECTION_ORDER[basename];
+        let lastKnownIdx = -1;
+        let lastKnownName = '';
+
+        for (const section of sections) {
+            const expectedIdx = expected.indexOf(section.name);
+            if (expectedIdx >= 0) {
+                if (expectedIdx < lastKnownIdx) {
+                    issues.push({
+                        line: section.line,
+                        col: 1,
+                        severity: WARN,
+                        message: `Section '${section.name}' after '${lastKnownName}' — expected: ${expected.join(' → ')}`,
+                        rule: 'css-section-order',
+                        skill: RULE_SKILLS['css-section-order'],
+                    });
+                }
+                lastKnownIdx = expectedIdx;
+                lastKnownName = section.name;
+            }
+        }
+    }
+
+    return issues;
+}
+
+/**
+ * Check token sub-category ordering within :root in global.css.
+ * Detects minor section comments (/* Name ...\n ...--- * /) and
+ * verifies they follow TOKEN_CATEGORY_ORDER.
+ */
+function checkTokenCategoryOrder(filepath, content) {
+    const issues = [];
+    if (path.basename(filepath) !== 'global.css') return issues;
+
+    const lines = content.split('\n');
+    let inRoot = false;
+    let braceDepth = 0;
+    let rootDone = false;
+    let lastCatIdx = -1;
+    let lastCatName = '';
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        /* Detect :root { */
+        if (!inRoot && !rootDone && /:\s*root\b/.test(line)) {
+            inRoot = true;
+        }
+
+        if (!inRoot) continue;
+
+        /* Track brace depth to know when :root ends */
+        for (const ch of line) {
+            if (ch === '{') braceDepth++;
+            if (ch === '}') {
+                braceDepth--;
+                if (braceDepth <= 0) {
+                    inRoot = false;
+                    rootDone = true;
+                }
+            }
+        }
+
+        if (!inRoot && rootDone) break;
+
+        /* Look for minor section comments: line has slash-star Text, next line has --- */
+        const commentMatch = line.match(/\/\*\s*(.+?)\s*$/);
+        if (commentMatch && i + 1 < lines.length) {
+            const nextLine = lines[i + 1].trim();
+            if (/^-{3,}\s*\*\//.test(nextLine)) {
+                const commentText = commentMatch[1].trim();
+                /* Match against canonical categories by prefix */
+                const catIdx = TOKEN_CATEGORY_ORDER.findIndex((cat) =>
+                    commentText.toLowerCase().startsWith(cat.toLowerCase()),
+                );
+
+                if (catIdx >= 0) {
+                    if (catIdx < lastCatIdx) {
+                        issues.push({
+                            line: i + 1,
+                            col: 1,
+                            severity: WARN,
+                            message: `Token category '${commentText}' after '${lastCatName}' — expected: ${TOKEN_CATEGORY_ORDER.join(' → ')}`,
+                            rule: 'token-category-order',
+                            skill: RULE_SKILLS['token-category-order'],
+                        });
+                    }
+                    lastCatIdx = catIdx;
+                    lastCatName = commentText;
+                }
+            }
+        }
+    }
+
+    return issues;
 }
 
 /* ── CSS checker ────────────────────────────────────────────────────────── */
@@ -616,6 +787,10 @@ function checkCSS(filepath, content) {
             });
         }
     }
+
+    /* ── Section and token category order (pre-pass on raw content) ── */
+    issues.push(...checkCssSectionOrder(filepath, content));
+    issues.push(...checkTokenCategoryOrder(filepath, content));
 
     return issues;
 }

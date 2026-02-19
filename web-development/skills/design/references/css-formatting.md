@@ -86,16 +86,16 @@ Order properties by group. 5 groups, always in this order. This makes it easy to
   flex-direction: column;
   grid-template-columns: 1fr 1fr;
   width: 100%;
-  max-width: var(--container-md);
+  max-width: var(--breakpoint-lg);
   height: auto;
-  margin: var(--space-md);
-  padding: var(--space-lg);
+  margin: var(--space-4);
+  padding: var(--space-8);
   overflow: hidden;
   box-sizing: border-box;
 
   /* 3. Typography */
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-normal);
   line-height: var(--line-height-normal);
   text-align: left;
@@ -113,7 +113,7 @@ Order properties by group. 5 groups, always in this order. This makes it easy to
   visibility: visible;
 
   /* 5. Animation */
-  transition: all var(--duration-fast) var(--easing-standard);
+  transition: all var(--duration-fast) var(--easing-default);
   animation: fade-in var(--duration-normal);
   will-change: transform;
 }
@@ -142,12 +142,12 @@ Order properties by group. 5 groups, always in this order. This makes it easy to
 .card {
   display: flex;
   flex-direction: column;
-  padding: var(--space-md);
+  padding: var(--space-4);
   background: var(--color-surface);
 }
 
 /* ❌ Bad - Multiple properties on one line */
-.card { display: flex; flex-direction: column; padding: var(--space-md); }
+.card { display: flex; flex-direction: column; padding: var(--space-4); }
 ```
 
 ### Consistent Indentation
@@ -179,7 +179,7 @@ Use 2 spaces for indentation (configurable, but be consistent).
 ```css
 /* ✅ Breathing room between rules */
 .header {
-  padding: var(--space-lg);
+  padding: var(--space-8);
   background: var(--color-primary);
 }
 
@@ -190,12 +190,12 @@ Use 2 spaces for indentation (configurable, but be consistent).
 
 .header__subtitle {
   font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
 }
 
 /* ❌ Cramped - hard to scan */
 .header {
-  padding: var(--space-lg);
+  padding: var(--space-8);
   background: var(--color-primary);
 }
 .header__title {
@@ -204,7 +204,7 @@ Use 2 spaces for indentation (configurable, but be consistent).
 }
 .header__subtitle {
   font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
 }
 ```
 
@@ -214,13 +214,13 @@ Use 2 spaces for indentation (configurable, but be consistent).
 /* ✅ Space after colon */
 .element {
   color: var(--color-text);
-  margin: var(--space-md);
+  margin: var(--space-4);
 }
 
 /* ❌ No space after colon */
 .element {
   color:var(--color-text);
-  margin:var(--space-md);
+  margin:var(--space-4);
 }
 ```
 
@@ -302,20 +302,20 @@ Utilities are exceptions, not architecture. They live in `overrides.css`, use th
 ```css
 /* ✅ Uses design tokens */
 .component {
-  padding: var(--space-md);
-  font-size: var(--font-size-body);
-  color: var(--color-text-primary);
+  padding: var(--space-4);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
   background: var(--color-surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  transition: all var(--duration-fast) var(--easing-standard);
+  transition: all var(--duration-fast) var(--easing-default);
 }
 
 /* ❌ Hardcoded values */
 .component {
-  padding: 16px;           /* Should be var(--space-md) */
-  font-size: 14px;         /* Should be var(--font-size-body) */
-  color: #333333;          /* Should be var(--color-text-primary) */
+  padding: 16px;           /* Should be var(--space-4) */
+  font-size: 14px;         /* Should be var(--font-size-base) */
+  color: #333333;          /* Should be var(--color-text) */
   background: #ffffff;     /* Should be var(--color-surface) */
   border-radius: 8px;      /* Should be var(--radius-md) */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);  /* Should be var(--shadow-sm) */
@@ -392,7 +392,7 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
 .grid {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-4);
 }
 
 /* Tablet and up */
@@ -403,14 +403,14 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
   }
 
   .grid__item {
-    flex-basis: calc(50% - var(--space-md));
+    flex-basis: calc(50% - var(--space-4));
   }
 }
 
 /* Desktop and up */
 @media (min-width: 1024px) {
   .grid__item {
-    flex-basis: calc(33.333% - var(--space-md));
+    flex-basis: calc(33.333% - var(--space-4));
   }
 }
 ```
@@ -444,18 +444,18 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
 
 ```css
 .header {
-  padding: var(--space-sm);
+  padding: var(--space-2);
 }
 
 @media (min-width: 768px) {
   .header {
-    padding: var(--space-md);
+    padding: var(--space-4);
   }
 }
 
 @media (min-width: 1024px) {
   .header {
-    padding: var(--space-lg);
+    padding: var(--space-8);
   }
 }
 ```
@@ -476,7 +476,7 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
 /* ✅ Comment for workarounds/hacks */
 .element {
   /* Safari fix for flexbox gap support */
-  margin: calc(var(--space-md) / 2 * -1);
+  margin: calc(var(--space-4) / 2 * -1);
 }
 
 /* ✅ Comment for magic numbers that can't be avoided */
@@ -495,7 +495,7 @@ p { margin: 1em 0; }  /* Affects ALL paragraphs */
   background: var(--color-primary);
 
   /* Add padding */
-  padding: var(--space-md);
+  padding: var(--space-4);
 }
 ```
 

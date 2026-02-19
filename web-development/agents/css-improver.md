@@ -50,6 +50,7 @@ You run standalone — invoke directly on any web project with CSS files.
 - `node <team-scripts>/sort-css-properties.js <path>` (pre-built property sorter)
 - `node <team-scripts>/unit-zero.js <path>` (strip redundant units from zero values)
 - `node <team-scripts>/fix-imports-order.js <path>` (reorder CSS imports to cascade order)
+- `node <team-scripts>/scaffold-css.js <path>` (copy 5 template CSS files to target directory)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. You CAN run pre-built team scripts that ship with the pipeline.
 
@@ -107,12 +108,23 @@ Assess the current state and determine your approach:
 
 | Condition | Action |
 |-----------|--------|
+| **0 CSS files** | Scaffold from templates first (see below), then proceed normally. |
 | **8+ CSS files** OR **0 canonical names** | Create a Restructure Plan before any other work. |
 | **6-7 files** | Merge down to ≤5 before other fixes. |
 | **≤5 files, correct names** | Proceed normally. |
 | **≤5 files, wrong names** | Rename to canonical names first. |
 
 **Canonical names:** `reset.css`, `global.css`, `layouts.css`, `components.css`, `overrides.css`
+
+**Scaffolding from scratch:** If starting with 0 canonical CSS files, run the scaffold script to create the skeleton:
+
+```bash
+node <team-scripts>/scaffold-css.js <project-styles-directory>
+```
+
+This copies the 5 template files with canonical section headers and default token values. Never overwrites existing files. Then merge any existing CSS rules into the correct files and sections.
+
+For the canonical section structure of each file, read the templates at `~/.claude/skills/web-css/templates/`.
 
 ### Restructure Plan (when triggered)
 

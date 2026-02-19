@@ -38,6 +38,7 @@ $ARGUMENTS
 - `node sort-css-properties.js <path>` (CSS property sorter)
 - `node unit-zero.js <path>` (strip redundant units from zero)
 - `node fix-imports-order.js <path>` (reorder CSS imports to cascade order)
+- `node scaffold-css.js <path>` (copy 5 template CSS files to target directory)
 - `node strip-debug.js <path>` (remove console/debugger statements)
 - `node fix-double-equals.js <path>` (== to ===, != to !==)
 - `node fix-var.js <path>` (var to let)
