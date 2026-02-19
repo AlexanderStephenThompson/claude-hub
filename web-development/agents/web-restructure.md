@@ -100,7 +100,7 @@ Use Glob to find all `.ts`, `.tsx`, `.js`, `.jsx`, `.css`, `.html` files. Exclud
 
 **1d. Root-level audit:**
 
-List every file and directory at the project root. Classify each against this allowlist:
+Use Glob with pattern `*` at the project root to find every file and directory. Classify each against this allowlist:
 
 ```
 ALLOWED AT ROOT
@@ -334,7 +334,7 @@ If any are missing, add them. This ensures output directories are invisible in t
 
 For each item classified as `stale-source` (e.g., `lib/`, `app/`):
 - If the directory is empty → delete it
-- If it still has files → STOP. List the remaining files as unmoved. Do not delete a non-empty source dir.
+- If it still has files → STOP. Use Glob to show the remaining files as unmoved. Do not delete a non-empty source dir.
 
 **Step 3 — Rename misnamed dirs:**
 
