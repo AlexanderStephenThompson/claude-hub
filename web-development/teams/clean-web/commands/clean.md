@@ -20,12 +20,25 @@ $ARGUMENTS
 
 ---
 
+## Tool Usage — MANDATORY
+
+Use the right tool for each job. **Never use Bash for file operations or text parsing.** Paths with special characters (`&`, spaces, parentheses) will break bash commands silently.
+
+| Task | Use | Never |
+|------|-----|-------|
+| Find files | **Glob** | `find`, `ls`, `git ls-files` |
+| Search file contents | **Grep** | `grep`, `rg`, `cat \| grep` |
+| Read files or script output | **Read** | `cat`, `head`, `tail`, `wc -l` |
+| Parse/count script results | **Read** the output, then analyze it yourself | `grep -oP`, `sed`, `sort \| uniq -c`, `awk` |
+| Git operations | **Bash** | — (correct use) |
+| Run scripts (check.js, Python) | **Bash** | — (correct use) |
+
 ## Operating Rules
 
 1. **Autonomous execution** — Agents run without interruption unless they hit a true blocker
 2. **Commit per phase** — Each agent commits its changes phase by phase before handing off
 3. **Skip what doesn't apply** — Detect project shape first, skip agents with no work to do
-4. **One question max** — Only ask the user if there's a hard blocker (build failure that can't be auto-fixed, ambiguous root items)
+4. **One question max** — Only ask the user if there's a hard blocker (build failure that can't be auto-fix, ambiguous root items)
 5. **Pass context forward** — Extract key facts from each agent's handoff and pass to the next agent
 6. **Don't change behavior** — Every agent preserves existing functionality. The page must look and work identical after each step.
 
@@ -130,6 +143,8 @@ python <team-scripts>/detect_dead_code.py <project-path> 2>&1 || true
 ```
 
 **Run these sequentially, not in parallel.** If any script fails or returns a non-zero exit code when run in parallel, Claude Code cancels the sibling calls (`Sibling tool call errored`). Sequential execution avoids this.
+
+**To parse results:** Read the Bash output directly — you already have it from the tool result. Do NOT re-run the scripts or pipe output through `grep`/`sed`/`awk`/`sort | uniq -c`. Just read the output and categorize the findings yourself.
 
 **Parse results into agent-specific findings:**
 
