@@ -6,15 +6,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **claude-hub** is a Claude Code customizations repository organized by domain. Everything deploys flat to `~/.claude/` — the domain folders are for human navigation only.
 
-### Domain Structure
+### Top-Level Structure
+
+| Folder | Purpose |
+|--------|---------|
+| `foundations/` | Universal skills (code-quality, architecture, security, documentation, explaining, organize), commands, agents, templates |
+| `domains/` | Project-specific skill domains (below) |
+
+### Domains (`domains/`)
 
 | Domain | Contents |
 |--------|----------|
-| `foundations/` | Universal skills, commands, agents, templates |
 | `web-development/` | Web skills, agents, clean-web team |
-| `world-building/` | Unity + VRChat skills |
-| `data/` | Data engineering skills (Python, SQL, pipelines, AWS, IaC) |
-| `productivity/` | Thinking and communication tools (explaining, organize skills; improve-prompt, explain, organize commands) |
+| `world-building/` | Unity + VRChat skills, organized by platform (unity/, vr-chat/) |
+| `data/` | Data skills by discipline: analytics (Python, SQL), engineering (pipelines, AWS, IaC), science (ML, stats — future) |
 
 ### Deployment (flat)
 
@@ -60,11 +65,11 @@ Deploy covers: flat files (skills, agents, commands) + `claude plugin marketplac
 
 ### Analysis Scripts (clean-web)
 ```bash
-node web-development/teams/clean-web/scripts/check.js                           # Design system compliance (38 rules)
-node web-development/teams/clean-web/scripts/check.js --validate-registry       # Verify rule ↔ skill links
-python web-development/teams/clean-web/scripts/analyze_complexity.py <path>     # High-complexity functions
-python web-development/teams/clean-web/scripts/analyze_dependencies.py <path>   # Circular dependencies
-python web-development/teams/clean-web/scripts/detect_dead_code.py <path>       # Unused code
+node domains/web-development/teams/clean-web/scripts/check.js                           # Design system compliance (38 rules)
+node domains/web-development/teams/clean-web/scripts/check.js --validate-registry       # Verify rule ↔ skill links
+python domains/web-development/teams/clean-web/scripts/analyze_complexity.py <path>     # High-complexity functions
+python domains/web-development/teams/clean-web/scripts/analyze_dependencies.py <path>   # Circular dependencies
+python domains/web-development/teams/clean-web/scripts/detect_dead_code.py <path>       # Unused code
 ```
 
 ### Rule ↔ Skill Sync
@@ -81,9 +86,9 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 | Change Type | Edit Location | Then |
 |-------------|---------------|------|
 | Foundation skills | `foundations/skills/<skill>/` | `/sync deploy` |
-| Web skills | `web-development/skills/<skill>/` | `/sync deploy` |
-| World-building skills | `world-building/skills/<skill>/` | `/sync deploy` |
-| Data skills | `data/skills/<skill>/` | `/sync deploy` |
+| Web skills | `domains/web-development/skills/<skill>/` | `/sync deploy` |
+| World-building skills | `domains/world-building/<platform>/skills/<skill>/` | `/sync deploy` |
+| Data skills | `domains/data/<sub-category>/skills/<skill>/` | `/sync deploy` |
 | Teams | `*/teams/<team>/` | Update both `plugin.json` AND `.claude-plugin/marketplace.json` (versions must match), then `/sync push` |
 | Agents | `*/agents/` | `/sync deploy` |
 | Commands | `*/commands/` | `/sync deploy` |
@@ -97,5 +102,7 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 
 - Commands: lowercase (`commit.md`, `clean.md`)
 - Agents: kebab-case (`new-codebase-scout.md`)
-- Skills: `<domain>/skills/<name>/SKILL.md` as main file
+- Skills: `<domain>/skills/<name>/SKILL.md` as main file (some domains nest by sub-category: `<domain>/<sub-category>/skills/<name>/`)
 - Domain folders: lowercase with hyphens (`foundations`, `web-development`, `world-building`, `data`, `productivity`)
+- References: kebab-case (`master-user-profile.md`)
+- Architecture references: centralized in `foundations/skills/architecture/references/` (domain-specific files like `web.md`, `unity.md`, `data-iac.md` live here, not in each domain)

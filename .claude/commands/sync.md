@@ -19,7 +19,7 @@ Sync customizations between this repo and `~/.claude/`. Three modes:
 
 | Name | Path |
 |------|------|
-| Repo | `c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub` |
+| Repo | `c:\Users\Alexa\OneDrive\Desktop\_Personal\Utility\Tools\claude-hub` |
 | Claude | `C:\Users\Alexa\.claude` |
 
 ---
@@ -58,9 +58,9 @@ Handles everything: flat files, plugin marketplace, and plugin installation. All
 One script that deploys flat files, discovers teams, clears stale plugin cache, and counts results:
 
 ```powershell
-$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Personal\claude-hub'
+$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Utility\Tools\claude-hub'
 $claude = 'C:\Users\Alexa\.claude'
-$domains = @('foundations', 'web-development', 'world-building', 'data', 'productivity')
+$domains = @('foundations', 'domains\web-development', 'domains\world-building', 'domains\data')
 
 # --- Deploy flat files ---
 Remove-Item "$claude\skills\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -73,13 +73,15 @@ foreach ($d in $domains) {
         Where-Object { $_.Name -eq 'skills' } |
         ForEach-Object { Copy-Item "$($_.FullName)\*" "$claude\skills\" -Recurse -Force }
 
-    # Agents (flat)
-    $a = Join-Path $repo "$d\agents"
-    if (Test-Path $a) { Get-ChildItem "$a\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\agents\" -Force }
+    # Agents (recursive — finds agents/ at any depth)
+    Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
+        Where-Object { $_.Name -eq 'agents' } |
+        ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\agents\" -Force }
 
-    # Commands (flat)
-    $c = Join-Path $repo "$d\commands"
-    if (Test-Path $c) { Get-ChildItem "$c\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\commands\" -Force }
+    # Commands (recursive — finds commands/ at any depth)
+    Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
+        Where-Object { $_.Name -eq 'commands' } |
+        ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\commands\" -Force }
 }
 
 # --- Discover teams ---
