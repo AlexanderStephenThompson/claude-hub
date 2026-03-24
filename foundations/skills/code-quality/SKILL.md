@@ -9,26 +9,35 @@ description: Non-negotiable code quality standards for testing, structure, namin
 
 ---
 
-## Testing Standards
+## Test-Driven Development: 4-Layer Validation Framework
 
-### The Testing Pyramid
+### Layer 1 — Unit Tests (does the logic work?)
 
-| Layer | What it Tests | Speed | Purpose |
-|-------|---------------|-------|---------|
-| **Unit Tests** | Individual functions/components | Fast | TDD lives here. Catches logic errors early. |
-| **Integration Tests** | Components working together | Medium | Catches connection and data flow issues. |
-| **E2E Tests** | Full user flows | Slowest | Confirms the system does the thing. |
-| **Human Review** | Visual correctness, UX | Manual | Irreducible quality judgment. |
+Test individual functions, calculations, state transformations, and data formatting in isolation. Pure input/output — given this input, do I get this output? Mock everything around the piece being tested. These are fast, cheap, and should be the most numerous. Covers: happy path, the specific case you're building for, and edge cases.
 
-### Test-Driven Development (TDD)
+### Layer 2 — Integration Tests (do the pieces connect?)
 
-**TDD is mandatory at the unit test level:**
+Test how multiple pieces work together. API calls return expected shapes, components render with correct props, database queries return the right data, hooks and state management wire up properly, modules pass data between each other correctly. These catch the "works alone, breaks together" problems.
 
-1. **Tests are written BEFORE implementation** — Never implement without a failing test first
-2. **Red -> Green -> Refactor is mandatory** — No exceptions
-3. **Tests define behavior** — Implementation serves tests
-4. **Small incremental steps** — Tiny, safe changes over large speculative edits
-5. **Tests are the source of truth** — If it's not tested, it doesn't work
+### Layer 3 — Behavioral Tests (does the flow work?)
+
+Test the full user-facing flow end to end using automated tools like Playwright or similar. Simulate real interactions — click this, expect that, navigate here, form submits correctly, data appears where it should. Also test adjacent flows to make sure nothing regressed. These are slower and more brittle, but they catch what the other layers miss.
+
+### Layer 4 — Human Verification (does it actually feel right?)
+
+Everything automated tests literally cannot judge: does it look correct visually, does the animation feel smooth, does the UX make intuitive sense, does the data on screen match real-world expectations, does it work on your actual device and screen size. After layers 1-3 pass, generate a specific manual checklist based on what changed — not generic checks. If the work touched a chart component, ask the human to eyeball the chart. If it touched an API integration, ask them to verify real data flows through. If it touched layout, ask them to check it at their actual screen width.
+
+### The TDD Principle
+
+In true TDD, layers 1-3 are written before any implementation code. All tests should fail initially — that's the point. The tests define what you're building. Then you write code until they pass. Layer 4 is the final gate after everything else is green.
+
+**The cycle for every change:**
+
+1. **Red** — Write a failing test
+2. **Green** — Write the minimum code to make it pass
+3. **Refactor** — Clean up without changing behavior
+4. Repeat at Layer 1 until the unit is complete, then Layer 2, then Layer 3
+5. Layer 4 is the final gate after all automated layers are green
 
 **When in doubt:** Slow down, write the test, make the smallest possible change.
 
@@ -64,28 +73,6 @@ def test_apply_discount_reduces_total():
 - **Deterministic** — Same input, same result. No randomness, no clock dependency, no network calls.
 - **Fast** — Unit tests run in milliseconds. If they're slow, they're not unit tests.
 - **Readable** — A failing test name should tell you what broke without reading the test body
-
-### Unit Tests
-- Foundation of testing
-- Run in milliseconds
-- Test one function/component in isolation
-- Mock external dependencies, not internal logic
-
-### Integration Tests
-- Verify modules work together
-- Use test databases or containers, not mocks
-- Reset state between tests
-
-### E2E Tests
-- Critical user paths only
-- Keep the suite small and focused
-- Accept some flakiness, build in retries
-
-### Human Review
-- Does it work correctly?
-- Does it look right?
-- Does it feel good?
-- Is it accessible?
 
 ---
 
@@ -135,6 +122,36 @@ Every function, class, and module should have one reason to change.
 
 **Smell:** "This function handles validation AND formatting AND saving."
 **Fix:** Three functions — `validate`, `format`, `save`.
+
+### Import Hygiene
+
+- **No unused imports** — delete them, don't comment them out
+- **No wildcard imports** — `from x import *` hides where names come from
+- **Group imports** — stdlib, then external, then internal, separated by a blank line
+
+```python
+# Bad — unordered, wildcard, unused
+from utils import *
+import os
+import requests
+from collections import OrderedDict  # unused
+
+# Good — grouped, explicit, no dead weight
+import os
+
+import requests
+
+from app.models import User
+from app.services import send_welcome_email
+```
+
+### Dead Code
+
+If it's not called, it doesn't exist. Delete it — version control remembers.
+
+- **No commented-out code** — `// old version`, `# was: ...`, `/* removed */` are clutter
+- **No unreachable branches** — dead `else` after an unconditional return, unused variables
+- **No placeholder comments** — `// TODO: removed` or `// no longer needed` just delete the line
 
 ### Explicit Over Clever
 
@@ -397,6 +414,25 @@ create_user(data, send_welcome=True, require_verification=False)
 
 If the language doesn't support named parameters, use an options object/struct.
 
+### Immutability by Default
+
+Default to immutable. Only use mutable bindings when reassignment is genuinely needed.
+
+- Use `const` (JS/TS), `final` (Java/Dart), `readonly` (C#), or equivalent
+- `let` / `var` only when the value must change (loop counters, accumulators)
+- Don't mutate function arguments — return new values instead
+
+```python
+# Bad — mutates the input
+def apply_discount(cart):
+    cart["total"] *= 0.8
+    return cart
+
+# Good — returns a new value
+def apply_discount(cart):
+    return {**cart, "total": cart["total"] * 0.8}
+```
+
 ---
 
 ## Documentation
@@ -499,11 +535,13 @@ cascade_position = file_index + 1
 
 ## Quick Reference
 
-- [ ] Tests written BEFORE implementation
-- [ ] Red -> Green -> Refactor followed
+- [ ] Layers 1-3 written BEFORE implementation (tests fail first, then code passes them)
+- [ ] Layer 1: Unit tests cover logic, happy path, and edge cases
+- [ ] Layer 2: Integration tests verify pieces connect correctly
+- [ ] Layer 3: Behavioral tests simulate real user flows end to end
+- [ ] Layer 4: Human verification checklist generated from what changed
 - [ ] Each test has one concept, Arrange-Act-Assert structure
 - [ ] Tests are isolated, deterministic, fast
-- [ ] All tests pass, edge cases covered
 - [ ] Functions are short, single-responsibility
 - [ ] Max 3 levels of nesting, early returns used
 - [ ] Errors fail fast at boundaries with specific types
@@ -517,6 +555,9 @@ cascade_position = file_index + 1
 - [ ] Every literal passes the extraction test — named constant if not 0/1/True/False/None/""
 - [ ] Constants at module top, grouped by purpose
 - [ ] Boolean parameters use named args or options
+- [ ] Variables are immutable by default (`const`/`final`/`readonly`)
+- [ ] No unused or wildcard imports
+- [ ] No commented-out code or dead code
 - [ ] All public APIs have complete docstrings
 - [ ] Comments pass the delete test — only explain why, never what
 
@@ -547,6 +588,14 @@ These rules are deterministically checked by `check.js` (clean-team). When updat
 - `assets/tdd-checklist.md` — Step-by-step TDD workflow checklist
 - `assets/docstring-templates.md` — Copy-paste docstring templates (Python, JS/TS, C#, Rust, Go)
 - `assets/code-review-checklist.md` — Comprehensive code review checklist
+
+## Templates
+
+Domain-specific code quality extensions. Each file scaffolds the same categories (structure, naming, testing, error handling, performance) for a project type:
+
+- `templates/web-development.md` — Web-specific quality rules
+- `templates/data.md` — Data pipeline and analytics quality rules
+- `templates/world-building.md` — Unity and VRChat quality rules
 
 ## Scripts
 
