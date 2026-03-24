@@ -40,6 +40,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Team | Agents | Workflow |
 |------|--------|----------|
 | clean-web | 4 | Web Restructure → CSS Improver → HTML Improver → Code Improver |
+| clean-data | 4 | Data Restructure → SQL Improver → Python Improver → Pipeline Improver |
 
 ### When to Use
 
@@ -48,6 +49,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Web project needs full cleanup (structure + CSS + HTML + code) | `/clean-web:clean` |
 | CSS file sprawl (>5 files) | `/clean-web:clean` |
 | Scoped cleanup (e.g., just src/) | `/clean-web:clean src/` |
+| Data project needs cleanup (SQL + Python + pipeline + IaC) | `/clean-data:clean` |
+| ETL code has iterrows, bare excepts, hardcoded dates | `/clean-data:clean` |
+| SQL queries need optimization (SELECT *, no CTEs) | `/clean-data:clean` |
 
 ## Common Commands
 
@@ -70,6 +74,14 @@ node domains/web-development/teams/clean-web/scripts/check.js --validate-registr
 python domains/web-development/teams/clean-web/scripts/analyze_complexity.py <path>     # High-complexity functions
 python domains/web-development/teams/clean-web/scripts/analyze_dependencies.py <path>   # Circular dependencies
 python domains/web-development/teams/clean-web/scripts/detect_dead_code.py <path>       # Unused code
+```
+
+### Analysis Scripts (clean-data)
+```bash
+python domains/data/teams/clean-data/scripts/check_data.py                              # Data project compliance (26 rules)
+python domains/data/teams/clean-data/scripts/check_data.py --validate-registry          # Verify rule -> skill links
+python domains/data/teams/clean-data/scripts/strip_print.py <path>                      # Remove print() from production code
+python domains/data/teams/clean-data/scripts/fix_sql_keywords.py <path>                 # Uppercase SQL keywords
 ```
 
 ### Rule ↔ Skill Sync

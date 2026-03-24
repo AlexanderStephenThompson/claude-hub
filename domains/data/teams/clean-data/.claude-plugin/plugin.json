@@ -1,0 +1,7 @@
+{
+  "name": "clean-data",
+  "version": "1.0.0",
+  "description": "A 4-agent pipeline for cleaning data projects: data-restructure, sql-improver, python-improver, pipeline-improver. Includes check_data.py (26 rules) and deterministic fix scripts.",
+  "agentDir": "../agents",
+  "commandDir": "../commands"
+}
