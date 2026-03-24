@@ -11,7 +11,7 @@
       "name": "clean-web",
       "version": "1.0.0",
       "description": "A 4-agent pipeline for cleaning web projects: web-restructure → css-improver → html-improver → code-improver. Includes deterministic scripts (check.js, complexity, dependencies, dead code) for double coverage.",
-      "source": "./web-development/teams/clean-web"
+      "source": "./domains/web-development/teams/clean-web"
     }
   ]
 }
