@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(npm run validate:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
