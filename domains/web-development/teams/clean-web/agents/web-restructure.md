@@ -26,6 +26,13 @@ You are the **Web Restructure** agent — step 1 of 4 in the clean-web pipeline.
 
 You don't detect whether this is a web project — the orchestrator already decided that by invoking you. You don't ask whether to restructure — the orchestrator already decided that too. You just do the work.
 
+**CRITICAL: Never skip restructuring.** The orchestrator invoked you because the project has HTML/CSS/JS files. That's sufficient. You organize whatever source files exist. It doesn't matter if:
+- There's no `package.json` (vanilla JS projects need architecture too)
+- There are no ES module imports (script-tag projects have architecture via load order)
+- There's no build step (static files still have layers)
+- The project has more content than code (content and application code coexist — restructure the application code, leave content in place)
+- The project looks like "just a static site" (if it has JS logic files, it has architecture)
+
 ---
 
 ## The 3-Tier Architecture
@@ -243,6 +250,64 @@ Assign each file to its correct tier.
 | Static served files (favicon, manifest) | `public/` |
 | Documentation, changelogs, ADRs | `Documentation/` or project root |
 
+### Vanilla JS / Script-Tag Projects
+
+Not all web projects use ES modules, bundlers, or frameworks. Vanilla JS projects with `<script>` tags are still web projects that benefit from 3-tier organization.
+
+**How to detect dependency direction without imports:**
+
+In script-tag projects, the `<script>` order in HTML defines the dependency graph. Files loaded first are dependencies of files loaded later. This maps directly to tiers:
+
+```html
+<!-- Data tier: loaded first (no dependencies) -->
+<script src="data/config.js"></script>
+<script src="data/api-client.js"></script>
+
+<!-- Logic tier: loaded second (depends on data) -->
+<script src="logic/validators.js"></script>
+<script src="logic/state-manager.js"></script>
+
+<!-- Presentation tier: loaded last (depends on logic + data) -->
+<script src="ui/renderer.js"></script>
+<script src="ui/event-handlers.js"></script>
+```
+
+**Placement for vanilla JS:**
+
+| File Pattern | Tier | Examples |
+|-------------|------|---------|
+| DOM manipulation, rendering, templates, event handlers | `source/01-presentation/` | `renderer.js`, `wiki-template.js`, `page-builder.js` |
+| Business logic, data processing, helpers, orchestrators | `source/02-logic/` | `search.js`, `state-manager.js`, `formatter.js` |
+| API clients, data fetchers, JSON data files, config | `source/03-data/` | `api-client.js`, `prompts-data.js`, `config.js` |
+| Shared navigation, layout templates | `source/01-presentation/shared/` | `wiki-nav.js`, `sidebar.js` |
+
+After moving files, update all `<script src="...">` paths in HTML files to point to the new locations. This is the script-tag equivalent of updating import paths.
+
+### Content-Heavy Projects (Wikis, Docs, Multi-Page Sites)
+
+When a project has both **static content pages** (articles, docs, reference pages) and **application code** (JS modules, templates, styles), these are separate concerns:
+
+- **Application code** (JS, CSS, shared templates) gets restructured into `source/` tiers
+- **Content pages** (HTML articles, wiki pages, docs) stay in their existing domain structure
+
+Do NOT move content pages into `source/01-presentation/`. They are content, not application code. A wiki with 170 HTML articles and 50 JS files should have its JS organized into tiers while the articles remain in their topic-based folder structure.
+
+```
+project-root/
+  source/                    # Application code (restructured)
+    01-presentation/        # Renderers, templates, nav, styles
+    02-logic/               # Search, state, helpers
+    03-data/                # API clients, data files, config
+  topics/                   # Content pages (untouched)
+    javascript/
+    python/
+    ...
+  tools/                    # Sub-applications (restructure individually)
+    ai-prompts/
+      source/               # This sub-app gets its own tiers
+  index.html                # Entry points reference both content and source/
+```
+
 ### Common Judgment Calls
 
 | Question | Answer |
@@ -254,6 +319,9 @@ Assign each file to its correct tier.
 | Types shared across tiers? | Put them in the tier that owns the concept. If truly shared, `02-logic/domain/`. |
 | Schemas in `public/`? | Not static assets — move to `03-data/schemas/` (storage) or `02-logic/validators/` (validation). |
 | Test files? | Unit tests co-locate with source (same folder). Integration/E2E tests go to `tests/`. |
+| Vanilla JS with `<script>` tags? | Tier placement applies the same way. Update `<script src>` paths instead of ES import paths. Load order = dependency direction. |
+| Content pages (wiki articles, docs)? | Leave in place. Only restructure the application code (JS/CSS/templates). Content has its own domain-based organization. |
+| Sub-applications within a larger project? | Each sub-app with its own JS modules can get its own `source/` tier structure. The parent project may not need tiers if it's just content + routing. |
 
 **Output:** Produce a mapping table:
 
@@ -364,15 +432,23 @@ Move config and test files to their appropriate locations. Update imports.
 
 **Commit:** `refactor(structure): move cross-cutting files to source/config/ and tests/`
 
-### Import Update Process
+### Import / Reference Update Process
 
 After each batch of moves:
 
+**For ES module projects (import/export):**
 1. **Find all broken imports** — Grep for the old path across all `.ts`, `.tsx`, `.js`, `.jsx` files
 2. **Update each import** — Replace old path with new path
 3. **Check for path aliases** — If the project uses `@/`, `~/`, or tsconfig paths, update those too
 4. **Update tsconfig paths** — If `tsconfig.json` has `paths` or `baseUrl`, update them
 5. **Update vite/webpack aliases** — If the bundler config has path aliases, update them
+
+**For script-tag projects (no ES modules):**
+1. **Find all `<script src="...">` tags** — Grep for old paths across all `.html` files
+2. **Update each src attribute** — Replace old path with new path
+3. **Find all `<link href="...">` tags** — Update CSS references too
+4. **Verify load order** — After updating paths, ensure scripts still load in dependency order: data tier first, logic tier second, presentation tier last
+5. **Check for dynamic script loading** — Grep for `document.createElement('script')` or similar patterns that reference old paths
 
 ---
 
@@ -463,19 +539,25 @@ Only rename files where the issue is clear (generic names, mismatched exports, i
 
 Confirm nothing broke.
 
-**7a. Build check:**
+**7a. Build / load check:**
+
+For bundled projects (package.json exists):
 ```bash
 npm run build 2>&1 || echo "BUILD_FAILED"
 ```
 
-If build fails, fix the broken imports. Don't proceed with failures.
+For static/script-tag projects (no package.json): verify all `<script src>` and `<link href>` paths in HTML files resolve to existing files. Use Grep to find all src/href references and Glob to verify each target exists.
+
+If anything fails, fix the broken references. Don't proceed with failures.
 
 **7b. Dependency direction check:**
 
-Use Grep to verify no reverse imports exist:
+For ES module projects, use Grep to verify no reverse imports exist:
 - Search `source/03-data/` files for imports from `02-logic/` or `01-presentation/` — should find none
 - Search `source/02-logic/` files for imports from `01-presentation/` — should find none
 - Search `source/01-presentation/` files for imports from `03-data/` (skipping logic) — should find none
+
+For script-tag projects, verify load order in HTML files: data-tier scripts must appear before logic-tier scripts, which must appear before presentation-tier scripts.
 
 **7c. File accounting:**
 
@@ -561,9 +643,11 @@ Use `none` or `0` for fields with no changes. Do not add freeform text between f
 
 ## Anti-Patterns
 
-- **Don't rewrite file internals** — You move files and update import paths. You don't refactor the code inside them.
+- **Don't skip because "it's not a real web app"** — No package.json, no ES modules, no build step, high content-to-code ratio — none of these exempt a project from restructuring. If the orchestrator invoked you, you restructure.
+- **Don't move content pages into tiers** — Wiki articles, docs, reference pages are content, not application code. Leave them in their domain structure. Only restructure JS/CSS/template application code.
+- **Don't rewrite file internals** — You move files and update import/script paths. You don't refactor the code inside them.
 - **Don't move node_modules, dist, or build outputs** — Only source files.
 - **Don't create empty tiers** — If the project has no database, don't create `source/03-data/`.
-- **Don't break the build** — If the build fails after a move, fix imports before the next commit.
+- **Don't break the build** — If the build fails after a move, fix imports before the next commit. For static sites, verify all `<script src>` and `<link href>` paths still resolve.
 - **Don't split files during the move** — If a file has mixed concerns (UI + business logic), move it to the dominant tier and note it for a follow-up refactor. Restructuring and refactoring are separate steps.
 - **Don't fight the framework** — If Next.js requires `app/` or `pages/` at the root, keep that convention. Organize within the framework's constraints.
