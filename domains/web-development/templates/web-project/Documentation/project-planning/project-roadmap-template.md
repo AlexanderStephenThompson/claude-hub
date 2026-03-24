@@ -77,46 +77,40 @@ MODULE LINKS:
 
 ## Versioning Mindset
 
-This project uses a pragmatic versioning approach:
+> Full versioning rules: [Standards/Documentation.md — Section 1.4](../../Standards/Documentation.md#14-pre-mvp-versioning-00x)
 
-- **0.0.x**: Pre-MVP work (setup, experiments, foundational modules, and features leading up to MVP)
-- **0.1.0**: MVP (Minimum Viable Product) — first version with a complete, usable workflow
+- **0.0.x**: Pre-MVP milestones — real milestones with full feature tracking, building toward MVP
+- **0.1.0**: MVP — first complete, end-to-end user workflow
 - **0.2.0+**: Post-MVP milestones, adding features and value
 - **1.0.0**: Production-ready (feature complete, polished, documented, ready for real users)
 
-> **Note:** While 0.0.x is often reserved for hotfixes, here it is intentionally used for all work leading up to MVP. This makes 0.1.0 a clear, special milestone for the MVP.
+Transition from 0.0.x to 0.1.0 requires an explicit MVP declaration via `/Release`.
 
 ---
 
-## Roadmap (0.0.x → 1.0.0)
+## Release Plan
 
-### Pre-MVP (0.0.x)
-
-| Version | Goal | Key Features | Status |
-|---------|------|--------------|--------|
-| 0.0.1   | Initial setup, repo, CI | Project skeleton, linting, standards | ⏳ <!-- STATUS:planned --> |
-| 0.0.2   | Foundation modules | Core data models, basic logic | ⏳ <!-- STATUS:planned --> |
-| ...     | ... | ... | ... |
-| 0.1.0   | MVP: First complete workflow | [List MVP features] | ⏳ <!-- STATUS:planned --> |
-
----
-
-## Milestone Roadmap (0.1.0+)
-
-> Strategic sequencing from proof of concept to production ready.
+> Strategic sequencing from project setup to production ready.
 
 <!--
 SEQUENCING PRINCIPLES:
 1. Dependencies first — Build foundational modules before dependent ones
-2. Risk early — Tackle hardest/riskiest features in v0.1-v0.3 while there's time to pivot
-3. Value increments — Each version delivers a complete capability, not half-features
+2. Risk early — Tackle hardest/riskiest features in v0.0.x-v0.3.0 while there's time to pivot
+3. Value increments — Each version delivers something demonstrable, not just "setup"
 4. User journey — Prioritize completing one full user workflow over partial coverage of many
 5. Magic moment — Plan which version delivers the core "aha" experience
 
 VERSION DEFINITIONS:
-- v0.1 = Proof of concept (one complete user flow, end-to-end, core infrastructure in place)
-- v0.2-v0.9 = Build toward value (add modules/features in dependency order, each version delivers something usable)
-- v1.0 = Production ready (feature complete per spec, polished UX, error handling, documentation, ready for real users)
+- v0.0.x = Pre-MVP milestones (setup, foundations, early features building toward MVP)
+- v0.1.0 = MVP (first complete user flow, end-to-end, core infrastructure in place)
+- v0.2.0-v0.9.0 = Build toward value (add modules/features in dependency order, each version delivers something usable)
+- v1.0.0 = Production ready (feature complete per spec, polished UX, error handling, documentation, ready for real users)
+
+0.0.x GUIDANCE:
+- 0.0.x iterations are real milestones with full feature tracking (same as 0.1.0+)
+- Typical 0.0.x milestones: project skeleton + CI, core data models, foundational module(s)
+- Each 0.0.x should deliver something demonstrable, not just "setup"
+- Transition to 0.1.0 requires explicit MVP declaration via /Release
 -->
 
 ### Module Dependencies
@@ -143,13 +137,15 @@ Group by source feature. Omit features with no dependencies.
 {feature-d} ──→ {feature-e}
 ```
 
-### Release Plan
+### Milestones
 
 | Version | Release Name | Goal | Modules | Key Features | Unlocks |
 |---------|-------------|------|---------|--------------|---------|
-| v0.1.0 | {Program} / {Module}: {Feature} | {What users can do} | {Module A} | {Feature 1, 2} | First complete workflow |
-| v0.2.0 | {Program} / {Module}: {Feature} | {What users can do} | {Module B} | {Feature 3, 4} | Builds on v0.1, enables v0.3 |
-| v0.3.0 | {Program} / {Module}: {Feature} | {Magic moment} | {Module C} | {Feature 5, 6} | Core value delivered |
+| v0.0.1 | {Program} / {Module}: {Feature} | {What this sets up} | {Module A} | {Feature 1, 2} | Project foundation |
+| v0.0.2 | {Program} / {Module}: {Feature} | {What this enables} | {Module A} | {Feature 3, 4} | Core data models ready |
+| v0.1.0 | {Program} / {Module}: {Feature} | MVP: {What users can do} | {Module B} | {Feature 5, 6} | First complete workflow |
+| v0.2.0 | {Program} / {Module}: {Feature} | {What users can do} | {Module C} | {Feature 7, 8} | Builds on MVP, enables v0.3 |
+| v0.3.0 | {Program} / {Module}: {Feature} | {Magic moment} | {Module D} | {Feature 9, 10} | Core value delivered |
 | v1.0.0 | {Program} / {Module}: {Feature} | Production ready | All modules | Polish, errors, docs | Ready for real users |
 
 <!--
@@ -159,8 +155,10 @@ RELEASE NAMING FORMAT: vX.Y.Z — [Program] / [Module]: [Headline Feature]
 - Feature: The headline capability of that release (verb/noun-phrase)
 
 SINGLE-MODULE MILESTONE:
-- v0.2.0 — Kitchen / Planning: Create weekly meal plan
-- v0.3.0 — Garden / Tasks: Track watering routine
+- v0.0.1 — Kitchen / Planning: Project setup and CI
+- v0.0.2 — Kitchen / Planning: Core meal plan data model
+- v0.1.0 — Kitchen / Planning: Create weekly meal plan
+- v0.2.0 — Kitchen / Planning: Generate shopping list
 - v0.4.1 — Kitchen / Planning: Fix missing quantities
 
 MULTI-MODULE MILESTONE:
@@ -174,9 +172,9 @@ the milestone detail section below list every module involved.
 
 ---
 
-## v0.1.0 — {Program} / {Module}: {Feature}
+## v0.0.1 — {Program} / {Module}: {Feature}
 
-**Goal:** {2-4 sentences: What can users do after this release? What does it prove? Why is this the right starting point?}
+**Goal:** {2-4 sentences: What does this iteration set up? What infrastructure or foundation does it establish? Why is this the right starting point?}
 
 ### Module: {module}
 
@@ -186,6 +184,44 @@ the milestone detail section below list every module involved.
 |-------|--------|
 | [#1 — Issue title](../../issues/1) | ⏳ <!-- STATUS:planned --> |
 | [#2 — Issue title](../../issues/2) | ⏳ <!-- STATUS:planned --> |
+
+---
+
+## v0.0.2 — {Program} / {Module}: {Feature}
+
+**Goal:** {2-4 sentences: What does this iteration build on top of v0.0.1? What new capability is established?}
+
+### Module: {module}
+
+{1-2 sentences: What this module does and why it matters for this milestone.}
+
+| Issue | Status |
+|-------|--------|
+| [#3 — Issue title](../../issues/3) | ⏳ <!-- STATUS:planned --> |
+| [#4 — Issue title](../../issues/4) | ⏳ <!-- STATUS:planned --> |
+
+<!--
+0.0.x MILESTONE DETAIL SECTIONS:
+- Add one section per 0.0.x milestone, following the same format as 0.1.0+ milestones
+- Goal should explain what this iteration sets up and why it matters
+- The final 0.0.x milestone should clearly lead into the MVP (v0.1.0)
+- Delete this comment and adjust the example sections above when filling in real milestones
+-->
+
+---
+
+## v0.1.0 — {Program} / {Module}: {Feature}
+
+**Goal:** {2-4 sentences: What can users do after this release? What does it prove? This is the MVP — the first complete, end-to-end user workflow.}
+
+### Module: {module}
+
+{1-2 sentences: What this module does and why it matters for this milestone.}
+
+| Issue | Status |
+|-------|--------|
+| [#5 — Issue title](../../issues/5) | ⏳ <!-- STATUS:planned --> |
+| [#6 — Issue title](../../issues/6) | ⏳ <!-- STATUS:planned --> |
 
 ---
 
@@ -216,9 +252,10 @@ FEATURE INDEX:
 
 | Feature | Module | Milestone | Status |
 |---------|--------|-----------|--------|
-| [{feature-1}](features/{program}/{module}/{feature-1}.md) | [{module}](features/{program}/{module}/_{module}.md) | v0.1.0 | ⏳ <!-- STATUS:planned --> |
-| [{feature-2}](features/{program}/{module}/{feature-2}.md) | [{module}](features/{program}/{module}/_{module}.md) | v0.1.0 | ⏳ <!-- STATUS:planned --> |
-| [{feature-3}](features/{program}/{module}/{feature-3}.md) | [{module}](features/{program}/{module}/_{module}.md) | v0.2.0 | ⏳ <!-- STATUS:planned --> |
+| [{feature-1}](features/{program}/{module}/{feature-1}.md) | [{module}](features/{program}/{module}/_{module}.md) | v0.0.1 | ⏳ <!-- STATUS:planned --> |
+| [{feature-2}](features/{program}/{module}/{feature-2}.md) | [{module}](features/{program}/{module}/_{module}.md) | v0.0.2 | ⏳ <!-- STATUS:planned --> |
+| [{feature-3}](features/{program}/{module}/{feature-3}.md) | [{module}](features/{program}/{module}/_{module}.md) | v0.1.0 | ⏳ <!-- STATUS:planned --> |
+| [{feature-4}](features/{program}/{module}/{feature-4}.md) | [{module}](features/{program}/{module}/_{module}.md) | v0.2.0 | ⏳ <!-- STATUS:planned --> |
 
 ---
 

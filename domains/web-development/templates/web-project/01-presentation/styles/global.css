@@ -1,0 +1,240 @@
+/**
+ * Design System - Single Source of Truth
+ *
+ * PLACEHOLDER: This file structure shows what design tokens are needed.
+ * Replace this entire file with your actual design system.
+ *
+ * CRITICAL RULES:
+ * - ALL CSS values must come from this file
+ * - NEVER use hardcoded colors, spacing, fonts, shadows, etc.
+ * - Design token validator will block commits with hardcoded values
+ * - Reference these variables using var(--variable-name)
+ *
+ * Example usage:
+ *   color: var(--color-primary);          ✅ Correct
+ *   color: #3B82F6;                       ❌ Blocked by validator
+ */
+
+:root {
+  /* ============================================
+     COLORS
+     Define your brand colors here
+     ============================================ */
+
+  /* Primary brand colors */
+  --color-primary: #placeholder;
+  --color-primary-hover: #placeholder;
+  --color-primary-active: #placeholder;
+
+  /* Secondary/accent colors */
+  --color-secondary: #placeholder;
+  --color-accent: #placeholder;
+
+  /* Neutral colors (grays) */
+  --color-background: #placeholder;
+  --color-surface: #placeholder;
+  --color-border: #placeholder;
+
+  /* Text colors */
+  --color-text-primary: #placeholder;
+  --color-text-secondary: #placeholder;
+  --color-text-disabled: #placeholder;
+
+  /* Semantic colors */
+  --color-success: #placeholder;
+  --color-warning: #placeholder;
+  --color-error: #placeholder;
+  --color-info: #placeholder;
+
+
+  /* ============================================
+     TYPOGRAPHY
+     Font families, sizes, weights, line heights
+     ============================================ */
+
+  /* Font families */
+  --font-family-primary: placeholder, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-heading: placeholder, serif;
+  --font-family-mono: 'Courier New', monospace;
+
+  /* Font sizes (using 4px base system) */
+  --font-size-xs: placeholder;      /* Extra small - 12px */
+  --font-size-sm: placeholder;      /* Small - 14px */
+  --font-size-base: placeholder;    /* Base - 16px */
+  --font-size-lg: placeholder;      /* Large - 18px */
+  --font-size-xl: placeholder;      /* Extra large - 20px */
+  --font-size-2xl: placeholder;     /* 2X large - 24px */
+  --font-size-3xl: placeholder;     /* 3X large - 32px */
+  --font-size-4xl: placeholder;     /* 4X large - 40px */
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+
+  /* ============================================
+     SPACING
+     4px base system (0.25rem = 4px if 1rem = 16px)
+     ============================================ */
+
+  --space-0: 0;
+  --space-xs: placeholder;     /* 4px */
+  --space-sm: placeholder;     /* 8px */
+  --space-md: placeholder;     /* 16px */
+  --space-lg: placeholder;     /* 24px */
+  --space-xl: placeholder;     /* 32px */
+  --space-2xl: placeholder;    /* 48px */
+  --space-3xl: placeholder;    /* 64px */
+
+
+  /* ============================================
+     SIZING
+     Common widths/heights
+     ============================================ */
+
+  --size-icon-sm: placeholder;    /* 16px */
+  --size-icon-md: placeholder;    /* 24px */
+  --size-icon-lg: placeholder;    /* 32px */
+
+  --size-button-height: placeholder;     /* 40px */
+  --size-input-height: placeholder;      /* 40px */
+
+  --size-container-sm: placeholder;      /* 640px */
+  --size-container-md: placeholder;      /* 768px */
+  --size-container-lg: placeholder;      /* 1024px */
+  --size-container-xl: placeholder;      /* 1280px */
+
+
+  /* ============================================
+     BORDER RADIUS
+     Rounded corners
+     ============================================ */
+
+  --radius-none: 0;
+  --radius-sm: placeholder;      /* 4px */
+  --radius-md: placeholder;      /* 8px */
+  --radius-lg: placeholder;      /* 12px */
+  --radius-xl: placeholder;      /* 16px */
+  --radius-full: 9999px;         /* Fully rounded */
+
+
+  /* ============================================
+     SHADOWS
+     Elevation system
+     ============================================ */
+
+  --shadow-sm: placeholder;
+  --shadow-md: placeholder;
+  --shadow-lg: placeholder;
+  --shadow-xl: placeholder;
+
+  /* Example structure:
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  */
+
+
+  /* ============================================
+     Z-INDEX
+     Stacking order
+     ============================================ */
+
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-modal-backdrop: 1200;
+  --z-modal: 1300;
+  --z-tooltip: 1400;
+  --z-notification: 1500;
+
+
+  /* ============================================
+     TRANSITIONS
+     Animation timings
+     ============================================ */
+
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+
+
+  /* ============================================
+     BREAKPOINTS
+     Responsive design (use in media queries)
+     ============================================ */
+
+  /* Define as CSS custom properties for reference,
+     but use directly in @media queries:
+
+     @media (min-width: 640px) { ... }   // sm
+     @media (min-width: 768px) { ... }   // md
+     @media (min-width: 1024px) { ... }  // lg
+     @media (min-width: 1280px) { ... }  // xl
+  */
+}
+
+
+/**
+ * BASE STYLES (Optional)
+ *
+ * You can include base reset/normalization here if desired.
+ * These apply globally to all elements.
+ */
+
+/* Example reset (uncomment when ready):
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+*/
+
+
+/**
+ * COMPONENT STYLES (Optional)
+ *
+ * You can define reusable component classes here that reference
+ * the design tokens above.
+ *
+ * Example:
+ *
+ * .btn {
+ *   padding: var(--space-sm) var(--space-md);
+ *   background-color: var(--color-primary);
+ *   color: white;
+ *   border-radius: var(--radius-md);
+ *   transition: var(--transition-fast);
+ * }
+ *
+ * .btn:hover {
+ *   background-color: var(--color-primary-hover);
+ * }
+ */

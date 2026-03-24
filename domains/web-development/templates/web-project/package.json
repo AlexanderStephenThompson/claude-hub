@@ -1,0 +1,29 @@
+{
+  "name": "official-web-template",
+  "version": "2.1.0",
+  "description": "AI-powered web application template with enforced standards",
+  "private": true,
+  "scripts": {
+    "validate": "node .claude/validators/run-all.js",
+    "validate:tokens": "node .claude/validators/design-tokens.js",
+    "validate:arch": "node .claude/validators/architecture-boundaries.js",
+    "validate:naming": "node .claude/validators/file-naming.js",
+    "validate:secrets": "node .claude/validators/secret-scanner.js",
+    "validate:sync": "node .claude/validators/documentation-sync.js",
+    "test": "echo \"No test runner configured. Run /Start_Project to set up testing.\" && exit 0"
+  },
+  "devDependencies": {
+    "glob": "^10.3.10",
+    "husky": "^8.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "template",
+    "standards",
+    "web-app"
+  ],
+  "author": "",
+  "license": "MIT"
+}
