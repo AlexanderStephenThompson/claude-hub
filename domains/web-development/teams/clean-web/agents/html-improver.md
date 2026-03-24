@@ -46,6 +46,7 @@ If css-improver ran before you, it may have renamed or consolidated CSS classes.
 **Bash is ONLY for these operations — nothing else:**
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
+- `node <team-scripts>/check.js --root <path>` (deterministic linter — verification gate)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
 
@@ -67,7 +68,19 @@ Find all HTML/JSX/TSX files and assess the current state.
 
 Use Glob to find all `.html`, `.jsx`, `.tsx` files. Exclude `node_modules/`, `dist/`, `build/`.
 
-**1b. Count violations:**
+**1b. Deterministic findings from check.js:**
+
+The orchestrator passes post-pre-fix check.js findings in your invocation message. These are your **primary issue list** — exact file:line violations that are guaranteed to exist.
+
+Parse the findings and extract violations for these 10 rules (your MY_RULES):
+
+`no-inline-style`, `no-jsx-inline-style`, `button-type-required`, `img-alt-required`, `title-required`, `tabindex-no-positive`, `max-classes`, `heading-order`, `single-h1`, `no-div-as-button`
+
+Group by rule. Record the count per rule, total count, and exact file:line locations. These are the issues your phases must fix — they'll be verified in Phase 10.
+
+If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — proceeding with supplementary scan only" and rely on 1c.
+
+**1c. Supplementary scan:**
 
 Use Grep across all markup files to count:
 - `<div onClick` or `<div on-click` (clickable divs — should be buttons)
@@ -80,9 +93,14 @@ Use Grep across all markup files to count:
 - Redundant boolean attributes (`disabled="disabled"`, `hidden="true"`)
 - Empty attributes (`class=""`, `id=""`, `title=""`)
 
-Record these numbers — they're your "before" snapshot.
+Some of these overlap with check.js (clickable divs, button types, alt text, class bloat, inline styles). The supplementary scan gives you "before" numbers for the Phase 11 report, plus detects things check.js doesn't cover: label association, lazy loading, redundant boolean attributes, empty attributes, and div-as-landmark patterns.
 
-**Output:** Baseline count — no changes, no commits.
+**Output:** Baseline — no changes, no commits.
+
+```
+Deterministic findings from check.js: [N] violations across [N] rules
+Supplementary findings: [N] (for context and before/after tracking)
+```
 
 ---
 
@@ -386,9 +404,31 @@ Clean up redundant or empty attributes that add noise to the markup.
 
 ---
 
-## Phase 10: Report
+## Phase 10: Verify
 
-Re-run the same Grep scans from Phase 1 and produce a summary.
+Re-run check.js to verify your work against the deterministic baseline from Phase 1b.
+
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1 || true
+```
+
+Extract violations for your 10 MY_RULES from the output. Compare to the Phase 1b baseline:
+
+```
+check.js HTML violations: [N] received → [N] remaining (fixed [N], regressed [N])
+```
+
+- **Fixed:** Rules with fewer violations than Phase 1b
+- **Regressed:** Rules with MORE violations than Phase 1b — these are bugs you introduced. List each regression explicitly and fix before proceeding to Phase 11.
+- **Remaining:** Violations you couldn't fix. Note why in the report.
+
+**No commit** — this is verification only.
+
+---
+
+## Phase 11: Report
+
+Re-run the same Grep scans from Phase 1c and produce a summary.
 
 ```
 HTML IMPROVEMENT COMPLETE
@@ -402,6 +442,9 @@ Missing alt text:       [N]    → [N]
 Missing lazy loading:   [N]    → [N]
 Elements w/ 4+ classes: [N]    → [N]
 Redundant attributes:   [N]    → [N]
+
+check.js verification:
+  HTML violations: [N] received → [N] remaining (fixed [N], regressed [N])
 
 Changes:
   Landmarks added:     [N] semantic elements
@@ -427,10 +470,19 @@ Commits:
 
 ## Handoff
 
-After reporting, write a brief handoff summary for the orchestrator containing:
-- **Markup file count:** How many HTML/JSX/TSX files were modified
-- **Tailwind migration:** Whether utility chains were extracted to CSS (code-improver should know)
-- **Remaining class bloat:** Any elements still above 3 classes that couldn't be simplified
+Write a structured handoff so the orchestrator can parse fields reliably and pass context to code-improver. Use this exact format:
+
+```
+HANDOFF: html-improver
+FILES_MODIFIED: [N]
+TAILWIND_MIGRATION: [yes — N utility chains extracted to CSS | no | N/A]
+REMAINING_CLASS_BLOAT: [N elements still above 3 classes, or "none"]
+LANDMARKS_ADDED: [N]
+BUTTONS_FIXED: [N]
+LABELS_ADDED: [N]
+```
+
+Use `none` or `0` for fields with no changes. Do not add freeform text between fields — the orchestrator parses these by field name.
 
 ---
 
@@ -447,7 +499,9 @@ After reporting, write a brief handoff summary for the orchestrator containing:
 | No `<b>`/`<i>` misuse found | Phase 8 |
 | No class bloat | Phase 9 |
 
-If ALL phases are skipped: "HTML is already semantic. No changes needed."
+Phase 10 (Verify) and Phase 11 (Report) always run — they are never skipped.
+
+If ALL work phases (2-9) are skipped: "HTML is already semantic. No changes needed."
 
 ---
 

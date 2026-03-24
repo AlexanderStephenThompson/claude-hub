@@ -44,9 +44,7 @@ You detect the language(s) from the files present and apply patterns accordingly
 **Bash is ONLY for these operations — nothing else:**
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
-- `node <team-scripts>/strip-debug.js <path>` (remove console/debugger statements)
-- `node <team-scripts>/fix-double-equals.js <path>` (== to ===, != to !==)
-- `node <team-scripts>/fix-var.js <path>` (var to let)
+- `node <team-scripts>/check.js --root <path>` (deterministic linter — verification gate)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. You CAN run pre-built team scripts that ship with the pipeline.
 
@@ -75,7 +73,25 @@ Use Glob to find source files. Identify the primary language(s) by file extensio
 
 Exclude `node_modules/`, `dist/`, `build/`, `.git/`, `__pycache__/`, `venv/`, `.venv/`.
 
-**1b. Scan for issues:**
+**1b. Deterministic findings from check.js:**
+
+The orchestrator passes post-pre-fix check.js findings in your invocation message. These are your **primary issue list** — exact file:line violations that are guaranteed to exist.
+
+Parse the findings and extract violations for these 8 rules (your MY_RULES):
+
+`no-debugger`, `no-var`, `no-empty-catch`, `no-console`, `no-double-equals`, `no-document-write`, `no-hardcoded-secrets`, `no-innerHTML`
+
+Note: The orchestrator already ran pre-fix scripts (`strip-debug.js`, `fix-var.js`, `fix-double-equals.js`) which handle `no-debugger`, `no-console`, `no-var`, `no-double-equals`. The post-pre-fix baseline should show these at 0 or near-0. Any remaining violations are edge cases the scripts missed — fix them manually.
+
+Also parse findings from analysis scripts if provided by the orchestrator:
+- `analyze_complexity.py` — high-complexity functions (targets for Phase 6)
+- `detect_dead_code.py` — unused exports (targets for Phase 4)
+
+Group by rule. Record the count per rule, total count, and exact file:line locations. These are the issues your phases must fix — they'll be verified in Phase 9.
+
+If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — proceeding with supplementary scan only" and rely on 1c.
+
+**1c. Supplementary scan:**
 
 Use Grep across all source files to count:
 - **Magic numbers** — Numeric literals not in constant declarations (pattern: standalone `\d+` in comparisons, assignments, returns — exclude 0, 1, common indices)
@@ -88,9 +104,15 @@ Use Grep across all source files to count:
 - **Empty catch blocks** — `catch {}`, `except:`, `except Exception: pass`
 - **Deep nesting** — Indentation beyond 4 levels
 
-Record these numbers — they're your "before" snapshot.
+Some of these overlap with check.js (debug statements, empty catch, var, double-equals). The supplementary scan gives you "before" numbers for the Phase 10 report, plus detects things check.js doesn't cover: magic numbers/strings, abbreviated/generic names, commented-out code, TODO context, and deep nesting.
 
 **Output:** Baseline count and language detection — no changes, no commits.
+
+```
+Deterministic findings from check.js: [N] violations across [N] rules
+Analysis scripts: [N] high-complexity functions, [N] unused exports
+Supplementary findings: [N] (for context and before/after tracking)
+```
 
 ---
 
@@ -167,15 +189,7 @@ Extract hardcoded numbers and strings into named constants.
 
 Remove code that doesn't execute or serve a purpose.
 
-**First**, run the deterministic fix scripts to handle the mechanical cleanup:
-
-```bash
-node <team-scripts>/strip-debug.js <project-source-directory>
-node <team-scripts>/fix-var.js <project-source-directory>
-node <team-scripts>/fix-double-equals.js <project-source-directory>
-```
-
-These handle: console/debugger removal, `var` → `let`, and `==` → `===`. After running, **Read** a few modified files to verify, then proceed with the judgment-based removals below.
+**Note:** The orchestrator already ran `strip-debug.js`, `fix-var.js`, and `fix-double-equals.js` before you launched. Debug statements, `var` declarations, and `==` comparisons are already fixed. Do not re-run these scripts. Proceed directly with the judgment-based removals below.
 
 ### What to Remove
 
@@ -384,9 +398,31 @@ Follow the language's docstring convention:
 
 ---
 
-## Phase 9: Report
+## Phase 9: Verify
 
-Re-run the same Grep scans from Phase 1 and produce a summary.
+Re-run check.js to verify your work against the deterministic baseline from Phase 1b.
+
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1 || true
+```
+
+Extract violations for your 8 MY_RULES from the output. Compare to the Phase 1b baseline:
+
+```
+check.js JS violations: [N] received → [N] remaining (fixed [N], regressed [N])
+```
+
+- **Fixed:** Rules with fewer violations than Phase 1b
+- **Regressed:** Rules with MORE violations than Phase 1b — these are bugs you introduced. List each regression explicitly and fix before proceeding to Phase 10.
+- **Remaining:** Violations you couldn't fix. Note why in the report.
+
+**No commit** — this is verification only.
+
+---
+
+## Phase 10: Report
+
+Re-run the same Grep scans from Phase 1c and produce a summary.
 
 ```
 CODE IMPROVEMENT COMPLETE
@@ -403,6 +439,9 @@ Debug statements:       [N]    → [N]
 Contextless TODOs:      [N]    → [N]
 Empty catch blocks:     [N]    → [N]
 Deep nesting (4+):      [N]    → [N]
+
+check.js verification:
+  JS violations: [N] received → [N] remaining (fixed [N], regressed [N])
 
 Changes:
   Names improved:       [N] variables/functions renamed
@@ -425,10 +464,21 @@ Commits:
 
 ## Handoff
 
-This is the final agent in the pipeline. Write a brief summary for the orchestrator containing:
-- **Languages detected:** What file types were processed
-- **Files modified:** Total count
-- **Key metrics:** Before/after for the most impactful categories
+This is the final agent in the pipeline. Write a structured handoff so the orchestrator can parse fields reliably. Use this exact format:
+
+```
+HANDOFF: code-improver
+LANGUAGES: [comma-separated list, e.g., TypeScript, JavaScript]
+FILES_MODIFIED: [N]
+NAMES_IMPROVED: [N]
+CONSTANTS_EXTRACTED: [N]
+DEAD_CODE_REMOVED: [N lines]
+FUNCTIONS_EXTRACTED: [N]
+ERRORS_FIXED: [N]
+DOCSTRINGS_ADDED: [N]
+```
+
+Use `0` for any metric with no changes. Do not add freeform text between fields — the orchestrator parses these by field name.
 
 ---
 
@@ -444,7 +494,9 @@ This is the final agent in the pipeline. Write a brief summary for the orchestra
 | Error handling is already correct | Phase 7 |
 | Public APIs already have docstrings | Phase 8 |
 
-If ALL phases are skipped: "Code quality is already solid. No changes needed."
+Phase 9 (Verify) and Phase 10 (Report) always run — they are never skipped.
+
+If ALL work phases (2-8) are skipped: "Code quality is already solid. No changes needed."
 
 ---
 

@@ -65,6 +65,7 @@ Your `architecture` skill is loaded automatically. For the full tier reference w
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `mkdir -p` (create directories)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
+- `node <team-scripts>/check.js --root <path>` (deterministic linter — verification gate)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Use the Edit tool on each file directly.
 
@@ -189,7 +190,26 @@ Check all source files for naming consistency. Detect the dominant convention an
 
 Record naming issues for Phase 6f. Don't rename yet — moves happen first.
 
-**Output:** Full inventory + root audit + naming issues — no changes, no commits.
+**1g. Deterministic findings from check.js:**
+
+The orchestrator passes post-pre-fix check.js findings in your invocation message. These are your **primary issue list** for architecture violations. Parse the findings and extract violations for these 2 rules (your MY_RULES):
+
+`tier-structure`, `tier-imports`
+
+Also parse `analyze_dependencies.py` findings (circular dependencies) if provided by the orchestrator.
+
+- `tier-structure` violations tell you whether 3-tier directories exist/are complete — use this to inform Phase 2 (Tier Mapping) and Phase 4 (Create Structure)
+- `tier-imports` violations give exact file:line locations of reverse or layer-skipping imports — use this to pre-populate Phase 3 (Dependency Check)
+- `analyze_dependencies.py` circular dependencies also feed Phase 3
+
+If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available" and proceed with normal Phase 1 analysis.
+
+**Output:** Full inventory + root audit + naming issues + deterministic findings — no changes, no commits.
+
+```
+Deterministic findings from check.js: [N] tier-structure, [N] tier-imports
+Circular dependencies from analysis: [N]
+```
 
 ---
 
@@ -461,6 +481,22 @@ Use Grep to verify no reverse imports exist:
 
 Compare your inventory from Phase 1 against the current state. Every file should be accounted for — nothing lost, nothing duplicated.
 
+**7d. Deterministic verification (check.js):**
+
+Re-run check.js to verify your work against the deterministic baseline from Phase 1g:
+
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1 || true
+```
+
+Extract violations for your 2 MY_RULES (`tier-structure`, `tier-imports`) from the output. Compare to the Phase 1g baseline:
+
+```
+check.js architecture violations: [N] received → [N] remaining (fixed [N], regressed [N])
+```
+
+If regressions exist (e.g., file moves introduced new reverse imports), fix them before proceeding to Phase 8.
+
 ---
 
 ## Phase 8: Report
@@ -491,6 +527,8 @@ File naming:
 
 Imports updated:      [N] paths
 Reverse dependencies: 0 (verified)
+check.js verification:
+  Architecture violations: [N] received → [N] remaining (fixed [N], regressed [N])
 Build status:         PASS
 
 Commits:
@@ -505,11 +543,19 @@ Commits:
 
 ## Handoff
 
-After reporting, write a brief handoff summary for the orchestrator containing:
-- **Tier paths confirmed:** Which tier directories were created and populated
-- **Build status:** PASS or FAIL (and what failed)
-- **CSS file locations:** Where CSS files now live (e.g., `source/01-presentation/styles/`) — the css-improver needs this
-- **Unknown root items:** Any items flagged for user decision
+Write a structured handoff so the orchestrator can parse fields reliably and pass context to css-improver. Use this exact format:
+
+```
+HANDOFF: web-restructure
+TIER_PATHS: [comma-separated tier directories created/confirmed, e.g., source/01-presentation/, source/02-logic/, source/03-data/]
+BUILD_STATUS: PASS | FAIL — [details if failed]
+CSS_LOCATIONS: [where CSS files now live, e.g., source/01-presentation/styles/]
+UNKNOWN_ROOT_ITEMS: [comma-separated items flagged for user, or "none"]
+FILES_MOVED: [N]
+IMPORTS_UPDATED: [N]
+```
+
+Use `none` or `0` for fields with no changes. Do not add freeform text between fields — the orchestrator parses these by field name.
 
 ---
 

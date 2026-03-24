@@ -47,9 +47,9 @@ If web-restructure ran before you, CSS files may have moved to `source/01-presen
 - `git mv`, `git add`, `git commit` (actual git write operations)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
 - `node <team-scripts>/sort-css-properties.js <path>` (pre-built property sorter)
-- `node <team-scripts>/unit-zero.js <path>` (strip redundant units from zero values)
 - `node <team-scripts>/fix-imports-order.js <path>` (reorder CSS imports to cascade order)
 - `node <team-scripts>/scaffold-css.js <path>` (copy 5 template CSS files to target directory)
+- `node <team-scripts>/check.js --root <path>` (deterministic linter — verification gate)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. You CAN run pre-built team scripts that ship with the pipeline.
 
@@ -76,7 +76,21 @@ Use Glob to find all `.css` files. Record:
 - File sizes (which are largest?)
 - Location (are they in a `styles/` folder, scattered, or somewhere else?)
 
-**1b. Scan for issues:**
+**1b. Deterministic findings from check.js:**
+
+The orchestrator passes post-pre-fix check.js findings in your invocation message. These are your **primary issue list** — exact file:line violations that are guaranteed to exist.
+
+Parse the findings and extract violations for these 16 rules (your MY_RULES):
+
+`no-hardcoded-color`, `no-hardcoded-spacing`, `no-hardcoded-font-size`, `no-hardcoded-radius`, `no-hardcoded-shadow`, `no-hardcoded-z-index`, `css-property-order`, `css-import-order`, `css-section-order`, `token-category-order`, `mobile-first`, `no-important`, `no-id-selector`, `unit-zero`, `css-file-count`, `css-file-names`
+
+Note: The orchestrator already ran `unit-zero.js` — the `unit-zero` rule should show 0 or near-0 violations. Any remaining are edge cases the script missed.
+
+Group by rule. Record the count per rule, total count, and exact file:line locations. These are the issues your phases must fix — they'll be verified in Phase 9.
+
+If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — proceeding with supplementary scan only" and rely on 1c.
+
+**1c. Supplementary scan:**
 
 Use Grep across all `.css` files to count:
 - Hardcoded hex colors outside `:root` (pattern: `#[0-9a-fA-F]{3,8}`)
@@ -85,13 +99,18 @@ Use Grep across all `.css` files to count:
 - `max-width` media queries (pattern: `max-width`)
 - `var(--` usage (existing token adoption)
 
-Record these numbers — they're your "before" snapshot for Phase 10.
+These overlap with check.js but serve as your "before" snapshot for the Phase 10 report. More importantly, this scan gives you context check.js doesn't provide: near-duplicate CSS detection, visual role grouping, and token adoption rate.
 
-**1c. Check for existing token system:**
+**1d. Check for existing token system:**
 
 Search for `:root` blocks. If tokens already exist, note the naming convention so you extend it (not replace it) in Phase 5.
 
 **Output:** A baseline snapshot — no changes, no commits.
+
+```
+Deterministic findings from check.js: [N] violations across [N] rules
+Supplementary findings: [N] (for context and before/after tracking)
+```
 
 ---
 
@@ -313,13 +332,7 @@ For each stray value found, determine: is this intentionally different, or did A
 
 Replace hardcoded values with CSS variables.
 
-**First**, run the unit-zero fixer to clean up redundant units before tokenizing:
-
-```bash
-node <team-scripts>/unit-zero.js <project-css-directory>
-```
-
-This replaces `0px`, `0em`, `0rem`, etc. with unitless `0` across all CSS files. Fewer unique values = better token consolidation.
+**Note:** The orchestrator already ran `unit-zero.js` before you launched. Zero values (`0px`, `0em`, `0rem`) are already clean. Do not re-run it.
 
 **Reference:** Read `~/.claude/skills/web-css/assets/token-reference.md` for the canonical token naming convention and complete `:root` definitions.
 
@@ -435,9 +448,11 @@ Enforce mobile-first patterns and consistent breakpoints.
 
 ## Phase 9: Validate
 
-Re-run the same Grep scans from Phase 1 and compare to baseline.
+Two-part validation: supplementary metrics (grep) and deterministic rules (check.js).
 
-**Compare:**
+**9a. Supplementary metrics (before/after):**
+
+Re-run the same Grep scans from Phase 1c and compare to baseline:
 - Hardcoded hex colors: before vs after
 - Hardcoded `px` values: before vs after
 - `!important` count: before vs after
@@ -445,7 +460,25 @@ Re-run the same Grep scans from Phase 1 and compare to baseline.
 - `var(--` usage: before vs after (should increase)
 - CSS file count: before vs after
 
-Every metric should improve or stay the same. If any got worse, investigate and fix before proceeding.
+Every metric should improve or stay the same. If any got worse, investigate and fix.
+
+**9b. Deterministic verification (check.js):**
+
+Re-run check.js to verify your work against the deterministic baseline from Phase 1b:
+
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1 || true
+```
+
+Extract violations for your 16 MY_RULES from the output. Compare to the Phase 1b baseline:
+
+```
+check.js CSS violations: [N] received → [N] remaining (fixed [N], regressed [N])
+```
+
+- **Fixed:** Rules that had violations in Phase 1b but have fewer or zero now
+- **Regressed:** Rules that have MORE violations than Phase 1b — these are bugs you introduced. List each regression explicitly and fix before proceeding to Phase 10.
+- **Remaining:** Violations you couldn't fix (e.g., intentional `!important` usage). Note why in the report.
 
 **No commit** — this is validation only.
 
@@ -483,6 +516,9 @@ Near-Duplicate Consolidation:
     - .btn-primary, .button-main → kept .btn-primary, replaced 3 usages
     - [... one line per merge ...]
 
+check.js verification:
+  CSS violations: [N] received → [N] remaining (fixed [N], regressed [N])
+
 Commits:
   [hash] refactor(css): consolidate to 5-file architecture
   [hash] refactor(css): remove dead CSS
@@ -495,13 +531,20 @@ Commits:
 
 ## Handoff
 
-After reporting, write a brief handoff summary for the orchestrator containing:
-- **CSS file list:** The canonical 5 files and their locations
-- **Selectors deleted:** Class names that were removed (merged into other selectors)
-- **Selectors renamed/merged:** Old name → new canonical name mappings
-- **Token system:** Whether `:root` tokens exist and the naming convention used
+Write a structured handoff so the orchestrator can parse fields reliably and pass the class-name contract to html-improver. Use this exact format:
 
-The html-improver needs this to avoid removing classes in Phase 9 (Class Discipline) that were just renamed or consolidated.
+```
+HANDOFF: css-improver
+CSS_FILES: [comma-separated canonical file paths, e.g., source/01-presentation/styles/reset.css, .../global.css, ...]
+SELECTORS_DELETED: [comma-separated class names removed, or "none"]
+SELECTORS_RENAMED: [old → new mappings, one per line, or "none"]
+TOKEN_SYSTEM: [exists | created] — [naming convention, e.g., --color-*, --space-*]
+TOKENS_ADDED: [N]
+DEAD_CSS_REMOVED: [N selectors]
+NEAR_DUPLICATES_MERGED: [N groups]
+```
+
+Use `none` or `0` for fields with no changes. Do not add freeform text between fields — the orchestrator parses these by field name. The html-improver needs `SELECTORS_DELETED` and `SELECTORS_RENAMED` to avoid removing classes that were just renamed.
 
 ---
 

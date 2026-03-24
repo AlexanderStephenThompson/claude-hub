@@ -163,10 +163,10 @@ python <team-scripts>/detect_dead_code.py <project-path> 2>&1 || true
 
 | check.js rule category | Pass to |
 |------------------------|---------|
-| CSS rules (12) + `css-file-count` + `css-file-names` | css-improver |
-| HTML rules (11) | html-improver |
-| JS rules (10) | code-improver |
-| `tier-structure` | web-restructure |
+| CSS rules (14) + `css-file-count` + `css-file-names` | css-improver |
+| HTML rules (10) | html-improver |
+| JS rules (8) | code-improver |
+| `tier-structure` + `tier-imports` | web-restructure |
 
 | Python script | Pass to |
 |--------------|---------|
@@ -185,6 +185,70 @@ Deterministic scan:
 ```
 
 If check.js or the Python scripts aren't available (e.g., no Node.js or Python installed), skip the deterministic scan and note it: "Deterministic scan skipped — node/python not available. Agents will scan probabilistically."
+
+---
+
+## Deterministic Pre-Fix
+
+After scanning, run all mechanical fix scripts **before** any agent launches. These are zero-judgment fixes that would otherwise waste agent context rediscovering what scripts can handle deterministically.
+
+**Scope resolution:** All pre-fix scripts handle recursive file discovery internally. Pass the project root as `<project-source-directory>` and `<project-css-directory>` — the scripts will find `.js`/`.ts`/`.css` files wherever they are, even before web-restructure has organized them.
+
+**Run sequentially**, same as the scan. Append `|| true` to each command.
+
+```bash
+node <team-scripts>/strip-debug.js <project-source-directory> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/fix-var.js <project-source-directory> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/fix-double-equals.js <project-source-directory> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/unit-zero.js <project-css-directory> 2>&1 || true
+```
+
+These handle:
+- `strip-debug.js` — removes `console.log`, `console.debug`, `console.warn`, `debugger`
+- `fix-var.js` — converts `var` to `let`
+- `fix-double-equals.js` — converts `==` to `===`, `!=` to `!==`
+- `unit-zero.js` — replaces `0px`, `0em`, `0rem` with unitless `0`
+
+**Read** the output of each script to confirm what was changed. If any script modified files, stage and commit once:
+
+```bash
+git add -A && git commit -m "fix: apply deterministic pre-fixes (debug, var, ===, unit-zero)"
+```
+
+If no scripts made changes, skip the commit.
+
+**Re-scan** to establish the post-pre-fix baseline. This is what agents will work from — only violations that require judgment remain.
+
+If the initial scan was skipped (check.js not available), skip the re-scan too. Pre-fix scripts still run (they don't depend on check.js), but there's no deterministic baseline to pass to agents — they'll detect issues probabilistically in their supplementary scans.
+
+**If check.js is available:**
+
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1 || true
+```
+
+**Present the delta** to the user:
+
+```
+Deterministic pre-fix:
+  Scripts run:     4 (strip-debug, fix-var, fix-double-equals, unit-zero)
+  Files modified:  [N] files across [N] scripts
+  Commit:          [hash] (or "no changes")
+
+Remaining violations (for agents):
+  check.js:    [N] errors, [N] warnings across [N] files
+```
+
+The remaining violations are what gets passed to agents. Use these post-pre-fix numbers (not the original scan numbers) in all agent invocations.
 
 ---
 
@@ -211,12 +275,20 @@ Mark skipped agents as completed immediately with a note. Update each to in_prog
 
 Tell the user: "Step 1/4: web-restructure — Moving files into 3-tier architecture and cleaning the project root."
 
-Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`. If the deterministic scan ran, include: "check.js found these tier-structure violations: [list]. analyze_dependencies.py found these circular dependencies: [list]. Fix these first, then proceed with your normal phases."
+Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`. If the deterministic scan ran, include: "check.js found these tier-structure violations (post-pre-fix): [list]. analyze_dependencies.py found these circular dependencies: [list]. Fix these first, then proceed with your normal phases."
 
 **After it returns:**
-- Read its handoff for: tier paths, build status, CSS file locations, unknown root items
-- If build failed and the agent couldn't fix it: ask the user — "web-restructure encountered a build failure. Retry import fixes, skip to css-improver, or stop?"
-- Save the handoff context (tier paths, CSS locations) for Step 2
+
+Parse its structured handoff fields:
+- `TIER_PATHS` — which tier directories were created/confirmed
+- `BUILD_STATUS` — PASS or FAIL (and what failed)
+- `CSS_LOCATIONS` — where CSS files now live (needed by css-improver)
+- `UNKNOWN_ROOT_ITEMS` — items flagged for user decision
+- `FILES_MOVED` / `IMPORTS_UPDATED` — counts for final summary
+
+If `BUILD_STATUS` is FAIL and the agent couldn't fix it: ask the user — "web-restructure encountered a build failure. Retry import fixes, skip to css-improver, or stop?"
+
+Save `TIER_PATHS` and `CSS_LOCATIONS` for Step 2.
 
 ---
 
@@ -228,11 +300,18 @@ Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`. If the 
 
 Tell the user: "Step 2/4: css-improver — Consolidating CSS to 5-file architecture and replacing hardcoded values with design tokens."
 
-Invoke the **@css-improver** agent. If web-restructure ran, pass in the context: "CSS files may have moved to `source/01-presentation/styles/`. The project now uses 3-tier architecture." If the deterministic scan ran, include: "check.js found these CSS violations: [list the 12 CSS rule findings + css-file-count + css-file-names]. Fix these deterministic findings first, then proceed with your normal phases."
+Invoke the **@css-improver** agent. If web-restructure ran, pass in the context: "CSS files may have moved to `source/01-presentation/styles/`. The project now uses 3-tier architecture." If web-restructure was SKIPPED, pass: "web-restructure was skipped. Source files remain in their original structure. Detect CSS file locations in your Phase 1 inventory." Include: "The orchestrator already ran `unit-zero.js` — zero values are clean. Don't re-run it." If the deterministic scan ran, include: "check.js found these CSS violations (post-pre-fix): [list the 14 CSS rule findings + css-file-count + css-file-names]. Fix these remaining findings first, then proceed with your normal phases."
 
 **After it returns:**
-- Read its handoff for: canonical CSS file list, deleted/renamed selectors, token system info
-- Save the selector changes for Step 3 (the class-name contract)
+
+Parse its structured handoff fields:
+- `CSS_FILES` — canonical file paths (the 5-file list) → forward to Step 3 context
+- `SELECTORS_DELETED` — class names removed (merged into others) → **forward to Step 3**
+- `SELECTORS_RENAMED` — old → new name mappings → **forward to Step 3**
+- `TOKEN_SYSTEM` — whether `:root` tokens exist and naming convention → save for summary
+- `TOKENS_ADDED` — count of new CSS variables → save for summary
+- `DEAD_CSS_REMOVED` — count of selectors removed → save for summary
+- `NEAR_DUPLICATES_MERGED` — count of groups unified → save for summary
 
 ---
 
@@ -244,10 +323,17 @@ Invoke the **@css-improver** agent. If web-restructure ran, pass in the context:
 
 Tell the user: "Step 3/4: html-improver — Replacing div-soup with semantic landmarks, fixing interactive elements, and cleaning class bloat."
 
-Invoke the **@html-improver** agent. If css-improver ran, pass in the context: "css-improver deleted/renamed these selectors: [list from handoff]. In Phase 9 (Class Discipline), do not remove classes that were renamed — only remove classes confirmed as unused." If the deterministic scan ran, include: "check.js found these HTML violations: [list the 11 HTML rule findings]. Fix these deterministic findings first, then proceed with your normal phases."
+Invoke the **@html-improver** agent. If css-improver ran, pass in the context: "css-improver deleted/renamed these selectors: `SELECTORS_DELETED`: [list], `SELECTORS_RENAMED`: [list]. In Phase 9 (Class Discipline), do not remove classes that were renamed — only remove classes confirmed as unused." If the deterministic scan ran, include: "check.js found these HTML violations (post-pre-fix): [list the 11 HTML rule findings]. Fix these remaining findings first, then proceed with your normal phases."
 
 **After it returns:**
-- Read its handoff for: files modified, Tailwind migration status
+
+Parse its structured handoff fields:
+- `FILES_MODIFIED` — count of HTML/JSX/TSX files changed → save for summary
+- `TAILWIND_MIGRATION` — whether utility chains were extracted to CSS → save for summary
+- `REMAINING_CLASS_BLOAT` — elements still above 3 classes → save for summary
+- `LANDMARKS_ADDED` — count of semantic elements added → save for summary
+- `BUTTONS_FIXED` — count of div→button conversions + types added → save for summary
+- `LABELS_ADDED` — count of form labels added → save for summary
 
 ---
 
@@ -259,35 +345,88 @@ Invoke the **@html-improver** agent. If css-improver ran, pass in the context: "
 
 Tell the user: "Step 4/4: code-improver — Fixing naming, extracting magic values, flattening nesting, and improving error handling."
 
-Invoke the **@code-improver** agent. If web-restructure ran, pass in the context: "The project uses 3-tier architecture. Source files are in `source/01-presentation/`, `source/02-logic/`, `source/03-data/`." If the deterministic scan ran, include: "check.js found these JS violations: [list the 10 JS rule findings]. analyze_complexity.py found these high-complexity functions: [list]. detect_dead_code.py found these unused exports: [list]. Fix these deterministic findings first, then proceed with your normal phases."
+Invoke the **@code-improver** agent. If web-restructure ran, pass in the context: "The project uses 3-tier architecture. Source files are in `source/01-presentation/`, `source/02-logic/`, `source/03-data/`." If web-restructure was SKIPPED, pass: "web-restructure was skipped. Source files remain in their original structure." Include: "The orchestrator already ran `strip-debug.js`, `fix-var.js`, and `fix-double-equals.js` — debug statements, `var`, and `==` are clean. Don't re-run these scripts." If the deterministic scan ran, include: "check.js found these JS violations (post-pre-fix): [list the 8 JS rule findings]. analyze_complexity.py found these high-complexity functions: [list]. detect_dead_code.py found these unused exports: [list]. Fix these remaining findings first, then proceed with your normal phases."
 
 **After it returns:**
-- Read its handoff for: languages, files modified, key metrics
+
+Parse its structured handoff fields:
+- `LANGUAGES` — detected languages → save for summary
+- `FILES_MODIFIED` — total count → save for summary
+- `NAMES_IMPROVED` — count of variables/functions renamed → save for summary
+- `CONSTANTS_EXTRACTED` — count of magic values named → save for summary
+- `DEAD_CODE_REMOVED` — lines of dead code removed → save for summary
+- `FUNCTIONS_EXTRACTED` — count of new focused functions → save for summary
+- `ERRORS_FIXED` — count of catch blocks improved → save for summary
+- `DOCSTRINGS_ADDED` — count of public APIs documented → save for summary
+
+---
+
+## Post-Pipeline Verification
+
+After all agents complete, re-run `check.js` to verify the pipeline actually fixed what it claimed.
+
+If check.js wasn't available (initial scan was skipped), skip this entire section. Report: "Post-pipeline verification skipped — check.js not available." Jump to Final Summary using only agent handoff data.
+
+**If check.js is available:**
+
+```bash
+node <team-scripts>/check.js --root <project-path> 2>&1 || true
+```
+
+**Compare three snapshots:**
+
+| Snapshot | When | Purpose |
+|----------|------|---------|
+| Initial scan | Before pre-fix scripts | Total violations found |
+| Post-pre-fix | After scripts, before agents | What scripts fixed mechanically |
+| Post-pipeline | After all agents | What agents fixed with judgment |
+
+**What to report:**
+- **Fixed by scripts:** Initial − Post-pre-fix counts
+- **Fixed by agents:** Post-pre-fix − Post-pipeline counts
+- **Regressions:** Any rule that has MORE violations in post-pipeline than post-pre-fix (agents introduced new violations)
+- **Unfixed:** Remaining violations in post-pipeline
+
+If regressions exist, list them explicitly — these are bugs agents introduced and should be called out.
 
 ---
 
 ## Final Summary
 
-After all agents complete, compile a single report from their handoffs:
+After verification, compile a single report from the three snapshots and agent handoffs:
 
 ```
 CLEAN-WEB PIPELINE COMPLETE
 
-Deterministic scan:
-  check.js:         [N] errors, [N] warnings → [N] fixed by agents
-  Complexity:       [N] high-complexity functions → [N] addressed
-  Dependencies:     [N] circular deps → [N] resolved
-  Dead code:        [N] unused exports → [N] removed
+Deterministic results (check.js):
+                     Initial → Post-Pre-Fix → Post-Pipeline
+  Errors:            [N]        [N]             [N]
+  Warnings:          [N]        [N]             [N]
+  Fixed by scripts:  [N]
+  Fixed by agents:   [N]
+  Regressions:       [N] (list any rules that got worse)
+  Remaining:         [N]
+
+Pre-fix scripts:
+  strip-debug:       [N files changed / no changes]
+  fix-var:           [N files changed / no changes]
+  fix-double-equals: [N files changed / no changes]
+  unit-zero:         [N files changed / no changes]
+
+Analysis scripts:
+  Complexity:        [N] high-complexity functions → [N] addressed by code-improver
+  Dependencies:      [N] circular deps → [N] resolved by web-restructure
+  Dead code:         [N] unused exports → [N] removed by code-improver
 
 Agents:
-  web-restructure:  [ran — N commits / SKIPPED]
-  css-improver:     [ran — N commits / SKIPPED]
-  html-improver:    [ran — N commits / SKIPPED]
-  code-improver:    [ran — N commits / SKIPPED]
+  web-restructure:   [ran — N commits / SKIPPED]
+  css-improver:      [ran — N commits / SKIPPED]
+  html-improver:     [ran — N commits / SKIPPED]
+  code-improver:     [ran — N commits / SKIPPED]
 
 [Include each agent's before/after summary from their handoff]
 
-Total commits: [N]
+Total commits: [N] (1 pre-fix + [N] agent commits)
 ```
 
 ---
