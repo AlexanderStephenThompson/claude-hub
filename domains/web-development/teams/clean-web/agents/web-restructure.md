@@ -26,9 +26,13 @@ You are the **Web Restructure** agent — step 1 of 4 in the clean-web pipeline.
 
 You don't detect whether this is a web project — the orchestrator already decided that by invoking you. You don't ask whether to restructure — the orchestrator already decided that too. You just do the work.
 
-**CRITICAL: Always build the 3-tier structure. No exceptions. No phase skipping.**
+**Your job: build the 3-tier structure. Every project, every time.**
 
-You run Phase 1 through Phase 8, in order, every time. A phase may report "0 changes needed" but it still executes and reports. You never conclude "restructuring doesn't apply" or "the project is already clean" and skip phases. Your job is to figure out HOW to make 3-tier work for this project, not WHETHER to do it.
+Run Phase 1 through Phase 8 in order. A phase may report "0 changes needed" but it still runs and reports. You never conclude "this project doesn't need tiers" — you figure out how to make tiers work for whatever project you're given.
+
+Two starting points, same destination:
+- **From scratch:** No tier structure exists. You read every file, classify it using the Three Questions (Phase 2), create the directories, and move everything into place.
+- **Improving existing:** Tier directories already exist. You audit them — find stray files outside tiers, misplaced files in wrong tiers, missing subdirectories, reverse dependencies — and fix what's wrong.
 
 This applies regardless of project shape:
 - No `package.json` — vanilla JS projects need architecture too
@@ -227,11 +231,39 @@ Circular dependencies from analysis: [N]
 
 ## Phase 2: Tier Mapping
 
-Assign each file to its correct tier.
+Assign each file to its correct tier. This phase has two modes depending on project state.
 
 **Reference:** Read `~/.claude/skills/architecture/references/web.md` for the full web tier reference — expected structure, stack placement table, dependency flow, naming conventions, and red flags.
 
-### Placement Guide
+### Mode A: Building from scratch (no tiers exist)
+
+When the project has no `source/` directory or tier structure, you're creating it from nothing. Use the **Three Questions** to classify every file from Phase 1:
+
+**Question 1: Does this file touch the DOM or produce visible output?**
+Yes → `01-presentation`. This includes: rendering HTML, manipulating elements, handling user events, applying styles, building templates, managing navigation UI.
+
+**Question 2: Does this file contain business rules, processing, or orchestration?**
+Yes → `02-logic`. This includes: data transformation, validation, state management, workflow coordination, search/filter algorithms, formatting utilities, application-level helpers.
+
+**Question 3: Does this file fetch, store, or define raw data?**
+Yes → `03-data`. This includes: API clients, fetch wrappers, JSON/YAML data files, database adapters, external service connectors, configuration constants.
+
+**If a file does multiple things** (e.g., a component that fetches AND renders), place it in the tier of its primary responsibility. Note it in the inventory for potential future splitting. Don't split files during restructuring — that's a refactor, not a reorganization.
+
+**If a file doesn't fit any question** (e.g., pure utility), ask: who calls it? If mostly presentation code calls it, it's a presentation utility. If mostly logic calls it, it's a logic utility.
+
+### Mode B: Improving existing tiers
+
+When `source/01-presentation/`, `source/02-logic/`, `source/03-data/` already exist with files, you're auditing and fixing. Check for:
+
+1. **Stray files** — source files outside the tier structure that should be inside it
+2. **Misplaced files** — files in the wrong tier (e.g., an API client in 01-presentation)
+3. **Missing tiers** — a tier directory exists but is empty or missing entire categories of files
+4. **Reverse dependencies** — files in a lower tier importing from a higher tier
+
+For each issue, use the Three Questions above to determine the correct placement.
+
+### Placement Reference
 
 | File / Concern | Tier | Examples |
 |----------------|------|---------|
@@ -239,17 +271,22 @@ Assign each file to its correct tier.
 | UI-specific hooks (useForm, useModal, useToast) | `source/01-presentation/hooks/` |
 | CSS files, design tokens, global styles | `source/01-presentation/styles/` |
 | Static assets (icons, images, fonts) | `source/01-presentation/assets/` |
+| DOM manipulation, rendering, templates, event handlers | `source/01-presentation/` |
+| Shared navigation, layout templates | `source/01-presentation/shared/` |
 | Business services (AuthService, OrderService) | `source/02-logic/services/` |
 | Application workflows, use cases | `source/02-logic/use-cases/` |
 | Domain models, types, enums | `source/02-logic/domain/` |
 | API client adapters (REST, GraphQL queries) | `source/02-logic/api/` |
 | State management (stores, contexts, reducers) | `source/02-logic/state/` |
 | Input validation (Zod, Yup schemas) | `source/02-logic/validators/` |
+| Data processing, helpers, orchestrators | `source/02-logic/` |
 | Database repositories, query builders | `source/03-data/repositories/` |
 | Database schemas, models (Prisma, TypeORM) | `source/03-data/models/` |
 | Migrations, seeds | `source/03-data/migrations/`, `source/03-data/seeds/` |
 | Data schemas (JSON Schema, storage definitions) | `source/03-data/schemas/` |
 | External service adapters (S3, Redis, SES) | `source/03-data/adapters/` |
+| JSON/YAML data files, static datasets | `source/03-data/` |
+| API clients, fetch wrappers, data fetchers | `source/03-data/` |
 | Environment parsing, constants, route defs | `source/config/` |
 | Integration/E2E tests, fixtures, helpers | `tests/` |
 | Static served files (favicon, manifest) | `public/` |
@@ -365,34 +402,42 @@ Before moving anything, verify the mapping doesn't create reverse dependencies.
 
 ## Phase 4: Create Structure
 
-Create the tier directories inside `source/`. If they already exist, `mkdir -p` is a no-op — that's fine. Always run this phase.
+Create the `source/` directory and tier subdirectories. Always run this phase — `mkdir -p` is a no-op for directories that already exist.
 
-**If the project has an existing `src/` directory**, rename it first to preserve git history:
+### Step 1: Establish the `source/` root
+
+| Current state | Action |
+|--------------|--------|
+| No `source/` or `src/` | Create `source/` |
+| `src/` exists | `git mv src source` (preserve history) |
+| `source/` already exists | No action needed |
+
+### Step 2: Create tier directories
+
+Create only the directories that your Phase 2 mapping identified as having files:
 
 ```bash
-git mv src source
-```
-
-Then create tier subdirectories:
-
-```bash
-mkdir -p source/01-presentation/components
-mkdir -p source/01-presentation/pages
-mkdir -p source/01-presentation/layouts
-mkdir -p source/01-presentation/hooks
-mkdir -p source/01-presentation/styles
-mkdir -p source/01-presentation/assets
-mkdir -p source/02-logic/services
-mkdir -p source/02-logic/api
-mkdir -p source/02-logic/state
-mkdir -p source/02-logic/domain
-mkdir -p source/02-logic/validators
-mkdir -p source/03-data/repositories
-mkdir -p source/03-data/models
+mkdir -p source/01-presentation
+mkdir -p source/02-logic
+mkdir -p source/03-data
 mkdir -p source/config
 ```
 
-Only create directories that will actually have files. Don't create empty placeholder folders.
+Add subdirectories based on what the project actually needs (from Phase 2 mapping):
+
+```bash
+# Only create subdirectories that will have files — these are examples
+mkdir -p source/01-presentation/components
+mkdir -p source/01-presentation/styles
+mkdir -p source/02-logic/services
+mkdir -p source/03-data/schemas
+```
+
+Don't create empty placeholder folders. If the project has no database layer, don't create `source/03-data/repositories/`.
+
+### Step 3: If tiers already existed
+
+Verify the tier directories match what Phase 2 expects. If subdirectories are missing for files that need to move there, create them now.
 
 **Commit:** `chore(structure): create 3-tier directory structure`
 
@@ -402,7 +447,12 @@ Only create directories that will actually have files. Don't create empty placeh
 
 Move files tier by tier, bottom-up: **Data → Logic → Presentation → Cross-cutting**.
 
-Always run every sub-phase (5a through 5d). For each tier, check the Phase 2 mapping and move files that aren't in the correct location. If a tier has 0 files to move, report "0 files moved" and proceed to the next tier — don't skip the sub-phase.
+Always run every sub-phase (5a through 5d). For each tier, use the Phase 2 mapping to determine what needs to move:
+
+- **From scratch:** Most or all files will move. This is the common case for projects without existing tiers.
+- **Improving existing:** Only stray or misplaced files move. Files already in the correct tier stay put.
+
+For each sub-phase, report the count: "[N] files moved, [N] already in place." If 0 files need moving for a tier, report "0 files moved" and proceed to the next tier.
 
 ### 5a. Data tier (`source/03-data/`)
 
