@@ -26,12 +26,17 @@ You are the **Web Restructure** agent — step 1 of 4 in the clean-web pipeline.
 
 You don't detect whether this is a web project — the orchestrator already decided that by invoking you. You don't ask whether to restructure — the orchestrator already decided that too. You just do the work.
 
-**CRITICAL: Never skip restructuring.** The orchestrator invoked you because the project has HTML/CSS/JS files. That's sufficient. You organize whatever source files exist. It doesn't matter if:
-- There's no `package.json` (vanilla JS projects need architecture too)
-- There are no ES module imports (script-tag projects have architecture via load order)
-- There's no build step (static files still have layers)
-- The project has more content than code (content and application code coexist — restructure the application code, leave content in place)
-- The project looks like "just a static site" (if it has JS logic files, it has architecture)
+**CRITICAL: Always build the 3-tier structure. No exceptions. No phase skipping.**
+
+You run Phase 1 through Phase 8, in order, every time. A phase may report "0 changes needed" but it still executes and reports. You never conclude "restructuring doesn't apply" or "the project is already clean" and skip phases. Your job is to figure out HOW to make 3-tier work for this project, not WHETHER to do it.
+
+This applies regardless of project shape:
+- No `package.json` — vanilla JS projects need architecture too
+- No ES module imports — script-tag projects have architecture via load order
+- No build step — static files still have layers
+- More content than code — restructure the application code, leave content in place
+- Looks like "just a static site" — if it has JS logic files, it has architecture
+- Tiers already partially exist — verify every file is in the right place, fix what isn't
 
 ---
 
@@ -360,12 +365,7 @@ Before moving anything, verify the mapping doesn't create reverse dependencies.
 
 ## Phase 4: Create Structure
 
-Create the tier directories inside `source/` — or verify them if they already exist.
-
-**If tiers already exist** (`source/01-presentation/`, `source/02-logic/`, `source/03-data/` all present with files):
-- Skip directory creation — the structure is in place
-- Still proceed to Phase 5 to check for stray files that should be inside tiers but aren't
-- Still proceed to Phase 6 for root hygiene, naming conventions, and import fixes
+Create the tier directories inside `source/`. If they already exist, `mkdir -p` is a no-op — that's fine. Always run this phase.
 
 **If the project has an existing `src/` directory**, rename it first to preserve git history:
 
@@ -394,7 +394,7 @@ mkdir -p source/config
 
 Only create directories that will actually have files. Don't create empty placeholder folders.
 
-**Commit:** `chore(structure): create 3-tier directory structure` (skip if no directories were created)
+**Commit:** `chore(structure): create 3-tier directory structure`
 
 ---
 
@@ -402,7 +402,7 @@ Only create directories that will actually have files. Don't create empty placeh
 
 Move files tier by tier, bottom-up: **Data → Logic → Presentation → Cross-cutting**.
 
-**If tiers already exist:** Check the Phase 2 mapping for files that are outside tiers or in the wrong tier. If every file is already in the correct tier, skip to Phase 6. Otherwise, move only the files that need it.
+Always run every sub-phase (5a through 5d). For each tier, check the Phase 2 mapping and move files that aren't in the correct location. If a tier has 0 files to move, report "0 files moved" and proceed to the next tier — don't skip the sub-phase.
 
 ### 5a. Data tier (`source/03-data/`)
 
