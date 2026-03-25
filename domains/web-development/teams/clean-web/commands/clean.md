@@ -164,7 +164,7 @@ python <team-scripts>/detect_dead_code.py <project-path> 2>&1 || true
 | check.js rule category | Pass to |
 |------------------------|---------|
 | CSS rules (14) + `css-file-count` + `css-file-names` | css-improver |
-| HTML rules (10) | html-improver |
+| HTML rules (11) | html-improver |
 | JS rules (8) | code-improver |
 | `tier-structure` + `tier-imports` | web-restructure |
 

@@ -73,14 +73,14 @@ foreach ($d in $domains) {
         Where-Object { $_.Name -eq 'skills' } |
         ForEach-Object { Copy-Item "$($_.FullName)\*" "$claude\skills\" -Recurse -Force }
 
-    # Agents (recursive — finds agents/ at any depth)
+    # Agents (recursive — finds agents/ at any depth, EXCLUDING .claude/ and templates/)
     Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'agents' } |
+        Where-Object { $_.Name -eq 'agents' -and $_.FullName -notmatch '\\\.claude\\' -and $_.FullName -notmatch '\\templates\\' } |
         ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\agents\" -Force }
 
-    # Commands (recursive — finds commands/ at any depth)
+    # Commands (recursive — finds commands/ at any depth, EXCLUDING .claude/ and templates/)
     Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'commands' } |
+        Where-Object { $_.Name -eq 'commands' -and $_.FullName -notmatch '\\\.claude\\' -and $_.FullName -notmatch '\\templates\\' } |
         ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\commands\" -Force }
 }
 

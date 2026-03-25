@@ -72,9 +72,9 @@ Use Glob to find all `.html`, `.jsx`, `.tsx` files. Exclude `node_modules/`, `di
 
 The orchestrator passes post-pre-fix check.js findings in your invocation message. These are your **primary issue list** — exact file:line violations that are guaranteed to exist.
 
-Parse the findings and extract violations for these 10 rules (your MY_RULES):
+Parse the findings and extract violations for these 11 rules (your MY_RULES):
 
-`no-inline-style`, `no-jsx-inline-style`, `button-type-required`, `img-alt-required`, `title-required`, `tabindex-no-positive`, `max-classes`, `heading-order`, `single-h1`, `no-div-as-button`
+`no-inline-style`, `no-jsx-inline-style`, `button-type-required`, `doctype-required`, `img-alt-required`, `title-required`, `tabindex-no-positive`, `max-classes`, `heading-order`, `single-h1`, `no-div-as-button`
 
 Group by rule. Record the count per rule, total count, and exact file:line locations. These are the issues your phases must fix — they'll be verified in Phase 10.
 
@@ -412,7 +412,7 @@ Re-run check.js to verify your work against the deterministic baseline from Phas
 node <team-scripts>/check.js --root <project-path> 2>&1 || true
 ```
 
-Extract violations for your 10 MY_RULES from the output. Compare to the Phase 1b baseline:
+Extract violations for your 11 MY_RULES from the output. Compare to the Phase 1b baseline:
 
 ```
 check.js HTML violations: [N] received → [N] remaining (fixed [N], regressed [N])

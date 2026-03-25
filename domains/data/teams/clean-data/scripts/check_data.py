@@ -253,8 +253,8 @@ def check_sql(filepath, content):
                     "no-function-on-index",
                 ))
 
-        # no-implicit-join: FROM a, b WHERE
-        if re.search(r"\bFROM\s+\w+\s*,\s*\w+", upper):
+        # no-implicit-join: FROM a, b WHERE (handles aliases like FROM users a, orders b)
+        if re.search(r"\bFROM\s+\w+(?:\s+\w+)?\s*,\s*\w+", upper):
             if not re.search(r"\bJOIN\b", upper):
                 col = re.search(r"(?i)\bFROM\b", clean)
                 issues.append(issue(
@@ -415,7 +415,8 @@ def check_python(filepath, content):
             ))
 
         # no-hardcoded-dates: date literals not in UPPER_SNAKE constants
-        date_match = re.search(r"""['"]20\d{2}-\d{2}-\d{2}['"]""", clean)
+        # Match on raw_line — the date is inside a string literal
+        date_match = re.search(r"""['"]20\d{2}-\d{2}-\d{2}['"]""", raw_line)
         if date_match:
             # Check if it's a constant assignment (UPPER_SNAKE_CASE =)
             if not re.match(r"\s*[A-Z][A-Z0-9_]*\s*=", raw_line):
@@ -436,7 +437,8 @@ def check_python(filepath, content):
                 ))
 
         # idempotent-writes: if_exists="append" without DELETE
-        if re.search(r"""if_exists\s*=\s*['"]append['"]""", clean):
+        # Match on raw_line — the value is inside a string literal
+        if re.search(r"""if_exists\s*=\s*['"]append['"]""", raw_line):
             issues.append(issue(
                 i, 1, WARN,
                 'if_exists="append" --ensure preceding DELETE for idempotency',
@@ -450,14 +452,20 @@ def check_python(filepath, content):
                 "Bare except: --catch specific exception types",
                 "no-bare-except",
             ))
-        elif re.match(r"\s*except\s+Exception\s*:", stripped):
-            # Check if there's a re-raise
+        elif re.match(r"\s*except\s+Exception(\s+as\s+\w+)?\s*:", stripped):
+            # Check if there's a re-raise in the except block body
             has_raise = False
-            for j in range(i, min(i + 10, len(lines))):
-                if re.match(r"\s*raise\b", lines[j]):
+            except_indent = len(raw_line) - len(raw_line.lstrip())
+            for j in range(i, min(i + 10, len(lines))):  # i is 1-based, lines is 0-based
+                next_line = lines[j]  # j=i means the line AFTER except (0-based offset)
+                next_stripped = next_line.strip()
+                if not next_stripped or next_stripped.startswith("#"):
+                    continue
+                next_indent = len(next_line) - len(next_line.lstrip())
+                if next_indent <= except_indent and next_stripped:
+                    break  # Dedented past the except block
+                if re.search(r"\braise\b", next_stripped):
                     has_raise = True
-                    break
-                if lines[j].strip() and not lines[j].strip().startswith("#") and not lines[j][0].isspace():
                     break
             if not has_raise:
                 issues.append(issue(
@@ -509,18 +517,18 @@ def check_terraform(filepath, content):
         stripped = raw_line.strip()
         line_clean = strip_python_strings(raw_line)
 
-        # no-hardcoded-values: ARNs
-        if re.search(r"arn:aws:", line_clean):
+        # no-hardcoded-values: ARNs (match raw_line — ARN is inside string literal)
+        if re.search(r"arn:aws:", raw_line):
             if not re.match(r"\s*(#|//|variable|data\s)", stripped):
-                m = re.search(r"arn:aws:", line_clean)
+                m = re.search(r"arn:aws:", raw_line)
                 issues.append(issue(
                     i, m.start() + 1, WARN,
                     "Hardcoded ARN --use variable or data source",
                     "no-hardcoded-values",
                 ))
 
-        # no-hardcoded-values: 12-digit account IDs
-        acct = re.search(r'"\d{12}"', line_clean)
+        # no-hardcoded-values: 12-digit account IDs (match raw_line)
+        acct = re.search(r'"\d{12}"', raw_line)
         if acct:
             issues.append(issue(
                 i, acct.start() + 1, WARN,
@@ -539,30 +547,30 @@ def check_terraform(filepath, content):
                 ))
                 break
 
-    # File-level: remote-state
-    if "terraform" in clean and "backend" in clean:
-        if re.search(r'backend\s+"local"', clean):
+    # File-level: remote-state (use raw content — "local" is inside a string)
+    if "terraform" in content and "backend" in content:
+        if re.search(r'backend\s+"local"', content):
             issues.append(issue(
                 0, 0, ERROR,
                 'Terraform backend "local" --use remote state (S3, GCS, etc.)',
                 "remote-state",
             ))
-    elif "terraform" in clean and "backend" not in clean:
-        if re.search(r"terraform\s*\{", clean):
+    elif "terraform" in content and "backend" not in content:
+        if re.search(r"terraform\s*\{", content):
             issues.append(issue(
                 0, 0, ERROR,
                 "Terraform block without backend --configure remote state",
                 "remote-state",
             ))
 
-    # File-level: required-tags
-    resource_blocks = re.finditer(r'resource\s+"aws_\w+"\s+"(\w+)"', clean)
+    # File-level: required-tags (use raw content for resource block detection)
+    resource_blocks = re.finditer(r'resource\s+"aws_\w+"\s+"(\w+)"', content)
     for rb in resource_blocks:
         # Find the resource block content
         start = rb.end()
         brace_depth = 0
         block_text = ""
-        for ch in clean[start:]:
+        for ch in content[start:]:
             if ch == "{":
                 brace_depth += 1
             elif ch == "}":
@@ -592,10 +600,11 @@ def check_s3_patterns(filepath, content):
     lines = content.splitlines()
 
     for i, raw_line in enumerate(lines, 1):
-        clean = strip_python_strings(raw_line)
+        # Most patterns here match content INSIDE strings, so use raw_line
+        # (strip_python_strings would remove the content we need to check)
 
         # s3-hive-partitions: S3 paths without key=value
-        s3_match = re.search(r"s3://[\w\-]+/[\w\-/]+", clean)
+        s3_match = re.search(r"s3://[\w\-]+/[\w\-/]+", raw_line)
         if s3_match:
             path_part = s3_match.group(0).split("//")[1].split("/", 1)
             if len(path_part) > 1:
@@ -610,7 +619,8 @@ def check_s3_patterns(filepath, content):
                     ))
 
         # config-separation: connection strings in non-config files
-        if not any(p in filepath.replace("\\", "/") for p in ("/config/", "/settings/", "/conf/")):
+        norm_path = filepath.replace("\\", "/")
+        if not any(p in norm_path for p in ("/config/", "/settings/", "/conf/", "config/")):
             conn_patterns = [
                 (r"postgresql://", "PostgreSQL"),
                 (r"mysql://", "MySQL"),
@@ -619,7 +629,7 @@ def check_s3_patterns(filepath, content):
                 (r"jdbc:", "JDBC"),
             ]
             for pattern, db_name in conn_patterns:
-                if re.search(pattern, clean, re.IGNORECASE):
+                if re.search(pattern, raw_line, re.IGNORECASE):
                     issues.append(issue(
                         i, 1, WARN,
                         f"{db_name} connection string outside config --move to config/",
@@ -629,8 +639,8 @@ def check_s3_patterns(filepath, content):
 
         # parquet-format: non-Parquet writes in staged/curated
         rel_path = filepath.replace("\\", "/")
-        if any(layer in rel_path for layer in ("/staged/", "/curated/", "/aggregated/")):
-            if re.search(r"""(?:format\s*=\s*['"](?:csv|json)['"]|\.to_csv\s*\(|\.to_json\s*\()""", clean):
+        if any(layer in rel_path for layer in ("/staged/", "/curated/", "/aggregated/", "staged/", "curated/", "aggregated/")):
+            if re.search(r"""(?:format\s*=\s*['"](?:csv|json)['"]|\.to_csv\s*\(|\.to_json\s*\()""", raw_line):
                 issues.append(issue(
                     i, 1, WARN,
                     "Non-Parquet format in staged/curated layer --use Parquet for performance",
