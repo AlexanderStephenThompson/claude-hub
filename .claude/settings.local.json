@@ -32,6 +32,9 @@
       "Bash(git rm:*)",
       "Bash(git fetch:*)",
       "Bash(git reset:*)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Alexa\\OneDrive\\Desktop\\_Personal\\Utility\\Tools\\claude-hub"
     ]
   }
 }
