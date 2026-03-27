@@ -1,3 +1,10 @@
+<!--
+GENERIC AGENT TEMPLATE
+For agents that don't fit the builder or refactorer pattern.
+See also:
+  - BUILDER-AGENT.md  — for agents that create new code from specs (proactive)
+  - REFACTORER-AGENT.md — for agents that audit and fix existing code (reactive)
+-->
 ---
 name: [agent-name]
 

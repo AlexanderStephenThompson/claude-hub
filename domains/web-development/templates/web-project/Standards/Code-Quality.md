@@ -1,3 +1,7 @@
+<!-- Derived from ~/.claude/skills/code-quality/SKILL.md
+     For agent consumption, read the skill directly.
+     This file is a human-readable convenience copy for project browsing. -->
+
 # Code Quality Standards
 
 **Version:** 2.0

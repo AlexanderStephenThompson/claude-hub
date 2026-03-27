@@ -11,6 +11,16 @@ user-invocable: false
 
 > Clean, maintainable CSS without preprocessors or utility frameworks. Design tokens via CSS variables.
 
+## The Problem
+
+AI-generated CSS drifts. Without memory between sessions, similar components end up with slightly different padding, colors, spacing, and border radii — not by design, but by independence. The drift itself isn't the problem. The problem is that every future edit becomes a partial fix: you change `.card`'s background, but `.panel` uses `#fff`, `.info-box` uses `white`, and `.content-block` uses `rgb(255,255,255)` — same color, different formats, so only one gets updated. These standards centralize values into tokens so one edit propagates everywhere.
+
+## Consumption
+
+- **Builders:** Read `## Builder Checklist` before writing any CSS. Every value must use a token; every file must follow the 5-file architecture.
+- **Refactorers:** Use `## Enforced Rules` to find hardcoded values and structural violations. Read narrative sections for token naming and file organization guidance.
+- **Both:** Narrative sections are the authoritative standard. Checklist and rules table are compressed views of the same content.
+
 ---
 
 ## Scope and Boundaries
@@ -248,7 +258,9 @@ Organize properties by group. 5 groups, always in this order:
 
 ---
 
-## Checklist
+## Builder Checklist
+
+Before writing CSS governed by this skill, verify your plan against these constraints. Builders read this section before writing code; refactorers use the Enforced Rules table and full narrative instead.
 
 ### Design Tokens
 - [ ] All colors use CSS variables

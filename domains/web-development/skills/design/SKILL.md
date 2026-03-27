@@ -11,6 +11,16 @@ user-invocable: false
 
 > Non-negotiable design and user interface standards. These are not preferences—they are requirements.
 
+## The Problem
+
+AI agents produce UI that looks plausible but diverges from itself. Each session picks slightly different spacing, heading levels, element choices, and state handling — creating interfaces where similar components feel inconsistent. A card uses `<h3>` here but `<h4>` there; a button has hover states in one place but not another. These standards ensure every UI element follows the same design language regardless of which session built it.
+
+## Consumption
+
+- **Builders:** Read `## Builder Checklist` before writing any HTML, CSS, or JSX. Design token usage and semantic HTML are constraints, not suggestions.
+- **Refactorers:** Use `## Enforced Rules` to find design violations. Read narrative sections for correct element selection and token usage.
+- **Both:** Narrative sections are the authoritative standard. Checklist and rules table are compressed views of the same content.
+
 ---
 
 ## Scope and Boundaries
@@ -355,7 +365,9 @@ We follow S-Tier SaaS standards (Stripe, Airbnb, Linear):
 
 ---
 
-## Quick Reference Checklist
+## Builder Checklist
+
+Before writing UI code governed by this skill, verify your plan against these constraints. Builders read this section before writing code; refactorers use the Enforced Rules table and full narrative instead.
 
 ### Design System
 

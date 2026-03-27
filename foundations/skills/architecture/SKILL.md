@@ -10,6 +10,16 @@ description: Architecture principles, module boundaries, folder structure, and p
 
 > How to structure a project — both logically (module design, dependency flow) and physically (folder layout, naming, type-specific conventions).
 
+## The Problem
+
+AI agents don't remember where they put things last session. Without explicit structure, each session invents its own folder layout, module boundaries, and dependency patterns — leading to scattered files, circular imports, and architectures that only make sense to the session that created them. These standards define one structure so every session builds in the same place.
+
+## Consumption
+
+- **Builders:** Read `## Builder Checklist` before creating files or folders. Follow the project type profile that matches your target.
+- **Refactorers:** Use `## Enforced Rules` to find structural violations. Read narrative sections for migration guidance.
+- **Both:** Narrative sections are the authoritative standard. Checklist and rules table are compressed views of the same content.
+
 ---
 
 ## Scope and Boundaries
@@ -321,6 +331,31 @@ Stop and reconsider when you see:
 | "Quick helper" in wrong module | Boundary violation | Move to correct owner |
 | Framework magic hiding control flow | Hard to debug, hard to refactor | Make it explicit |
 | Feature touching 5+ unrelated files | Poor separation | Refactor boundaries |
+
+---
+
+## Builder Checklist
+
+Before designing modules or folder structure, verify your plan against these constraints. Builders read this section before writing code; refactorers use the Enforced Rules table and full narrative instead.
+
+### Structure
+- [ ] 3-tier architecture: `01-presentation/` → `02-logic/` → `03-data/`
+- [ ] No reverse dependencies (data → logic, logic → presentation)
+- [ ] No layer skipping (presentation → data)
+- [ ] Max 4 folder levels from root to file
+- [ ] Clean root — only entry points and required config at top level
+
+### Modules
+- [ ] Each module has a single entry point (index file)
+- [ ] No circular dependencies between modules
+- [ ] Each module owns its data — no cross-module direct DB access
+- [ ] Feature-organized within tiers (not global `models/`, `services/` folders)
+
+### Design
+- [ ] Default to simplicity: function → module → class → pattern
+- [ ] Small changes stay local (feature touches 1-2 modules, not 5+)
+- [ ] No `shared/common/utils` dumping grounds
+- [ ] Folder names describe what's inside (not `helpers/`, `misc/`)
 
 ---
 

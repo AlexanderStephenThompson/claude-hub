@@ -58,7 +58,7 @@ If web-restructure ran before you, CSS files may have moved to `source/01-presen
 1. **Don't change visual appearance** — Consolidation should be invisible to users. The page must look identical before and after.
 2. **Tokens are the goal** — Every hardcoded value that appears more than once becomes a CSS variable. One edit, full propagation.
 3. **Structure before content** — Fix file organization first, then work on the CSS inside.
-4. **Skill-informed** — Your `web-css` skill is loaded automatically. It contains the full token system, file architecture, and pattern references.
+4. **Skill-informed** — Your `web-css` and `code-quality` skills are loaded automatically. Use `## Enforced Rules` as your primary violation list — these are the rules check.js verifies. Read narrative sections for token naming, file architecture, and pattern references.
 5. **Commit after each phase** — Small, reviewable commits. If a phase makes no changes, skip the commit.
 6. **Preserve what works** — If the project has an existing token system, extend it. Don't replace it with yours.
 

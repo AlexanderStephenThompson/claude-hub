@@ -11,6 +11,16 @@ user-invocable: false
 
 > Non-negotiable documentation standards. Documentation ships with code, not after it.
 
+## The Problem
+
+AI agents treat documentation as optional — code gets written, but changelogs, feature specs, and module docs are skipped or generated as an afterthought. Each session assumes the next one will "just read the code," but without documentation, context evaporates between sessions. These standards ensure documentation ships with every change so agents and humans can pick up where the last session left off.
+
+## Consumption
+
+- **Builders:** Read `## Builder Checklist` before starting a feature. Plan documentation alongside code, not after.
+- **Refactorers:** Use `## Enforced Rules` to find documentation gaps. Read narrative sections for format and structure guidance.
+- **Both:** Narrative sections are the authoritative standard. Checklist and rules table are compressed views of the same content.
+
 ---
 
 ## Core Principles
@@ -215,7 +225,9 @@ Follow [Keep a Changelog](https://keepachangelog.com/) format. Use the template 
 
 ---
 
-## Documentation Checklist
+## Builder Checklist
+
+Before writing code governed by this skill, verify your plan against these constraints. Builders read this section before starting work; refactorers use the Enforced Rules table and full narrative instead.
 
 Before considering documentation complete:
 
@@ -236,6 +248,16 @@ Before considering documentation complete:
 - [ ] Roadmap reflects current state
 - [ ] Changelog updated for release
 - [ ] Architecture doc current
+
+---
+
+## Enforced Rules
+
+Documentation standards are not currently enforced by a deterministic linter. When a documentation checker is added, register rules here and in the checker's `RULE_SKILLS` registry.
+
+| Rule ID | Severity | What It Checks |
+|---------|----------|---------------|
+| — | — | No automated rules yet — all checks are manual via the Builder Checklist above |
 
 ---
 

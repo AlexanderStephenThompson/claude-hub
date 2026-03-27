@@ -7,6 +7,16 @@ description: Non-negotiable code quality standards for testing, structure, namin
 
 > Non-negotiable code quality standards. These are not preferences — they are requirements.
 
+## The Problem
+
+AI agents produce code that works but diverges. Each session picks slightly different names, nesting patterns, and error handling approaches — not by design, but by independence. Over time this drift compounds: the codebase accumulates three ways to handle errors, four naming conventions, and scattered magic numbers that almost-but-don't-quite match. These standards collapse that divergence to zero so refactoring stays small and infrequent.
+
+## Consumption
+
+- **Builders:** Read `## Builder Checklist` before writing code. Reference narrative sections when a checklist item is ambiguous.
+- **Refactorers:** Use `## Enforced Rules` as your issue list. Read narrative sections for fix guidance.
+- **Both:** Narrative sections are the authoritative standard. Checklist and rules table are compressed views of the same content.
+
 ---
 
 ## Test-Driven Development: 4-Layer Validation Framework
@@ -533,7 +543,9 @@ cascade_position = file_index + 1
 
 ---
 
-## Quick Reference
+## Builder Checklist
+
+Before writing code governed by this skill, verify your plan against these constraints. This is the same guidance described in detail above, compressed for pre-build verification. Builders read this section before writing code; refactorers use the Enforced Rules table and full narrative instead.
 
 - [ ] Layers 1-3 written BEFORE implementation (tests fail first, then code passes them)
 - [ ] Layer 1: Unit tests cover logic, happy path, and edge cases

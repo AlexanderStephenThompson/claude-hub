@@ -1,3 +1,7 @@
+<!-- Derived from ~/.claude/skills/architecture/SKILL.md
+     For agent consumption, read the skill directly.
+     This file is a human-readable convenience copy for project browsing. -->
+
 # Architecture Principles
 
 **Version:** 2.0

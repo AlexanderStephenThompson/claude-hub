@@ -11,6 +11,16 @@ user-invocable: false
 
 > Accessibility is not optional. These patterns ensure all users can use your application.
 
+## The Problem
+
+AI agents build interfaces that look correct but aren't accessible. Without explicit WCAG standards, each session skips alt text, uses divs instead of buttons, nests headings incorrectly, and omits keyboard navigation — not from intent but from path-of-least-resistance. Each session introduces slightly different accessibility gaps, making remediation a moving target. These standards ensure accessibility is built in from the first element.
+
+## Consumption
+
+- **Builders:** Read `## Builder Checklist` before writing any HTML or component markup. Accessibility must be designed in, not patched via ARIA after the fact.
+- **Refactorers:** Use `## Enforced Rules` to find accessibility violations. Read narrative sections for remediation patterns.
+- **Both:** Narrative sections are the authoritative standard. Checklist and rules table are compressed views of the same content.
+
 ---
 
 ## Scope and Boundaries
@@ -629,7 +639,9 @@ it('has no accessibility violations', async () => {
 
 ---
 
-## Checklist
+## Builder Checklist
+
+Before writing UI code governed by this skill, verify your plan against these constraints. Builders read this section before writing code; refactorers use the Enforced Rules table and full narrative instead.
 
 ### Semantic HTML
 - [ ] Correct heading hierarchy

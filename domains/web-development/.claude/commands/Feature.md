@@ -121,17 +121,26 @@ When building a feature, follow this exact process:
 - Technical notes
 - Related features
 
-### 2. Read Scopes and Follow Standards
+### 2. Load Standards from Skills
 
-**Read the feature's `Scopes:` field** to determine which standards apply.
+**Read the feature's `Scopes:` field** to determine which skills to load.
 
 `core` and `docs` are always active. Additional scopes (`ui`, `api`, `auth`, `data`) activate based on the feature.
 
-**Reference standards files matching active scopes:**
-- `Standards/Code-Quality.md` — Always (`core`)
-- `Standards/Design.md` — Only if `ui` scope active
-- `Standards/Security.md` — Only if `api`, `auth`, or `data` scope active
-- `01-presentation/styles/global.css` — Only if `ui` scope active
+**Read the `## Builder Checklist` section from each active skill:**
+
+| Scope | Skill Path | When Active |
+|-------|-----------|-------------|
+| `core` | `~/.claude/skills/code-quality/SKILL.md` | Always |
+| `core` | `~/.claude/skills/architecture/SKILL.md` | Always |
+| `ui` | `~/.claude/skills/design/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/web-css/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/web-accessibility/SKILL.md` | `ui` scope active |
+| `api`, `auth`, `data` | `~/.claude/skills/security/SKILL.md` | Any of these scopes active |
+
+Also read `01-presentation/styles/global.css` if `ui` scope is active (project-specific design tokens).
+
+**Hold these checklist constraints in context for the entire build.** When a checklist item is ambiguous, read the full skill narrative for deeper guidance.
 
 **If the feature spec has no `Scopes:` field**, infer scopes from the feature's layers:
 - Touches `01-presentation/` → add `ui`
@@ -267,6 +276,18 @@ Layer 3 (Behavioral):  ✅ All passing — user flows work end-to-end
 **Must pass:** Design tokens, architecture boundaries, file naming, secrets, documentation sync.
 
 **If any fail:** Fix issues before proceeding.
+
+**Also run the deterministic checker** (same checker the refactoring agents use — running it here catches violations proactively):
+
+```bash
+# Web projects
+node domains/web-development/teams/clean-web/scripts/check.js --root <source-dir>
+
+# Data projects
+python domains/data/teams/clean-data/scripts/check_data.py --root <source-dir>
+```
+
+Fix any violations before committing. This ensures code written by the builder meets the same standards the refactorer would enforce later.
 
 ### 3. Layer 4 — Change-Specific Human Verification
 

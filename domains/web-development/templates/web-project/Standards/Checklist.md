@@ -1,3 +1,7 @@
+<!-- Derived from skill Builder Checklists in ~/.claude/skills/
+     For agent consumption, read each skill's ## Builder Checklist section directly.
+     This file is a human-readable convenience copy for project browsing. -->
+
 # Standards Compliance Checklist
 
 **Version:** 3.0

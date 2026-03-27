@@ -1,3 +1,7 @@
+<!-- Derived from ~/.claude/skills/design/SKILL.md
+     For agent consumption, read the skill directly.
+     This file is a human-readable convenience copy for project browsing. -->
+
 # Design Standards
 
 **Version:** 3.0

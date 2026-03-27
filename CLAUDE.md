@@ -35,6 +35,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Key principle:** Skills are the single source of truth. All teams reference shared skills from `~/.claude/skills/`, not embedded copies. The `/sync` command recursively discovers files from all domain folders and flattens on deploy.
 
+## Builder vs Refactorer Pattern
+
+Skills serve two consumer types through different sections of the same file:
+
+| Consumer | Primary section | When | Goal |
+|----------|----------------|------|------|
+| **Builder** | `## Builder Checklist` | Before writing code | Conform from the start |
+| **Refactorer** | `## Enforced Rules` | After code exists | Find and fix violations |
+
+Both read the same narrative sections for detailed guidance. Both run `check.js` — builders as a post-build gate (expect 0 violations), refactorers as a before/after delta.
+
+Every skill contains: `## The Problem` (why standards exist), `## Consumption` (how each consumer reads the file), `## Builder Checklist`, and `## Enforced Rules`. Agent templates at `foundations/templates/agent/` provide `BUILDER-AGENT.md` and `REFACTORER-AGENT.md` for creating new agents of each type.
+
 ## Multi-Agent Teams
 
 | Team | Agents | Workflow |

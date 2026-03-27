@@ -1,3 +1,7 @@
+<!-- Derived from ~/.claude/skills/documentation/SKILL.md
+     For agent consumption, read the skill directly.
+     This file is a human-readable convenience copy for project browsing. -->
+
 # Documentation Standards
 
 **Version:** 1.0

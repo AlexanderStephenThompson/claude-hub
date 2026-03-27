@@ -11,6 +11,16 @@ user-invocable: false
 
 > Security must be built in from the start, not bolted on later. These standards apply to all code that handles user data, authentication, or external input.
 
+## The Problem
+
+AI agents default to making code work, not making it safe. Without explicit security standards, each session takes the shortest path — string concatenation for queries, hardcoded secrets for convenience, broad permissions for speed. These aren't malicious choices; they're the path of least resistance when security isn't in the prompt. These standards make secure patterns the default path.
+
+## Consumption
+
+- **Builders:** Read `## Builder Checklist` before writing any code that touches user input, auth, or external services. Security must be designed in, not patched after.
+- **Refactorers:** Use `## Enforced Rules` to find security violations. Read narrative sections for remediation guidance.
+- **Both:** Narrative sections are the authoritative standard. Checklist and rules table are compressed views of the same content.
+
 ---
 
 ## Core Principles
@@ -433,7 +443,9 @@ def log_security_event(event_type: str, user_id: str, details: dict):
 
 ---
 
-## Security Checklist
+## Builder Checklist
+
+Before writing code that handles user data, authentication, or external input, verify your plan against these constraints. Builders read this section before writing code; refactorers use the Enforced Rules table and full narrative instead.
 
 ### Before Every Release
 
