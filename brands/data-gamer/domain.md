@@ -4,13 +4,15 @@
 
 | Use This | Not This |
 |----------|----------|
-| Crash course | Tutorial, walkthrough, guide |
-| Deep dive | Analysis, breakdown |
+| Guide, breakdown | Tutorial, walkthrough, crash course |
+| Deep dive | Analysis, comprehensive review |
 | The spreadsheet | The dataset, the data |
 | Hook | Intro, opening (the counterintuitive stat or question that opens a video) |
 | CTA | Call to action (but never say "call to action" on camera) |
 | Systems-heavy games | Complex games, simulation games |
 | Data story | Data visualization, infographic (a data story is narrative-driven, not just a chart) |
+| The numbers, the data says | Statistics show, research indicates |
+| Tracked, logged, tested | Analyzed, evaluated, assessed |
 
 ## Twitch Channel Point Rewards
 
@@ -34,11 +36,12 @@ Systems-heavy titles where data analysis adds genuine play value:
 - Oxygen Not Included
 - Factorio
 
-## Tools Referenced
+## Tools Used (Behind the Scenes)
 
-The three crash course pillars:
-- **Tableau** — visualization
-- **Excel** — spreadsheets and analysis
-- **SQL / Databases** — querying
+Data Gamer uses Tableau, Excel, and SQL to produce the analysis — but the audience sees the *findings*, not the tools. The tools are backstage, not the content.
+
+- **Tableau** — visualization for videos
+- **Excel** — tracking and analysis
+- **SQL** — querying game data
 
 **Never reference:** Power BI.

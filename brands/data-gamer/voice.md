@@ -12,13 +12,13 @@ Curious, slightly irreverent, data-first but never dry. The voice of someone who
 
 > "I analyzed every item drop in 7 Days to Die and the pricing makes no sense. Here's the spreadsheet."
 
-Direct, confident, but not condescending. Teaching through proof, not authority.
+Direct, confident, but not condescending. Proving through data, not asserting through opinion.
 
-> "Your Excel dashboard is confusing. Here's why."
+> "Everyone tells you to rush the trader in 7 Days to Die. I tracked 50 runs and the math says otherwise."
 
 ## What Sounds Wrong
 
-**Too formal / corporate:**
+**Too formal / educational:**
 > "In this video, we'll explore the fascinating world of data analytics and its applications in the gaming industry."
 
 **Too hype-bro:**

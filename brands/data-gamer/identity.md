@@ -1,30 +1,29 @@
 # Data Gamer
 
-A content brand that turns gameplay into interactive data stories and experiments. The audience is gamers and data-curious creatives who want to see games as systems — not just play them, but understand how they work.
+A YouTube and Twitch channel that makes game guides nobody else can — because they're backed by actual data. Not a data education channel. Not a course platform. It's gaming content where data storytelling is the secret weapon that makes guides more engaging, more useful, and more trustworthy than anything else out there.
 
 ## Mission
 
-Build an audience through YouTube, Twitch, and eventually digital products by applying real analytical rigor to gaming — making data accessible and entertaining.
+Be the gaming channel where every guide, every breakdown, every recommendation is backed by real data — tracked, analyzed, and presented in a way that's genuinely interesting to watch.
 
 ## Channels
 
-- **YouTube:** Crash courses on Tableau, Excel, and Databases & Querying
+- **YouTube:** Game guides, breakdowns, and analysis powered by data storytelling
 - **Twitch:** Live streaming with a channel point redemption system that generates content
-- **Digital Products (future):** Courses, templates
 
 ## Relationship to Other Brands
 
-Data Gamer is the entertainment arm of Alexander's data expertise — the same analytical rigor as Avid Analytics, but wrapped in gaming references and accessible energy. Long-term, it's an audience engine that feeds both course sales and consulting credibility.
+Data Gamer is gaming content first, data second. The analytical skills come from the same place as Avid Analytics, but the audience never needs to know that — they're here for better game guides, not data education. If anyone learns data skills along the way, that's a bonus, not the goal.
 
 ## Audience
 
-Gamers and data-curious creatives who enjoy systems-heavy games (7 Days to Die, Oxygen Not Included, Factorio).
+Gamers who play systems-heavy games (7 Days to Die, Oxygen Not Included, Factorio) and want better information about those games.
 
 ### Psychographics
 
-- **Pain point:** Traditional data courses are boring and disconnected from anything they care about
-- **Intent:** They want to learn data skills but need a reason to care — gaming provides that hook
-- **Behavior:** They already analyze games informally (wiki browsing, Reddit theorycrafting, min-maxing builds) — they just don't call it "data analysis"
+- **Pain point:** Existing game guides are opinions dressed as facts — "this is the best build" with no proof. Or they're wikis with raw data and no narrative.
+- **Intent:** They want to know what actually works and why, not just what some YouTuber thinks is good
+- **Behavior:** They already dig into wikis, Reddit theorycrafting, and min-max spreadsheets — they just don't have someone presenting it well
 - **What they value:** Proof over opinion, specifics over generalities, showing work over claiming results
 - **How they talk:** Casual, meme-literate, game-specific jargon, skeptical of hype
 
@@ -32,5 +31,3 @@ Gamers and data-curious creatives who enjoy systems-heavy games (7 Days to Die, 
 
 1. YouTube ad revenue + sponsorships
 2. Twitch subscriptions + channel points engagement
-3. Course sales (crash courses as funnels)
-4. Templates and digital products

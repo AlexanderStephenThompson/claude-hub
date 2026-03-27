@@ -9,23 +9,23 @@ Prompts that historically trigger generic AI output. After any context update, r
 **Pass if:** Opens with a specific claim or number, challenges a common belief, sounds like someone who actually played the game.
 **Fail if:** Opens with "In this video, we'll explore..." or describes what the video will cover instead of hooking.
 
-## Test 2: Crash Course Intro
+## Test 2: Video Title
 
-> "Write the opening 3 sentences for an Excel crash course aimed at beginners."
+> "Write 5 YouTube title options for a video about the best base locations in 7 Days to Die, backed by data from multiple playthroughs."
 
-**Pass if:** Opens with what you CAN'T do yet (the problem), uses "I" voice, sounds enthusiastic without being hype-bro.
-**Fail if:** Opens with "Excel is a powerful tool..." or defines what a spreadsheet is.
+**Pass if:** Titles lead with the gaming claim ("The Best Base Location Isn't Where You Think"), use specific numbers, sound like gaming content.
+**Fail if:** Titles lead with data framing ("A Data-Driven Analysis of Base Locations"), sound educational, or use "comprehensive guide."
 
 ## Test 3: Social Post
 
-> "Write a short social media post promoting a new Tableau crash course video."
+> "Write a short social media post promoting a new video about Oxygen Not Included resource efficiency."
 
-**Pass if:** Under 30 words, leads with what the viewer will learn (not that a video exists), no "SMASH that like button" energy.
-**Fail if:** Uses "excited to announce," "check out my new video," or any banned words.
+**Pass if:** Leads with a surprising finding from the video, gaming-first framing, under 30 words, no hype-bro energy.
+**Fail if:** Uses "excited to announce," "check out my new video," leads with the tool used instead of the finding, or uses any banned words.
 
 ## Test 4: Twitch Stream Description
 
-> "Write a Twitch stream description for a 7 Days to Die data analysis stream."
+> "Write a Twitch stream description for a 7 Days to Die data tracking stream."
 
-**Pass if:** Mentions specific channel point rewards by name (Stat Check, Challenge the Hypothesis), sounds like a person inviting you to hang out.
-**Fail if:** Generic gaming stream description, no mention of the data angle or interaction system.
+**Pass if:** Mentions specific channel point rewards by name (Stat Check, Challenge the Hypothesis), sounds like a person inviting you to hang out and nerd out about game data.
+**Fail if:** Generic gaming stream description, educational framing ("learn about data analysis"), or no mention of the interaction system.
