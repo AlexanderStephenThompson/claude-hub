@@ -502,7 +502,7 @@ This file provides guidance to Claude Code when working with this project.
 | `/New_Idea {description}` | Add features or restructure milestones |
 | `/Bug {description}` | Report and fix bugs |
 | `/Release {version}` | Ship a milestone |
-| `/Adopt` | Adopt framework (already completed) |
+| `/Convert` | Convert/upgrade framework (already completed) |
 
 ## Architecture
 

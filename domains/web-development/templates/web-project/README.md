@@ -7,7 +7,7 @@ A comprehensive project template with built-in standards enforcement, automated 
 ## 📋 Process Overview
 
 1. **Clone & Install** → `npm install` then `npm run validate` (shows guidance)
-2. **Run `/Start_Project` or `/Adopt`** → Generate project documentation (new or existing project)
+2. **Run `/Start_Project` or `/Convert`** → Generate project documentation (new or existing project)
 3. **Review** `Documentation/project-roadmap.md` → Validate your plan
 4. **Pick first feature** → From the first milestone
 5. **Build** → `/Feature` handles TDD, standards, and completion
@@ -21,11 +21,15 @@ A comprehensive project template with built-in standards enforcement, automated 
 | Command | When to Use | What It Does |
 |---------|-------------|--------------|
 | `/Start_Project` | New project | 7-phase interview → generates all documentation |
-| `/Adopt` | Existing project | Scans codebase → generates docs → enables all commands |
-| `/Feature` | Building | Builds feature → validates → updates all docs |
-| `/New_Idea` | Anytime | Captures idea or restructures milestones (move, split, merge) |
+| `/Convert` | Existing project | Scans codebase → generates docs → enables all commands. Also upgrades already-converted projects. |
+| `/Feature` | Building | Lock → Research → Build with TDD → validate → update all docs |
+| `/New_Idea` | Anytime | Capture → Refine (pressure-test) → Place → spec. Also restructures milestones. |
 | `/Bug` | Something broken | Reports bug → tracks fix → PATCH version bump |
 | `/Release` | Milestone complete | Finalizes changelog → bumps version → creates git tag |
+
+### **Resumable Workflows**
+
+`/Feature` and `/New_Idea` save progress to `.claude/dispatch/`. If a session ends mid-workflow (on phone, lost connection, etc.), running the command again picks up exactly where you left off. No work lost, no repeated steps.
 
 ---
 
@@ -141,53 +145,59 @@ This ensures you build features in the right order, avoiding blockers where a fe
 
 ## 📋 How /New_Idea Works
 
-Run `/New_Idea` anytime during development to add new features to your project.
+Run `/New_Idea` anytime during development to add new features to your project. The command captures your raw idea, pressure-tests it collaboratively against the existing roadmap, then places and specs it.
 
 ```
 /New_Idea Add ability to export meal plans as PDF
 ```
 
-### **6-Phase Process**
+### **7-Phase Process**
 
-1. **Understand** → Brief clarifying questions (what, why, constraints)
-2. **Place** → Determines program/module (or creates new ones if needed)
-3. **Dependencies** → Analyzes what it depends on and what it enables
-4. **Milestone** → Assigns to existing milestone, new milestone, or "Maybe Later"
-5. **Generate** → Creates feature spec from template
-6. **Update** → Updates module explainer, roadmap, dependency map, changelog
+1. **Capture** → Write raw idea to dispatch artifact for persistence
+2. **Refine** → Collaborative pressure-testing: what problem does it solve, does it overlap, effort vs. impact, proceed/merge/park?
+3. **Place** → Determines program/module (or creates new ones if needed)
+4. **Dependencies** → Analyzes what it depends on and what it enables
+5. **Milestone** → Assigns to existing milestone, new milestone, or "Maybe Later"
+6. **Generate** → Creates feature spec from template
+7. **Update** → Updates module explainer, roadmap, dependency map, changelog
 
-### **What Gets Updated**
+### **Three Outcomes from Refine**
 
-| File | Change |
-|------|--------|
-| **Feature spec** | Created with user story, acceptance criteria, standards checklist |
-| **Module explainer** | Feature added to table, progress count updated |
-| **Project roadmap** | Milestone updated, dependency map updated (if needed) |
-| **Changelog** | Placeholder added (if milestone is in progress) |
+| Outcome | What Happens |
+|---------|-------------|
+| **Proceed** | Idea passes pressure-test → continues to Place, Spec, and Update |
+| **Park** | Nice idea, wrong timing → archived in `.claude/dispatch/ideas/` with reasoning |
+| **Merge** | Overlaps with existing feature → optionally update that feature's spec |
+
+### **Resumable**
+
+If a session ends after Capture but before Refine, running `/New_Idea` again resumes at Refine. If it ends after Refine, resumes at Place with context pre-filled.
 
 ### **Handles Edge Cases**
 
 - **New module needed?** → Creates module explainer first
 - **Circular dependency?** → Flags it and asks how to resolve
-- **Duplicate feature?** → Surfaces existing feature for comparison
-- **Low priority?** → Offers "Maybe Later" option (post v1.0)
+- **Duplicate feature?** → Surfaces existing feature during Refine
+- **Low priority?** → Offers parking or "Maybe Later" option
 
 ### **Example**
 
 ```
 User: /New_Idea Export meal plan as PDF
 
-AI: 📝 Understanding:
-    - Capability: Export meal plans to PDF format
-    - Benefit: Users can print or share plans offline
+AI: [Captures idea, scans roadmap]
+    Let me pressure-test this with you.
 
-    📍 This fits in Kitchen / Planning (where meal plans live).
+    What problem does exporting to PDF solve — printing, sharing, or offline access?
 
-    🔗 Dependencies:
-    - Depends on: "Create meal plan"
-    - Enables: Nothing currently planned
+User: Printing weekly plans for the fridge.
 
-    📅 Milestone: v0.3.0 (after core planning is done)
+AI: Clear use case. Low-medium effort, high impact. No overlap with existing features.
+    Recommendation: proceed. Kitchen / Planning is the right home.
+
+    📍 Placing in Kitchen / Planning.
+    🔗 Depends on: "Create meal plan"
+    📅 Milestone: v0.3.0
 
     ✅ Created: /Documentation/features/kitchen/planning/export-meal-plan-pdf.md
     ✅ Updated: Module explainer, roadmap, dependency map
@@ -268,15 +278,23 @@ Run `/Release` with no argument and it scans for milestones where all features a
 
 ---
 
-## 📋 How /Adopt Works
+## 📋 How /Convert Works
 
-Already have a project? Dump it into the template root and run `/Adopt`. A team of 5 agents scans your code, moves it into the 3-tier structure, and generates all documentation.
+One command for two scenarios: bring a raw project into the framework, or upgrade an already-converted project to the latest template.
 
 ```
-/Adopt
+/Convert                    ← auto-detects which mode
+/Convert /path/to/project   ← target a specific project
 ```
 
-### **5-Agent Pipeline**
+### **Two Modes**
+
+| Your Project | Mode | What Happens |
+|-------------|------|-------------|
+| No framework yet | **Fresh Convert** | 5-agent pipeline scans, migrates, documents (9 phases) |
+| Already has framework | **Upgrade** | Diffs against latest template, updates what's outdated (4 phases) |
+
+### **Fresh Convert — 5-Agent Pipeline**
 
 | Agent | What It Does |
 |-------|-------------|
@@ -286,19 +304,11 @@ Already have a project? Dump it into the template root and run `/Adopt`. A team 
 | **Documenter** | Generates roadmap, features, modules, changelog, architecture |
 | **Verifier** | Runs validators, checks imports, produces ADOPT-REPORT.md |
 
-### **Workflow**
+### **Upgrade**
 
-1. **Setup** — Check preconditions, detect conflicts
-2. **Scan** — Scanner agent reads entire codebase (automatic)
-3. **Present + Interview** — Review findings, answer 5-8 gap questions ← *you*
-4. **Plan** — Architect agent designs the migration
-5. **Approve** — Review migration plan before files move ← *you*
-6. **Migrate** — Migrator agent moves files, updates imports
-7. **Document** — Documenter agent generates all docs
-8. **Verify** — Verifier agent runs all checks
-9. **Summary** — Review results, start building
+Updates template-owned files (Standards, validators, CLAUDE.md template sections) while preserving all project-specific content (roadmap, features, changelog, code). Shows a diff report before applying.
 
-### **What Gets Detected Automatically**
+### **What Gets Detected Automatically (Fresh Convert)**
 
 | Source | What It Finds |
 |--------|--------------|
@@ -310,18 +320,9 @@ Already have a project? Dump it into the template root and run `/Adopt`. A team 
 | Import graphs | Module and feature dependencies |
 | Test files | What's tested and working |
 
-### **What You Get**
+### **Convert vs Start_Project**
 
-- **3-tier migration** — Files organized into presentation, logic, data layers
-- **Feature Index** with existing features marked Complete
-- **Milestone roadmap** with past releases reconstructed from git tags
-- **Changelog** backfilled from version history
-- **All commands** working going forward (`/Feature`, `/New_Idea`, `/Bug`, `/Release`)
-- **ADOPT-REPORT.md** — verification results with pass/fail status
-
-### **Adopt vs Start_Project**
-
-| | `/Start_Project` | `/Adopt` |
+| | `/Start_Project` | `/Convert` (Fresh) |
 |--|-----------------|----------|
 | **For** | New projects (no code) | Existing projects (code already written) |
 | **Interview** | Full 7-phase (30+ questions) | Scan first, ask gaps (5-8 questions) |
@@ -331,7 +332,7 @@ Already have a project? Dump it into the template root and run `/Adopt`. A team 
 | **File structure** | Creates empty 3-tier folders | Moves existing files INTO 3-tier |
 | **Agents** | None (single command) | 5-agent pipeline |
 
-**See:** [.claude/commands/Adopt.md](./.claude/commands/Adopt.md) and [.claude/agents/](./.claude/agents/)
+**See:** [.claude/commands/Convert.md](./.claude/commands/Convert.md) and [.claude/agents/](./.claude/agents/)
 
 ---
 
@@ -525,59 +526,25 @@ So that I can organize my meals and know what to cook
 
 ---
 
-### **How to Choose What to Build Next**
-
-#### **Step 1: Check Your Roadmap**
-Open `Documentation/project-roadmap.md` and find the **current milestone**:
-- Look for the first milestone with status 🔄 **In Progress** or ⏳ **Planned**
-- This is your active milestone (e.g., v0.1.0)
-
-#### **Step 2: Find Features in That Milestone**
-The roadmap shows which modules and features belong to each milestone:
-```markdown
-### v0.1.0 — Kitchen / Planning: Create meal plan
-**Status:** 🔄 In Progress (1/2 features complete)
-
-**What's included:**
-- Create a new meal plan for the week
-- Add meals to specific days (breakfast, lunch, dinner)
-```
-
-#### **Step 3: Pick the Next Feature**
-Features should be built in **dependency order**:
-1. Foundation features first (other features depend on these)
-2. Follow the sequence in the roadmap
-3. Check the module explainer for dependencies
-
-**Example:** In `_planning.md`, you might see:
-```markdown
-## Dependencies
-**This module enables:**
-- Shopping list generation (requires meal plans)
-
-**This module depends on:**
-- None (foundation module)
-```
-This means "Create meal plan" should be built first.
-
----
-
 ### **How to Build Features**
 
-One command:
+Two ways to start:
 
 ```
-/Feature kitchen/planning/create-meal-plan
+/Feature kitchen/planning/create-meal-plan    ← you know which feature
+/Feature                                       ← let it pick for you
 ```
 
-The AI will automatically:
-- ✅ Mark as "In Progress" and update all docs
-- ✅ Read the feature spec and understand requirements
-- ✅ Follow all standards in `Standards/` directory
-- ✅ Use design tokens from `01-presentation/styles/global.css`
-- ✅ Implement using TDD (tests first)
-- ✅ Follow the 3-tier architecture (data → logic → presentation)
-- ✅ When done: validate, mark complete, update all docs
+**`/Feature` without arguments** reads your roadmap and presents the highest-leverage features with met dependencies. You pick, it locks.
+
+**The command handles everything:**
+1. **Lock** → Picks the feature, assesses project state, sets scope boundaries
+2. **Research** → Explores codebase for patterns, pitfalls, and reusable code
+3. **Build** → TDD across 3-tier architecture (data → logic → presentation)
+4. **Validate** → Standards checklist, automated validators
+5. **Complete** → Update all docs, merge to main, clean up
+
+**Resumable:** If you stop after Lock or Research (e.g., working from phone), running `/Feature` again picks up where you left off.
 
 ---
 
@@ -794,7 +761,7 @@ All CSS values come from `01-presentation/styles/global.css`. Hardcoded values a
 | Command | Purpose | File |
 |---------|---------|------|
 | `/Start_Project` | Generate project documentation from interview | [.claude/commands/Start_Project.md](./.claude/commands/Start_Project.md) |
-| `/Adopt` | Adopt framework for existing project | [.claude/commands/Adopt.md](./.claude/commands/Adopt.md) |
+| `/Convert` | Convert existing project or upgrade to latest template | [.claude/commands/Convert.md](./.claude/commands/Convert.md) |
 | `/Feature` | Build a feature from spec to completion | [.claude/commands/Feature.md](./.claude/commands/Feature.md) |
 | `/New_Idea` | Add features or restructure milestones | [.claude/commands/New_Idea.md](./.claude/commands/New_Idea.md) |
 | `/Bug` | Report and fix bugs (PATCH versioning) | [.claude/commands/Bug.md](./.claude/commands/Bug.md) |

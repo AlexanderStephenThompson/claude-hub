@@ -141,6 +141,21 @@ project-root/
 
 **Why Documentation lives at the root:** It is cross-cutting — it describes the project, not any single tier. Placing it inside a tier would imply ownership by that layer.
 
+### DX Infrastructure at Root
+
+These files establish the development environment and enforce consistency. Not all are required — adopt what fits the project.
+
+| File | Purpose | Priority |
+|------|---------|----------|
+| `.editorconfig` | Cross-IDE consistency (indentation, line endings, charset) | High — eliminates invisible diff noise |
+| `.env.example` | Environment variable template (copy to `.env` for local config) | High — prevents missing-secret crashes |
+| `CHANGELOG.md` | Version history in Keep a Changelog format | High — tracks what changed between releases |
+| `.prettierrc` | Formatter config (or use `prettier` key in `package.json`) | Medium — eliminates style debates |
+| `.pre-commit-config.yaml` | Git hooks for linting/formatting on commit | Medium — catches issues before CI |
+| `CONTRIBUTING.md` | How to help, where to start | Medium — GitHub auto-links on new issues/PRs |
+| `LICENSE` | Legal terms (must be at root for GitHub to detect it) | Medium — required for open-source |
+| `.devcontainer/devcontainer.json` | Dev Container config for zero-friction onboarding | Optional — useful for team/codespace setups |
+
 ### Recommended Validators
 
 Automated enforcement prevents drift. These validators run in pre-commit hooks or CI:

@@ -383,7 +383,7 @@ After migration, these should be true:
 
 ## Handoff to Orchestrator
 
-Your Migration Plan goes to the `/Adopt` command orchestrator, which will:
+Your Migration Plan goes to the `/Convert` command orchestrator, which will:
 1. Present the plan to the user for approval
 2. Resolve any ambiguous file decisions
 3. Pass the approved plan to the Migrator agent

@@ -516,7 +516,7 @@ To release the next milestone:
 | Command | When to Use |
 |---------|-------------|
 | `/Start_Project` | Initialize a new project (run first) |
-| `/Adopt` | Wrap an existing project in this framework |
+| `/Convert` | Convert an existing project or upgrade to latest template |
 | `/Feature` | Build features toward a milestone |
 | `/New_Idea` | Add features or restructure milestones |
 | `/Bug` | Report and fix bugs (PATCH versioning) |

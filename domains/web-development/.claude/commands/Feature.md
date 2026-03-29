@@ -1,13 +1,42 @@
 ---
 description: Build a feature from spec to completion with automatic documentation updates
-argument-hint: <program/module/feature-name>
+argument-hint: [program/module/feature-name]
 ---
 
 **Feature to build:** $ARGUMENTS
 
 # Feature Command
 
-One command to build a feature from start to finish. Reads the spec, builds it, updates all documentation.
+One command to build a feature from start to finish. Locks the task, researches the approach, builds it, updates all documentation.
+
+---
+
+## Resume Detection
+
+Before starting, check for in-progress dispatch artifacts from a previous session:
+
+1. **Read** `.claude/dispatch/features/` directory
+2. **If a session-lock exists but no research artifact:**
+   ```
+   📋 Resuming feature: {slug}
+
+   Found session lock from {date} — picking up at Research.
+
+   Locked task: {feature name}
+   Scope: {IN/OUT summary}
+   ```
+   → Skip Lock, resume at Research
+3. **If a research artifact exists:**
+   ```
+   📋 Resuming feature: {slug}
+
+   Found research from {date} — picking up at Build.
+
+   Approach: {one-line from research-sprint.md}
+   ```
+   → Skip Lock and Research, resume at Build with research context loaded
+4. **If feature is already "In Progress"** (existing behavior) → Resume building as before
+5. **If nothing exists** → Start at Lock
 
 ---
 
@@ -22,7 +51,8 @@ Before building features, verify:
 
 2. **Feature spec exists** - Feature file has been created
    - Check: `/Documentation/features/{program}/{module}/{feature-name}.md` exists
-   - If missing: Show error and direct to `/New_Idea`
+   - If missing AND no `$ARGUMENTS` provided: deferred to Lock phase (Lock will help pick a feature)
+   - If missing AND `$ARGUMENTS` provided: Show error and direct to `/New_Idea`
 
 3. **Dependencies met** (optional but recommended)
    - Check: Parent module explainer exists
@@ -47,18 +77,166 @@ Then use /New_Idea to add features to the backlog.
 ## What This Command Does
 
 ```
-/Feature kitchen/planning/create-meal-plan
+/Feature kitchen/planning/create-meal-plan    ← explicit feature
+/Feature                                       ← auto-pick highest-leverage feature
 ```
 
-1. **Verify preconditions** (project initialized, feature exists)
-2. **Locate** the feature spec
-3. **Detect status** and act accordingly:
-   - Planned → Mark In Progress, start building
-   - In Progress → Continue building or complete
-   - Complete → Already done, nothing to do
-4. **Build** following all standards (TDD, design tokens, architecture)
-5. **Validate** with automated validators
-6. **Complete** and update all documentation atomically
+1. **Lock** the session to a single feature (auto-pick or explicit)
+2. **Research** patterns, pitfalls, and approach in the codebase
+3. **Build** following all standards (TDD, design tokens, architecture)
+4. **Validate** with automated validators
+5. **Complete** and update all documentation atomically
+
+---
+
+## Lock
+
+Select and lock to a single feature for this session. The value is in exclusion — knowing what you're NOT doing is as important as knowing what you are.
+
+### If explicit feature path provided
+
+If `$ARGUMENTS` contains a feature path (e.g., `kitchen/planning/create-meal-plan`):
+1. Verify the feature spec exists at `Documentation/features/{path}.md`
+2. Read the spec and confirm status is "Planned" or "In Progress"
+3. Lock to this feature
+
+### If no feature path provided
+
+If `$ARGUMENTS` is empty or `/Feature` is invoked bare:
+1. **Read project state:**
+   - `Documentation/project-roadmap.md` — current milestones and progress
+   - Feature Index — all features with their status
+   - Recent git log (last 10-15 commits) — what's been worked on
+   - Module explainers for the current milestone
+
+2. **Identify candidates** — features with:
+   - Status: Planned `<!-- STATUS:planned -->`
+   - All dependencies met (dependent features are Complete)
+   - In the current or next milestone
+
+3. **Present top candidates** (2-3 max):
+   ```
+   🔒 Session Lock — Pick your feature
+
+   Current milestone: v0.1.0 — Kitchen / Planning (1/3 complete)
+
+   Ready to build:
+   1. generate-shopping-list — Auto-generate grocery list from meal plan
+      Dependencies met: ✅ (create-meal-plan complete)
+      Effort: Medium
+
+   2. save-meal-plan-template — Save plans as reusable templates
+      Dependencies met: ✅ (create-meal-plan complete)
+      Effort: Low
+
+   Which one? (or describe what you'd rather work on)
+   ```
+
+4. **User picks** → lock to that feature
+
+### Write session lock artifact
+
+After selection (explicit or picked), write `.claude/dispatch/features/{slug}/session-lock.md`:
+
+```markdown
+# Session Lock: {feature-name}
+
+**Date:** {current date}
+**Feature:** {program}/{module}/{feature-name}
+**Spec:** Documentation/features/{program}/{module}/{feature-name}.md
+
+## Project State
+**Current milestone:** v{X.Y.Z} — {milestone name} ({N}/{M} complete)
+**Recent work:** {summary of last 5-10 commits}
+**In progress:** {any features currently in progress, or "None"}
+
+## Scope Boundary
+**IN:** {what this session covers — from acceptance criteria}
+**OUT:** {what is explicitly excluded — other features, refactoring, etc.}
+
+## Success Criteria
+{Acceptance criteria copied from feature spec}
+
+## Research Needs
+- {What patterns to look for in the codebase}
+- {What similar features exist to reference}
+- {Any external APIs or libraries to investigate}
+```
+
+**Commit:** `git add .claude/dispatch/features/{slug}/session-lock.md && git commit -m "feature: lock — {slug}"`
+
+---
+
+## Research
+
+Explore the codebase to build a concrete approach before writing any code. This is read-only investigation — no code changes.
+
+**Steps:**
+
+1. **Read the feature spec** at `Documentation/features/{program}/{module}/{feature-name}.md`
+   - Extract acceptance criteria, data model, technical notes
+   - Note the Standards Checklist scopes
+
+2. **Read the module explainer** at `Documentation/features/{program}/{module}/_{module}.md`
+   - Understand the module's existing features and architecture
+   - Note integration points
+
+3. **Explore for existing patterns:**
+   - Search the codebase for similar implementations (features in the same module, similar data models)
+   - Check for reusable utilities, shared components, helper functions
+   - Look at how existing tests are structured in this area
+   - Check `03-data/` for existing data models that need extending
+   - Check `02-logic/` for existing services to hook into
+   - Check `01-presentation/` for existing components to reference
+
+4. **Identify pitfalls:**
+   - Dependency conflicts or circular import risks
+   - Data model changes that affect other features
+   - Edge cases from the acceptance criteria
+
+5. **Design the approach** following 3-tier build order (data → logic → presentation):
+   - Which files to create and where
+   - Which existing files to modify
+   - What tests to write at each layer
+   - What order to build in
+
+**Write** `.claude/dispatch/features/{slug}/research-sprint.md`:
+
+```markdown
+# Research Sprint: {feature-name}
+
+**Date:** {current date}
+
+## Existing Patterns
+{What the codebase already does that's relevant — specific files and functions}
+
+## Recommended Approach
+
+### Data Layer (03-data/)
+- {Files to create/modify}
+- {Data models, repositories, API clients}
+
+### Logic Layer (02-logic/)
+- {Files to create/modify}
+- {Services, business rules, validation}
+
+### Presentation Layer (01-presentation/)
+- {Files to create/modify}
+- {Components, styles, hooks}
+
+## Test Strategy
+- **Unit:** {what to test per layer}
+- **Integration:** {what boundaries to test}
+- **Behavioral:** {what user flows to cover}
+
+## Pitfalls
+- {Edge cases, gotchas, things to avoid}
+
+## Reusable Code Found
+- {Existing utilities, components, patterns to leverage — with file paths}
+```
+
+**Commit:** `git add .claude/dispatch/features/{slug}/research-sprint.md && git commit -m "feature: research — {slug}"`
 
 ---
 
@@ -110,7 +288,7 @@ Nothing to do. Pick another feature from the roadmap.
 
 When building a feature, follow this exact process:
 
-### 1. Read the Feature Spec
+### 1. Read the Feature Spec and Research
 
 **File:** `/Documentation/features/{program}/{module}/{feature-name}.md`
 
@@ -120,6 +298,12 @@ When building a feature, follow this exact process:
 - Data model (if applicable)
 - Technical notes
 - Related features
+
+**Also load research context** if `.claude/dispatch/features/{slug}/research-sprint.md` exists:
+- Use the recommended approach as a guide (not blindly — the feature spec is authoritative)
+- Reference the reusable code and patterns identified
+- Follow the suggested test strategy per layer
+- Be aware of the documented pitfalls
 
 ### 2. Load Standards from Skills
 
@@ -450,6 +634,10 @@ git merge --no-ff feature/{feature-name} -m "Merge feature/{feature-name}: {one-
 
 # Delete the feature branch
 git branch -d feature/{feature-name}
+
+# Clean up dispatch artifacts
+rm -rf .claude/dispatch/features/{slug}/
+git add .claude/dispatch/ && git commit -m "chore: clean dispatch artifacts for {feature-name}"
 ```
 
 **If merge conflict occurs:**
@@ -513,6 +701,7 @@ Let's build this feature...
 4. ✅ Feature Index - Status: ✅ Complete
 5. ✅ Changelog - Entry added
 6. ✅ CLAUDE.md - Project State updated (progress, active work)
+7. 🧹 Cleaned: .claude/dispatch/features/{slug}/ (artifacts removed)
 
 🎯 Next feature:
 {next-feature-name} in {module}
@@ -576,58 +765,81 @@ Complete all active-scope checklist items before marking done.
 
 ## Examples
 
-### Example 1: Start and Build a New Feature
+### Example 1: Explicit Feature — Lock, Research, Build
 
 ```
 User: /Feature kitchen/planning/create-meal-plan
 
-AI: 🚀 Starting feature: kitchen/planning/create-meal-plan
+AI: [Writes session lock artifact]
+🔒 Locked: kitchen/planning/create-meal-plan
 
-📝 Updated:
-- Feature status → In Progress
-- Module table → 🔄 In Progress
-- Roadmap → v0.1.0 🔄 In Progress
+Current milestone: v0.1.0 — Kitchen / Planning (0/3 complete)
+Scope IN: Create meal plan feature (4 acceptance criteria)
+Scope OUT: Shopping list, templates, export
+
+Researching approach...
+
+[Reads codebase, writes research artifact]
+📋 Research complete:
+- No existing data models to extend (first feature)
+- Will create MealPlan model in 03-data/kitchen/
+- MealPlanService in 02-logic/kitchen/
+- MealPlanForm + MealPlanPage in 01-presentation/
+- Test pattern: following the project template structure
+
+🚀 Starting build. Feature status → In Progress
 
 📋 Building:
 As a homesteader, I want to create a weekly meal plan...
-
-Acceptance Criteria:
-- [ ] User can create a new meal plan
-- [ ] User can select week start date
-- [ ] User can add meals for each day
-- [ ] User can save the meal plan
 
 Let me start with the data layer tests...
 
 [AI builds the feature using TDD, updates status when complete]
 ```
 
-### Example 2: Complete an In-Progress Feature
+### Example 2: Auto-Pick Feature (no arguments)
 
 ```
-User: /Feature kitchen/planning/create-meal-plan
+User: /Feature
 
-AI: 📋 Feature in progress: kitchen/planning/create-meal-plan
+AI: 🔒 Session Lock — Pick your feature
 
-Checking acceptance criteria:
-- [x] User can create a new meal plan
-- [x] User can select week start date
-- [x] User can add meals for each day
-- [x] User can save the meal plan
+Current milestone: v0.1.0 — Kitchen / Planning (1/3 complete)
 
-All criteria met! Running validators...
+Ready to build:
+1. generate-shopping-list — Auto-generate grocery list from meal plan
+   Dependencies met: ✅ (create-meal-plan complete)
+   Effort: Medium
 
-✅ All validators passed
-✅ Standards checklist complete
+2. save-meal-plan-template — Save plans as reusable templates
+   Dependencies met: ✅ (create-meal-plan complete)
+   Effort: Low
 
-📝 Marking complete...
+Which one?
 
-✅ Feature complete: kitchen/planning/create-meal-plan
+User: Shopping list.
 
-[Summary of all updates]
+AI: [Writes session lock, researches, begins building...]
 ```
 
-### Example 3: Already Complete
+### Example 3: Resume from Previous Research
+
+```
+User: /Feature
+
+AI: 📋 Resuming feature: generate-shopping-list
+
+Found research from 2026-03-26 — picking up at Build.
+
+Approach: Create ShoppingList model, aggregate ingredients from
+MealPlan, deduplicate, sort by category.
+
+🚀 Starting build...
+
+[Skips Lock and Research, goes straight to building]
+```
+
+### Example 4: Already Complete
 
 ```
 User: /Feature kitchen/planning/create-meal-plan
@@ -645,13 +857,16 @@ Nothing to do. Next feature in this module:
 
 ## Quick Reference
 
-| Status | What Happens |
-|--------|--------------|
-| Planned | Mark In Progress → Read spec → Build → Validate → Complete |
-| In Progress | Check progress → Continue or Complete |
-| Complete | Nothing - suggest next feature |
+| Situation | What Happens |
+|-----------|--------------|
+| No arguments, no dispatch artifacts | Lock (pick feature) → Research → Build → Validate → Complete |
+| Explicit feature path, no dispatch artifacts | Lock (to that feature) → Research → Build → Validate → Complete |
+| Session lock exists, no research | Resume at Research → Build → Validate → Complete |
+| Research exists | Resume at Build → Validate → Complete |
+| Feature already In Progress | Resume building (existing behavior) |
+| Feature already Complete | Nothing — suggest next feature |
 
-**One command. Full lifecycle. All docs updated automatically.**
+**One command. Lock, research, build, complete. All docs updated automatically.**
 
 ---
 
@@ -660,7 +875,7 @@ Nothing to do. Next feature in this module:
 | Command | When to Use |
 |---------|-------------|
 | `/Start_Project` | Initialize a new project (run first) |
-| `/Adopt` | Wrap an existing project in this framework |
+| `/Convert` | Convert an existing project or upgrade to latest template |
 | `/New_Idea` | Add new features or restructure milestones |
 | `/Bug` | Report and fix bugs (different workflow, PATCH versioning) |
 | `/Release` | Ship a completed milestone |

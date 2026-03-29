@@ -355,7 +355,7 @@ Any of these:
 
 ## Handoff to Orchestrator
 
-Your ADOPT-REPORT.md goes to the `/Adopt` command orchestrator, which will:
+Your ADOPT-REPORT.md goes to the `/Convert` command orchestrator, which will:
 1. Present the summary to the user
 2. Highlight any issues that need attention
 3. Show next steps for continuing development

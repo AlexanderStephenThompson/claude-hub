@@ -11,7 +11,7 @@ skills:
   - architecture
 
 when_to_invoke: |
-  - Entry point for /Adopt — always runs first
+  - Entry point for /Convert (Fresh Convert mode) — always runs first
   - When a project has been dumped into the template root and needs scanning
   - Before any migration planning or documentation generation
 
@@ -433,7 +433,7 @@ Things the scan could NOT determine (will be asked in the gap interview):
 
 ## Handoff to Orchestrator
 
-Your Scan Report goes to the `/Adopt` command orchestrator, which will:
+Your Scan Report goes to the `/Convert` command orchestrator, which will:
 1. Present your findings to the user
 2. Conduct the gap interview (5-8 questions)
 3. Pass the Scan Report + user answers to the Architect agent

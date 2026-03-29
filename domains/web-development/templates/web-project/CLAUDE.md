@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This section is auto-maintained by slash commands. It gives you immediate context without reading multiple files.
 
-**Project:** Not initialized — run `/Start_Project` or `/Adopt`
+**Project:** Not initialized — run `/Start_Project` or `/Convert`
 **Version:** 0.0.0
 **Current Milestone:** None
 **Milestone Progress:** N/A
@@ -24,11 +24,32 @@ This section is auto-maintained by slash commands. It gives you immediate contex
 No features in progress.
 
 ### What to Read Next
-- Run `/Start_Project` to initialize, or `/Adopt` to wrap an existing project.
+- Run `/Start_Project` to initialize, or `/Convert` to bring an existing project into the framework.
 
 PROJECT_STATE_END -->
 
-## Commands
+## Developer Experience
+
+### One-Command Setup
+
+```bash
+npm install        # Install dependencies
+cp .env.example .env   # Create local environment config
+npm run validate   # Verify everything passes
+```
+
+### Root Files
+
+| File | Purpose |
+|------|---------|
+| `.editorconfig` | Universal editor settings (indentation, line endings, charset) |
+| `.env.example` | Environment variable template — copy to `.env` for local config |
+| `.gitignore` | Untracked files (node_modules, .env, dist, coverage) |
+| `package.json` | Dependencies, scripts, project metadata |
+| `CLAUDE.md` | AI agent context (this file) |
+| `README.md` | Project purpose, quickstart, usage |
+
+### Commands
 
 ```bash
 # Run all validators (fresh projects pass with guidance)
@@ -47,11 +68,23 @@ npm run validate:sync        # Documentation sync - docs match reality
 | Command | Purpose |
 |---------|---------|
 | `/Start_Project` | Initialize project — 7-phase interview generates all documentation |
-| `/Feature {program}/{module}/{feature}` | Build feature with TDD, update all docs atomically |
-| `/New_Idea {description}` | Add feature or restructure milestones (move, reorder, split, merge) |
+| `/Feature {path}` or `/Feature` | Lock → Research → Build with TDD → update all docs. Omit path to auto-pick highest-leverage feature. |
+| `/New_Idea {description}` | Capture → Refine (pressure-test) → Place → generate spec. Also handles restructure (move, reorder, split, merge). |
 | `/Bug {description}` | Report bug, track fix with PATCH versioning |
 | `/Release {version}` | Ship a completed milestone — bump version, finalize changelog, tag |
-| `/Adopt` | Adopt framework for existing project — scan codebase, generate docs |
+| `/Convert` | Convert existing project to framework, or upgrade to latest template |
+
+### Resumable Workflows
+
+`/Feature` and `/New_Idea` write progress to `.claude/dispatch/`. If a session ends mid-workflow, running the command again resumes from where you left off:
+
+| Artifacts found | `/Feature` resumes at | `/New_Idea` resumes at |
+|----------------|----------------------|----------------------|
+| None | Lock (start) | Capture (start) |
+| Session lock only | Research | — |
+| Research sprint | Build | — |
+| Capture only | — | Refine |
+| Refined idea | — | Place |
 
 ## Architecture
 
@@ -73,6 +106,7 @@ Invalid: data → logic, logic → presentation (blocked by validator)
 - `Documentation/project-roadmap.md` — Living roadmap (source of truth for milestones)
 - `Standards/` — Quality standards (scope-filtered checklist)
 - `01-presentation/styles/global.css` — Design tokens (all CSS values must reference these)
+- `.claude/settings.json` — Project permissions and hooks (validators run before commits)
 - `.claude/commands/` — Slash command definitions
 - `.claude/validators/` — Automated validators
 - `.claude/agents/` — 5 adopt-team agents
@@ -88,7 +122,7 @@ Every slash command that changes project state also updates the **Project State*
 | `/New_Idea` | Feature counts, module counts (if new module created) |
 | `/Bug` | Active Work (if bug is in progress) |
 | `/Release` | Version, current milestone advances, milestone progress resets |
-| `/Adopt` | Same as `/Start_Project` — full initialization from scan results |
+| `/Convert` | Fresh: same as `/Start_Project` (full init). Upgrade: updates template sections only. |
 
 **If Project State looks stale**, run `npm run validate:sync` to check, or read `Documentation/project-roadmap.md` directly for ground truth.
 

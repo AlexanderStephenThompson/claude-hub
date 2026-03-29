@@ -1211,15 +1211,30 @@ function checkJS(filepath, content) {
         }
 
         /* ── tier-imports (reverse or layer-skipping dependency) ── */
-        const fileTierMatch = filepath.replace(/\\/g, '/').match(/\/(0[1-3])-(?:presentation|logic|data)\//);
+        /* 00-foundation can be imported by any tier but cannot import from any tier.
+           01→02→03 is the only valid direction for the main tiers. */
+        const fileTierMatch = filepath.replace(/\\/g, '/').match(/\/(0[0-3])-(?:foundation|presentation|logic|data)\//);
         if (fileTierMatch) {
             const fileTierNum = parseInt(fileTierMatch[1]);
             const importMatch = line.match(/(?:import\s+.*?from\s+|require\s*\()['"]([^'"]+)['"]/);
             if (importMatch) {
-                const importTierMatch = importMatch[1].match(/(0[1-3])-(?:presentation|logic|data)/);
+                const importTierMatch = importMatch[1].match(/(0[0-3])-(?:foundation|presentation|logic|data)/);
                 if (importTierMatch) {
                     const importTierNum = parseInt(importTierMatch[1]);
                     if (importTierNum !== fileTierNum) {
+                        /* 00-foundation: any tier can import from it, but it cannot import from any tier */
+                        if (importTierNum === 0) continue; /* importing from foundation is always valid */
+                        if (fileTierNum === 0) {
+                            issues.push({
+                                line: lineNum,
+                                col: raw.indexOf(importMatch[1]) + 1,
+                                severity: ERROR,
+                                message: `Foundation cannot import from tiers — 00-foundation/ must be pure (found import from ${importTierMatch[0]})`,
+                                rule: 'tier-imports',
+                                skill: RULE_SKILLS['tier-imports'],
+                            });
+                            continue;
+                        }
                         const isReverse = importTierNum < fileTierNum;
                         const isSkip = importTierNum > fileTierNum + 1;
                         if (isReverse) {
@@ -1300,24 +1315,26 @@ function checkProject(cssFiles, jsFiles, htmlFiles) {
         || htmlFiles.length > 0;
 
     if (hasPackageJson && hasWebFiles) {
-        const TIER_DIRS = ['01-presentation', '02-logic', '03-data'];
+        const TIER_DIRS = ['00-foundation', '01-presentation', '02-logic', '03-data'];
+        const REQUIRED_TIERS = ['01-presentation', '02-logic', '03-data']; // 00-foundation is optional
         const existingTiers = TIER_DIRS.filter((t) =>
             fs.existsSync(path.join(ROOT, t)) || fs.existsSync(path.join(ROOT, 'src', t)) || fs.existsSync(path.join(ROOT, 'source', t)),
         );
 
         const sourceFileCount = count + jsFiles.length + htmlFiles.length;
+        const existingRequired = REQUIRED_TIERS.filter((t) => existingTiers.includes(t));
 
-        if (existingTiers.length === 0 && sourceFileCount > MIN_FILES_FOR_TIER_CHECK) {
+        if (existingRequired.length === 0 && sourceFileCount > MIN_FILES_FOR_TIER_CHECK) {
             issues.push({
                 line: 0,
                 col: 0,
                 severity: ERROR,
-                message: `Web project without 3-tier architecture — expected: 01-presentation/, 02-logic/, 03-data/`,
+                message: `Web project without tier architecture — expected: 01-presentation/, 02-logic/, 03-data/ (+ optional 00-foundation/)`,
                 rule: 'tier-structure',
                 skill: RULE_SKILLS['tier-structure'],
             });
-        } else if (existingTiers.length > 0 && existingTiers.length < 3) {
-            const missing = TIER_DIRS.filter((t) => !existingTiers.includes(t));
+        } else if (existingRequired.length > 0 && existingRequired.length < 3) {
+            const missing = REQUIRED_TIERS.filter((t) => !existingRequired.includes(t));
             issues.push({
                 line: 0,
                 col: 0,

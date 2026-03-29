@@ -17,10 +17,10 @@ Determine which mode to use based on `$ARGUMENTS`:
 
 | If arguments describe... | Mode | Workflow |
 |--------------------------|------|----------|
-| A new feature or capability | **New Idea** | Phases 1 → 2 → 3 → 4 → 5 → 6 |
-| Moving a feature between milestones | **Restructure** | Phase 4b |
-| Reordering milestones | **Restructure** | Phase 4b |
-| Splitting or merging milestones | **Restructure** | Phase 4b |
+| A new feature or capability | **New Idea** | Capture → Refine → Place → Dependencies → Milestone → Spec → Update docs |
+| Moving a feature between milestones | **Restructure** | Phase 5b |
+| Reordering milestones | **Restructure** | Phase 5b |
+| Splitting or merging milestones | **Restructure** | Phase 5b |
 
 **Restructure triggers** (keywords): move, reorder, split, merge, restructure, reschedule, swap, shift, reorganize
 
@@ -56,36 +56,151 @@ Then use /New_Idea to add features to the backlog.
 
 ---
 
+## Resume Detection
+
+Before starting, check for in-progress idea artifacts from a previous session:
+
+1. **Read** `.claude/dispatch/ideas/` directory
+2. **If a capture exists but no refined artifact:**
+   ```
+   📋 Resuming idea: {slug}
+
+   Found capture from {date} — picking up at Refine.
+   ```
+   → Skip Capture, resume at Refine
+3. **If a refined artifact exists with "proceed" recommendation:**
+   ```
+   📋 Resuming idea: {slug}
+
+   Found refined idea from {date} — picking up at Place.
+
+   Summary: {one-line from refined.md}
+   Recommended placement: {program}/{module}
+   ```
+   → Skip Capture and Refine, resume at Phase 3 (Place) with refined context pre-filled
+4. **If nothing exists** → Start at Capture (normal flow)
+
+---
+
 ## What This Command Does
 
 ```
 /New_Idea Add ability to export meal plans as PDF
 ```
 
-1. **Understand** the idea through brief clarifying questions
-2. **Place** it in the right program/module (or create new ones)
-3. **Assess** dependencies and impact on existing features
-4. **Assign** to a milestone (existing or new)
-5. **Generate** feature spec file
-6. **Update** all documentation atomically
+1. **Capture** the raw idea and write a dispatch artifact
+2. **Refine** through collaborative pressure-testing against the roadmap
+3. **Place** it in the right program/module (or create new ones)
+4. **Assess** dependencies and impact on existing features
+5. **Assign** to a milestone (existing or new)
+6. **Generate** feature spec file
+7. **Update** all documentation atomically
 
 ---
 
 ## Workflow
 
-### Phase 1: Understand the Idea
+### Phase 1: Capture
 
-**Ask (one at a time, skip if already clear from input):**
+Write the raw idea to a dispatch artifact for persistence.
 
-1. **What does this let users do?** (The capability in one sentence)
-2. **Why does this matter?** (The benefit/problem it solves)
-3. **Any constraints?** (Technical, time, scope limitations)
+**Steps:**
+1. Generate slug from the idea description (kebab-case, e.g., `export-meal-plan-pdf`)
+2. Quick-read `Documentation/project-roadmap.md` to note likely program/module placement
+3. Create `.claude/dispatch/ideas/{slug}/capture.md`:
 
-**Extract:** One-line description, user benefit, constraints (if any)
+```markdown
+# Idea Capture: {idea name}
+
+**Date:** {current date}
+**Raw input:** {verbatim $ARGUMENTS}
+
+## Quick Assessment
+**Likely placement:** {program}/{module} (based on roadmap scan)
+**Similar features spotted:** {list any from Feature Index, or "None"}
+
+## Open Questions for Refine
+- What problem does this solve for the user?
+- Is this distinct from {similar-feature} or an extension of it?
+- What's the rough effort level?
+```
+
+4. Commit: `git add .claude/dispatch/ideas/{slug}/capture.md && git commit -m "idea: capture — {slug}"`
 
 ---
 
-### Phase 2: Place in Structure
+### Phase 2: Refine
+
+Collaborative pressure-testing of the idea before committing to roadmap placement. This is a conversation, not a checklist — ask one question at a time and build on the answers.
+
+**Pressure-test questions** (ask naturally, skip what's already clear):
+
+1. **What problem does this actually solve?** — Not "what does it do" but "what pain does it remove or what value does it create?" Push past surface-level answers.
+2. **Does this overlap with anything already planned?** — Check the Feature Index for similar capabilities. If overlap found, ask: "Is this the same thing, an extension of it, or genuinely different?"
+3. **What's the effort vs. impact?** — Quick gut-check: is this a weekend feature or a month-long effort? Does the impact justify the investment?
+4. **Where does it probably belong?** — Suggest program/module based on the capture's quick assessment. Confirm or adjust.
+5. **Should this proceed, merge, or park?**
+   - **Proceed**: Clear value, manageable effort, no conflicts → continue to Phase 3
+   - **Merge**: Overlaps with existing feature → suggest updating that feature's spec instead
+   - **Park**: Nice idea but wrong timing, too much effort, or unclear value → archive with reasoning
+
+**Write conclusions to** `.claude/dispatch/ideas/{slug}/refined.md`:
+
+```markdown
+# Idea Refined: {idea name}
+
+**Date:** {current date}
+**Recommendation:** Proceed | Merge with {feature} | Park
+
+## Problem Statement
+{One clear paragraph on what problem this solves}
+
+## Assessment
+**Effort:** Low / Medium / High
+**Impact:** Low / Medium / High
+**Conflicts:** None | {list}
+**Overlaps:** None | {feature names}
+
+## Placement
+**Program:** {program}
+**Module:** {module} (existing | new)
+
+## Reasoning
+{Why this recommendation — what came out of the conversation}
+```
+
+**Commit:** `git add .claude/dispatch/ideas/{slug}/refined.md && git commit -m "idea: refine — {slug}"`
+
+**Short-circuit outcomes:**
+
+- **If "Park":**
+  ```
+  💤 Idea parked: {slug}
+
+  Reason: {one-line reasoning}
+  Location: .claude/dispatch/ideas/{slug}/refined.md
+
+  This idea isn't deleted — it's archived with context.
+  Revisit anytime by checking .claude/dispatch/ideas/.
+  ```
+  → **Done.** Do not proceed to Phase 3.
+
+- **If "Merge":**
+  ```
+  🔗 Idea merges with existing feature: {existing-feature}
+
+  Suggestion: Update {existing-feature}'s spec to include this capability.
+  Feature file: Documentation/features/{program}/{module}/{existing-feature}.md
+
+  Want me to update the existing feature spec now?
+  ```
+  → If user says yes, update the existing feature spec and stop. If no, done.
+
+- **If "Proceed":** Continue to Phase 3 with refined context loaded.
+
+---
+
+### Phase 3: Place in Structure
 
 **Determine fit:**
 
@@ -104,7 +219,7 @@ Then use /New_Idea to add features to the backlog.
 
 ---
 
-### Phase 3: Assess Dependencies
+### Phase 4: Assess Dependencies
 
 **Analyze:**
 
@@ -124,7 +239,7 @@ Then use /New_Idea to add features to the backlog.
 
 ---
 
-### Phase 4: Assign to Milestone
+### Phase 5: Assign to Milestone
 
 **Decision tree:**
 
@@ -166,9 +281,9 @@ Is the project in Pre-MVP (0.0.x)?
 
 ---
 
-### Phase 4b: Restructure Milestones
+### Phase 5b: Restructure Milestones
 
-> **Only runs in Restructure mode.** Skips Phases 1-4 and 5. Goes directly to Phase 6 after restructuring.
+> **Only runs in Restructure mode.** Skips Phases 1-5 and 6. Goes directly to Phase 7 after restructuring.
 
 **Read current state first:**
 1. Read `Documentation/project-roadmap.md` — Release Plan table, Feature Index, dependency maps
@@ -256,7 +371,7 @@ OR
 
 ---
 
-### Phase 5: Generate Feature Spec
+### Phase 6: Generate Feature Spec
 
 **Create file:** `/Documentation/features/{program}/{module}/{feature-name}.md`
 
@@ -278,7 +393,7 @@ OR
 
 ---
 
-### Phase 6: Update Documentation
+### Phase 7: Update Documentation
 
 **All updates are atomic — either all succeed or none:**
 
@@ -354,6 +469,8 @@ Update the content between `<!-- PROJECT_STATE_START` and `PROJECT_STATE_END -->
 
 ## Output Summary
 
+### If Proceeding (full flow)
+
 ```
 ✅ New idea captured: {feature-name}
 
@@ -373,6 +490,7 @@ Update the content between `<!-- PROJECT_STATE_START` and `PROJECT_STATE_END -->
    ✅ Updated: CLAUDE.md (Project State — feature counts)
    [✅ Updated: /Documentation/changelog.md] (if applicable)
    [✅ Created: _{new-module}.md] (if new module)
+   🧹 Cleaned: .claude/dispatch/ideas/{slug}/ (artifacts removed)
 
 📊 Project totals:
    Before: X Programs → Y Modules → Z Features
@@ -381,6 +499,28 @@ Update the content between `<!-- PROJECT_STATE_START` and `PROJECT_STATE_END -->
 🎯 Next steps:
    - Review feature spec for completeness
    - When ready to build: /Feature {program}/{module}/{feature-name}
+```
+
+### If Parked
+
+```
+💤 Idea parked: {slug}
+
+Reason: {one-line reasoning}
+Location: .claude/dispatch/ideas/{slug}/refined.md
+
+This idea isn't deleted — it's archived with context.
+Revisit anytime by checking .claude/dispatch/ideas/.
+```
+
+### If Merged
+
+```
+🔗 Idea merges with: {existing-feature}
+
+Feature file: Documentation/features/{program}/{module}/{existing-feature}.md
+[✅ Updated spec] (if user requested changes)
+🧹 Cleaned: .claude/dispatch/ideas/{slug}/ (artifacts removed)
 ```
 
 ---
@@ -392,13 +532,34 @@ Update the content between `<!-- PROJECT_STATE_START` and `PROJECT_STATE_END -->
 ```
 User: /New_Idea Export meal plan as PDF
 
-AI: Great idea! Let me capture this.
+AI: [Writes capture artifact]
+📝 Captured: export-meal-plan-pdf
 
-📝 Understanding:
-- Capability: Export meal plans to PDF format
-- Benefit: Users can print or share their plans offline
+Quick scan shows this likely fits in Kitchen / Planning. I also noticed
+"create-meal-plan" in the Feature Index — this would depend on that.
 
-📍 This fits in Kitchen / Planning (where meal plans live).
+Let me pressure-test this with you before we place it.
+
+What problem does exporting to PDF actually solve? Is this about printing,
+sharing with someone, or offline access?
+
+User: Mainly for printing weekly plans to stick on the fridge.
+
+AI: That's clear — physical reference for the week. Quick effort check:
+this is essentially a render-to-PDF of an existing view. I'd call it
+low-medium effort, high impact since it's a natural extension of meal planning.
+
+I don't see anything overlapping in the Feature Index. This is distinct
+from the meal plan itself.
+
+Recommendation: proceed. Kitchen / Planning is the right home.
+Does that feel right?
+
+User: Yep.
+
+AI: [Writes refined artifact, continues to Place]
+
+📍 Placing in Kitchen / Planning.
 
 🔗 Dependencies:
 - Depends on: "Create meal plan" (needs a plan to export)
@@ -411,62 +572,69 @@ User: That works.
 
 AI: ✅ New idea captured: export-meal-plan-pdf
 
-[Creates feature file, updates module, updates roadmap]
+[Creates feature file, updates module, updates roadmap, cleans up dispatch artifacts]
 ```
 
-### Example 2: Needs New Module
-
-```
-User: /New_Idea Track which plants are in each garden bed
-
-AI: Interesting! Let me understand this better.
-
-📝 This sounds like garden bed management — tracking plant placement.
-
-📍 I see you have a Garden program, but no module for bed/plot management yet.
-   Should I create a new "Beds" module under Garden?
-
-User: Yes, call it "Layout"
-
-AI: Perfect. Creating Garden / Layout module.
-
-🔗 Dependencies:
-- Depends on: None (foundation module)
-- Enables: Future features like companion planting suggestions
-
-📅 Since this is foundational for garden tracking, I'd place it in v0.2.0.
-   Sound right?
-
-[Creates module explainer, feature file, updates roadmap with new module]
-```
-
-### Example 3: Maybe Later
+### Example 2: Idea Gets Parked
 
 ```
 User: /New_Idea AI-powered recipe suggestions based on pantry
 
-AI: Cool idea! Let me capture this.
+AI: [Writes capture artifact]
+📝 Captured: ai-recipe-suggestions
 
-📝 Understanding:
-- Capability: AI suggests recipes from available ingredients
-- Benefit: Reduces food waste, simplifies meal decisions
+Interesting — let me check what's in the roadmap.
 
-🔗 Dependencies:
-- Depends on: Pantry inventory tracking, Recipe database
-- Enables: Smart shopping list generation
+I see you have pantry tracking and a recipe database both planned for later
+milestones (v0.4.0+). This feature would depend on both of those.
 
-📅 This has significant dependencies and would need AI integration.
-   Options:
-   1. Add to v0.8.0+ (after pantry and recipes exist)
-   2. Add to "Maybe Later" (post v1.0)
+What problem does AI recipe suggestion solve that browsing recipes wouldn't?
 
-   Which feels right?
+User: Reduces decision fatigue — you open the app and it tells you what to cook.
 
-User: Maybe Later for now
+AI: Clear value. But the dependencies are heavy — pantry inventory AND a recipe
+database need to exist first. Plus AI integration adds its own complexity.
 
-AI: ✅ Added to Maybe Later in project-roadmap.md
+Effort: High. Impact: High but deferred — can't deliver value until v0.5.0+.
+I'd recommend parking this. The idea is solid but the prerequisites aren't
+close to ready. Worth revisiting once pantry and recipes ship.
 
-[Updates roadmap's Maybe Later section only]
+Park it?
+
+User: Yeah, park it.
+
+AI: 💤 Idea parked: ai-recipe-suggestions
+
+Reason: Depends on pantry + recipe features not yet built. Revisit post-v0.4.0.
+Location: .claude/dispatch/ideas/ai-recipe-suggestions/refined.md
+```
+
+### Example 3: Idea Merges with Existing Feature
+
+```
+User: /New_Idea Create grocery list from meal plan
+
+AI: [Writes capture artifact]
+📝 Captured: create-grocery-list
+
+Hold on — I see "generate-shopping-list" already in Kitchen / Planning
+(planned for v0.2.0). That sounds like the same thing.
+
+Is "grocery list from meal plan" the same as "generate shopping list,"
+or are these genuinely different capabilities?
+
+User: Oh, same thing. Didn't realize it was already there.
+
+AI: 🔗 Idea merges with existing feature: generate-shopping-list
+
+Feature file: Documentation/features/kitchen/planning/generate-shopping-list.md
+
+Want me to update that spec to mention the "from meal plan" angle,
+or is it already covered?
+
+User: It's already covered.
+
+AI: Got it — no changes needed. Cleaning up the dispatch artifact.
 ```
 
 ### Example 4: Move Feature Between Milestones
@@ -579,12 +747,17 @@ Which structure makes sense for your project?
 
 | Situation | Action |
 |-----------|--------|
+| Fresh idea | Capture → Refine → Place → full flow |
+| Resuming (capture exists) | Skip to Refine |
+| Resuming (refined exists) | Skip to Place with pre-filled context |
+| Refine says "park" | Archive with reasoning, done |
+| Refine says "merge" | Point to existing feature, optionally update its spec |
 | Clear fit in existing module | Create feature file, update module + roadmap + Feature Index |
 | Needs new module | Create module explainer first, then feature |
 | Needs new program | Discuss scope — may need mini `/Start_Project` interview |
 | Has dependencies | Document in feature file + update both dependency maps |
 | Low priority | Offer "Maybe Later" as option |
-| Duplicate suspected | Surface existing feature, ask to clarify |
+| Duplicate suspected | Surface existing feature during Refine, ask to clarify |
 
 ### Restructure Mode
 
@@ -601,14 +774,16 @@ Which structure makes sense for your project?
 
 | File | When |
 |------|------|
-| `/Documentation/features/{program}/{module}/{feature}.md` | Always (created) |
-| `/Documentation/features/{program}/{module}/_{module}.md` | Always (updated) |
-| `/Documentation/project-roadmap.md` | Always (updated) |
+| `.claude/dispatch/ideas/{slug}/capture.md` | Always (created in Capture, cleaned up on completion) |
+| `.claude/dispatch/ideas/{slug}/refined.md` | Always (created in Refine, cleaned up on completion or kept if parked) |
+| `/Documentation/features/{program}/{module}/{feature}.md` | If proceeding (created) |
+| `/Documentation/features/{program}/{module}/_{module}.md` | If proceeding (updated) |
+| `/Documentation/project-roadmap.md` | If proceeding (updated) |
 | `/Documentation/changelog.md` | If milestone is in progress |
 | `/Documentation/features/{program}/{module}/_{new-module}.md` | If new module needed |
-| `CLAUDE.md` | Always (Project State — feature/module counts) |
+| `CLAUDE.md` | If proceeding (Project State — feature/module counts) |
 
-**One idea — or one restructure. Full integration. All docs synced.**
+**One idea — captured, pressure-tested, then integrated. All docs synced.**
 
 ---
 
@@ -617,7 +792,7 @@ Which structure makes sense for your project?
 | Command | When to Use |
 |---------|-------------|
 | `/Start_Project` | Initialize a new project from scratch |
-| `/Adopt` | Wrap an existing project in this framework |
+| `/Convert` | Convert an existing project or upgrade to latest template |
 | `/Feature` | Build a feature after adding it |
 | `/Bug` | Report bugs (not new features) |
 | `/Release` | Ship a completed milestone |

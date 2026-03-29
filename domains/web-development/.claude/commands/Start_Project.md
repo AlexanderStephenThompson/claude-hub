@@ -833,7 +833,7 @@ After the interview, use the information gained to generate a complete project r
 
 | Command | When to Use |
 |---------|-------------|
-| `/Adopt` | Wrap an existing project in this framework |
+| `/Convert` | Convert an existing project or upgrade to latest template |
 | `/Feature` | Build a feature from the generated spec |
 | `/New_Idea` | Add features or restructure milestones mid-project |
 | `/Bug` | Report and fix bugs (PATCH versioning) |

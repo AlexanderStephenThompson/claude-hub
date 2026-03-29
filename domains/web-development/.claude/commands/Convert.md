@@ -1,15 +1,39 @@
 ---
-description: Adopt this framework for an existing project — scan codebase, generate documentation
+description: Convert an existing project to the framework, or upgrade an already-converted project to the latest template
 argument-hint: <path to project, or blank for current directory>
 ---
 
 **Target project:** $ARGUMENTS
 
-# Adopt Command
+# Convert Command
 
-Scan an existing codebase, move it into the 3-tier structure, and generate all documentation. After adoption, `/Feature`, `/New_Idea`, `/Bug`, and `/Release` all work going forward.
+One command for both scenarios: bring a raw project into the framework, or upgrade an already-converted project to the latest template format. Detects which mode automatically.
 
-This command orchestrates **5 specialized agents** that handle the heavy lifting:
+---
+
+## Mode Detection
+
+Check if the framework has already been applied:
+
+| Check | Result | Mode |
+|-------|--------|------|
+| `Documentation/project-roadmap.md` does NOT exist | Raw project | **Fresh Convert** — full adoption flow |
+| `Documentation/project-roadmap.md` exists | Already converted | **Upgrade** — update to latest template |
+
+```
+/Convert                    → Detect mode from current directory
+/Convert /path/to/project   → Detect mode from specified path
+```
+
+---
+
+# Mode A: Fresh Convert
+
+> For projects that have never used this framework. Scans the codebase, moves files into 3-tier structure, and generates all documentation.
+
+After conversion, `/Feature`, `/New_Idea`, `/Bug`, and `/Release` all work going forward.
+
+This mode orchestrates **5 specialized agents** that handle the heavy lifting:
 
 | Agent | Role |
 |-------|------|
@@ -21,7 +45,7 @@ This command orchestrates **5 specialized agents** that handle the heavy lifting
 
 **How it differs from `/Start_Project`:**
 
-| | `/Start_Project` | `/Adopt` |
+| | `/Start_Project` | `/Convert` (Fresh) |
 |--|-----------------|----------|
 | **For** | New projects (no code yet) | Existing projects (code already written) |
 | **Interview** | Full 7-phase (30+ questions) | Scan first, ask only gaps (5-8 questions) |
@@ -32,31 +56,13 @@ This command orchestrates **5 specialized agents** that handle the heavy lifting
 
 ---
 
-## Preconditions
+## Preconditions (Fresh Convert)
 
-Before adopting, verify:
+Before converting, verify:
 
-1. **NOT already adopted** — Framework hasn't been applied yet
-   - Check: `Documentation/project-roadmap.md` must NOT exist
-   - If exists: Show error and direct to other commands
-
-2. **Source code exists** — There's something to scan
+1. **Source code exists** — There's something to scan
    - Check: `package.json` OR `src/` OR recognizable project files exist
    - If empty: Show error and direct to `/Start_Project`
-
-**If already adopted:**
-```
-Already adopted
-
-This project already has the framework:
-  Documentation/project-roadmap.md exists
-
-Use these commands instead:
-  /Feature — Build features
-  /New_Idea — Add features or restructure milestones
-  /Bug — Report and fix bugs
-  /Release — Ship completed milestones
-```
 
 **If no source code:**
 ```
@@ -69,10 +75,10 @@ If this is a new project, use /Start_Project instead.
 
 ---
 
-## Workflow — 9 Phases
+## Fresh Convert Workflow — 9 Phases
 
 ```
-/Adopt [path]
+/Convert [path]
        │
        ▼
 ┌──────────────────┐
@@ -133,8 +139,7 @@ If this is a new project, use /Start_Project instead.
 
 ### Check Preconditions
 
-1. Verify `Documentation/project-roadmap.md` does NOT exist
-2. Verify source code exists (`package.json`, `src/`, or other project files)
+1. Verify source code exists (`package.json`, `src/`, or other project files)
 
 ### Check for Conflicts
 
@@ -348,7 +353,7 @@ See `.claude/agents/adopt-verifier.md`.
 Present the final results:
 
 ```
-Adopted: {Project Name}
+Converted: {Project Name}
 
 Architecture: {N} Programs → {M} Modules → {F} Features
 
@@ -381,9 +386,223 @@ Next steps:
 
 ---
 
+# Mode B: Upgrade
+
+> For projects already using the framework. Updates project-level files to match the latest template without touching project-specific content (roadmap, features, custom code).
+
+---
+
+## What Gets Upgraded
+
+Template-owned files evolve over time. The slash commands themselves auto-update via `/sync`, but project-level files generated at conversion time can drift behind the current template.
+
+### Always Updated (safe — template-owned, no project customization)
+
+| File / Directory | What Changes |
+|-----------------|-------------|
+| `Standards/Code-Quality.md` | Latest code quality standards |
+| `Standards/Checklist.md` | Latest checklist with scope tags |
+| `.claude/validators/` | Latest validator scripts |
+| `.claude/agents/` | Latest adopt agents (adopt-scanner, etc.) |
+| `.claude/settings.json` | New permissions, hooks (merged, not replaced) |
+| `.husky/pre-commit` | Latest pre-commit hook commands (appended if custom hooks exist) |
+| `Documentation/project-planning/` | Latest templates (feature-development.md, module-template.md, project-roadmap-template.md) |
+
+### Merged (template sections updated, project content preserved)
+
+| File | Template Sections | Project Sections (preserved) |
+|------|-------------------|------------------------------|
+| `CLAUDE.md` | Developer Experience, Slash Commands, Architecture, Documentation Sync, Checklist Scopes, Status Conventions, Build Order, File Naming, Path Syntax, Branching Convention | Project State block (`<!-- PROJECT_STATE_START` ... `PROJECT_STATE_END -->`), any custom sections |
+| `README.md` | Process Overview, command descriptions, build cycle diagrams | Project name, description, quickstart, any custom sections |
+
+### Never Touched (project-owned)
+
+| File / Directory | Why |
+|-----------------|-----|
+| `Documentation/project-roadmap.md` | Project-specific roadmap |
+| `Documentation/features/**` | Project-specific feature specs and module explainers |
+| `Documentation/changelog.md` | Project-specific version history |
+| `Documentation/architecture.md` | Project-specific architecture |
+| `01-presentation/styles/global.css` | Project-specific design tokens |
+| `Config/` | Project-specific configuration |
+| All source code | Obviously |
+
+---
+
+## Upgrade Workflow — 4 Phases
+
+```
+/Convert [path]  (project already has framework)
+       │
+       ▼
+┌──────────────────┐
+│  1. Scan Current │  Read project files, detect what's outdated
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  2. Diff Report  │  Show what would change
+│                  │  ← USER CHECKPOINT
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  3. Apply        │  Update files, merge where needed
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  4. Verify       │  Run validators, confirm everything works
+└──────────────────┘
+```
+
+---
+
+## Upgrade Phase 1: Scan Current State
+
+Read the project's current framework files and compare against the latest template.
+
+**Steps:**
+
+1. **Read the latest template files** from the web template source:
+   - `Standards/Code-Quality.md`
+   - `Standards/Checklist.md`
+   - `Documentation/project-planning/*.md` (templates)
+   - `.claude/validators/`, `.claude/agents/`, `.claude/settings.json`
+   - `.husky/pre-commit`
+   - `CLAUDE.md` (template version, not project-specific)
+   - `README.md` (template sections only)
+
+2. **Read the project's current versions** of those same files
+
+3. **Compare and categorize:**
+   - **Up to date** — file matches template (no action)
+   - **Outdated** — template has changed (needs update)
+   - **Missing** — template file doesn't exist in project yet (needs creation)
+   - **Custom** — project has content not in template (preserve)
+
+---
+
+## Upgrade Phase 2: Diff Report
+
+Present what would change:
+
+```
+🔄 Upgrade Report
+
+Template has evolved. Here's what's outdated in your project:
+
+REPLACE (template-owned, safe to overwrite):
+  ✏️ Standards/Code-Quality.md — 3 new rules added
+  ✏️ Standards/Checklist.md — 2 items updated
+  ✏️ .claude/validators/arch.js — boundary check improved
+
+CREATE (new template files):
+  ➕ .claude/dispatch/ — new directory for resumable workflows
+
+MERGE (template + project content):
+  🔀 CLAUDE.md — Slash Commands table updated, Resumable Workflows section added
+     Your Project State block is preserved.
+  🔀 .claude/settings.json — 2 new permissions added
+     Your existing permissions preserved.
+
+ALREADY UP TO DATE:
+  ✅ Documentation/project-planning/feature-development.md
+  ✅ .husky/pre-commit
+
+Apply these updates?
+```
+
+**If user wants to skip specific updates:** Respect their choices.
+**If user approves:** Proceed to Phase 3.
+
+---
+
+## Upgrade Phase 3: Apply Updates
+
+For each file in the approved update list:
+
+### Replace Files (template-owned)
+
+Simply overwrite with the latest template version:
+
+```bash
+# Copy from template source
+cp {template-source}/Standards/Code-Quality.md Standards/Code-Quality.md
+cp {template-source}/Standards/Checklist.md Standards/Checklist.md
+# etc.
+```
+
+### Create Missing Files
+
+Create new directories and files that the latest template includes:
+
+```bash
+mkdir -p .claude/dispatch
+# Copy any new template files
+```
+
+### Merge Files (template + project)
+
+For files with both template and project content:
+
+**CLAUDE.md merge strategy:**
+1. Read the project's current `CLAUDE.md`
+2. Extract the Project State block (`<!-- PROJECT_STATE_START` ... `PROJECT_STATE_END -->`)
+3. Extract any custom sections the user added (sections not in the template)
+4. Write the latest template CLAUDE.md
+5. Re-insert the Project State block
+6. Re-insert any custom sections at the end
+
+**README.md merge strategy:**
+1. Read the project's current `README.md`
+2. Identify template sections (Process Overview, command tables, build cycle) vs. project sections (project name, description, quickstart, custom sections)
+3. Update template sections with latest content
+4. Preserve all project-specific sections in place
+
+**settings.json merge strategy:**
+1. Read project's current `.claude/settings.json`
+2. Read template's `.claude/settings.json`
+3. Union the `permissions.allow` arrays (add new, keep existing)
+4. Preserve any project-specific settings
+
+**Commit:** `chore: upgrade framework to latest template`
+
+---
+
+## Upgrade Phase 4: Verify
+
+1. Run `npm run validate` — confirm all validators pass with the updated files
+2. Check that no project-specific content was lost (spot-check Project State, feature counts)
+3. Report results:
+
+```
+✅ Upgrade complete
+
+Updated:
+  ✏️ Standards/Code-Quality.md
+  ✏️ Standards/Checklist.md
+  ✏️ .claude/validators/arch.js
+  ➕ .claude/dispatch/ (created)
+  🔀 CLAUDE.md (template sections updated, Project State preserved)
+  🔀 .claude/settings.json (2 permissions added)
+
+Verification: {PASS / PASS WITH WARNINGS}
+
+Your project-specific files are untouched:
+  Documentation/project-roadmap.md
+  Documentation/features/**
+  Documentation/changelog.md
+  All source code
+```
+
+---
+
+# Shared Sections
+
 ## Error Handling
 
-### Agent Fails Mid-Pipeline
+### Agent Fails Mid-Pipeline (Fresh Convert)
 
 | Failed Agent | Action |
 |-------------|--------|
@@ -398,7 +617,7 @@ Next steps:
 ```
 No git repository detected
 
-Adoption works best with git history (for release reconstruction),
+Conversion works best with git history (for release reconstruction),
 but it's not required.
 
 Proceeding without:
@@ -415,7 +634,7 @@ Recommendation: Initialize git first:
 ```
 No package.json found
 
-I can still adopt, but I'll need more info manually:
+I can still convert, but I'll need more info manually:
   - Project name
   - Tech stack
   - Version number
@@ -428,30 +647,45 @@ Want to proceed, or create package.json first?
 
 ## Edge Cases
 
+### Fresh Convert Edge Cases
+
 | Situation | Behavior |
 |-----------|----------|
 | Existing `Documentation/` folder | Ask: merge, skip, or rename to `Documentation-old/` |
 | Existing `Standards/` folder | Ask: overwrite or skip |
 | Existing `CHANGELOG.md` | Parse and integrate rather than regenerate |
-| No git repo | Adopt without history; recommend `git init` first |
+| No git repo | Convert without history; recommend `git init` first |
 | No git tags | Treat current state as v0.1.0 (or use package.json version) |
-| Monorepo | Ask which package/workspace to adopt |
+| Monorepo | Ask which package/workspace to convert |
 | Flat folder structure | Propose single program; user restructures via `/New_Idea` later |
 | Hundreds of files | Scanner groups by folder, presents summary first |
 | Non-JavaScript project | Detect language from extensions; adapt accordingly |
 | Existing linting/formatting | Preserve; validators are additive, not replacement |
 
+### Upgrade Edge Cases
+
+| Situation | Behavior |
+|-----------|----------|
+| Project has custom sections in CLAUDE.md | Preserve at end of file after template sections |
+| Project modified a Standards file | Warn, show diff, ask: overwrite or skip |
+| New validator added to template | Add it, update pre-commit hook |
+| Validator removed from template | Remove it, update pre-commit hook |
+| Project has custom validators | Preserve alongside template validators |
+| Template renamed a file | Delete old, create new, warn user |
+| `.claude/settings.json` has conflicting permissions | Union — never remove existing permissions |
+
 ---
 
 ## Examples
 
-### Example 1: React + Express Project
+### Example 1: Fresh Convert — React + Express Project
 
 ```
-User: /Adopt
+User: /Convert
+
+AI: No framework detected — running Fresh Convert.
 
 [Phase 1: Setup — no conflicts detected]
-
 [Phase 2: Scanner runs]
 
 AI: Scan complete. Here's what I found:
@@ -469,81 +703,109 @@ PROPOSED HIERARCHY:
     Auth (2 features) — all ✅ Complete
     Profile (1 feature) — ✅ Complete
 
-FILE CLASSIFICATION:
-  15 presentation files → 01-presentation/
-  8 logic files → 02-logic/
-  6 data files → 03-data/
-  4 config files (stay at root)
-
 I need your help with 5 questions...
 
 [Phase 3: Gap interview — user answers 5 questions]
-
 [Phase 4: Architect plans migration]
 
 AI: Migration Plan Ready
 
 Files to move: 29
 Import rewrites: 47
-Renames: 3 (to match naming conventions)
+Renames: 3
 
 Approve?
 
 User: Yes
 
-[Phase 6: Migrator moves files, updates imports, commits]
-[Phase 7: Documenter generates all docs, commits]
-[Phase 8: Verifier checks everything]
+[Phases 6-9: Migrate, document, verify, summarize]
 
-AI: Adopted: Recipe Manager
+AI: Converted: Recipe Manager
 
 Architecture: 2 Programs → 4 Modules → 10 Features
-Migration: 29 files moved, 47 imports updated
 Verification: PASS
 ```
 
-### Example 2: Project with No Git Tags
+### Example 2: Upgrade Existing Project
 
 ```
-User: /Adopt
+User: /Convert
 
-AI: ...
-VERSION: 1.0.0 (from package.json, 0 git tags found)
+AI: Framework detected — running Upgrade.
 
-No git tags found — I'll treat the current state as the first version.
-Changelog will start with a single entry for existing work.
-...
+🔄 Upgrade Report
+
+REPLACE:
+  ✏️ Standards/Checklist.md — 2 items updated
+  ✏️ .claude/validators/arch.js — improved boundary check
+
+CREATE:
+  ➕ .claude/dispatch/ — resumable workflow support
+
+MERGE:
+  🔀 CLAUDE.md — Slash Commands table updated (new Lock/Research/Capture/Refine
+     descriptions), Resumable Workflows table added
+  🔀 .claude/settings.json — 1 new permission added
+
+ALREADY UP TO DATE:
+  ✅ Standards/Code-Quality.md
+  ✅ Documentation/project-planning/*.md
+
+Apply these updates?
+
+User: Yes
+
+AI: ✅ Upgrade complete
+
+Updated: 4 files
+Created: 1 directory
+Merged: 2 files
+Verification: PASS
+
+Your roadmap, features, changelog, and source code are untouched.
 ```
 
-### Example 3: Project with Conflicts
+### Example 3: Upgrade with Custom Modifications
 
 ```
-User: /Adopt
+User: /Convert
 
-AI: Existing folders detected:
+AI: Framework detected — running Upgrade.
 
-- Documentation/ (has 3 files: API-docs.md, deployment-guide.md, setup.md)
-- .husky/ (has pre-commit hook running eslint)
+🔄 Upgrade Report
 
-For each:
-1. Merge — Add framework files alongside existing ones
-2. Skip — Don't touch this folder
-3. Rename — Move existing to {folder}-old/
+REPLACE:
+  ✏️ Standards/Code-Quality.md — 3 new rules added
 
-How should I handle each?
+CONFLICT:
+  ⚠️ Standards/Checklist.md — you've added custom items to this file.
+     The template version has also changed.
 
-User: Merge both
+     Options:
+     1. Overwrite (you'll lose your custom items)
+     2. Skip (keep your version, miss template updates)
+     3. Merge (add template changes, keep your custom items at the end)
 
-AI: Got it.
-- Documentation/ — Framework files added alongside your existing docs
-- .husky/pre-commit — Validator commands appended after your eslint check
+MERGE:
+  🔀 CLAUDE.md — Slash Commands updated
 
-Continuing...
+Apply? (I'll ask about the conflict.)
+
+User: Merge the checklist.
+
+AI: Got it — merging template updates into your Checklist while preserving
+your custom items.
+
+[Applies updates]
+
+✅ Upgrade complete
 ```
 
 ---
 
 ## Quick Reference
+
+### Fresh Convert
 
 | Phase | What Happens | Who Does It | User Input |
 |-------|-------------|-------------|------------|
@@ -557,7 +819,14 @@ Continuing...
 | 8. Verify | Run validators, check integrity | adopt-verifier agent | None |
 | 9. Summary | Present results | You (orchestrator) | Review and proceed |
 
-**5 agents. 3 user checkpoints. Full framework enabled.**
+### Upgrade
+
+| Phase | What Happens | Who Does It | User Input |
+|-------|-------------|-------------|------------|
+| 1. Scan | Compare project against latest template | You (orchestrator) | None |
+| 2. Diff | Show what would change | You (orchestrator) | Approve or skip items |
+| 3. Apply | Update/create/merge files | You (orchestrator) | Resolve conflicts |
+| 4. Verify | Run validators | You (orchestrator) | Review results |
 
 ---
 
@@ -565,8 +834,8 @@ Continuing...
 
 | Command | When to Use |
 |---------|-------------|
-| `/Start_Project` | Initialize a NEW project from scratch |
-| `/Feature` | Build features (available after adoption) |
+| `/Start_Project` | Initialize a NEW project from scratch (no existing code) |
+| `/Feature` | Build features (available after conversion) |
 | `/New_Idea` | Add features or restructure milestones |
 | `/Bug` | Report and fix bugs |
 | `/Release` | Ship a completed milestone |

@@ -360,7 +360,7 @@ Documentation/
 | Command | When to Use |
 |---------|-------------|
 | `/Start_Project` | Initialize a new project from scratch |
-| `/Adopt` | Wrap an existing project in this framework |
+| `/Convert` | Convert an existing project or upgrade to latest template |
 | `/Feature` | Build new features (not bug fixes) |
 | `/New_Idea` | Add features or restructure milestones |
 | `/Release` | Ship a completed milestone (or PATCH release for bug batches) |

@@ -51,10 +51,10 @@ This applies regardless of project shape:
 ```
 project-root/
   source/                 # All source code lives here
+    00-foundation/       # Cross-cutting — config, types, errors, utils (optional)
     01-presentation/     # UI — what the user sees and interacts with
     02-logic/            # Business rules — validation, orchestration, state
-    03-data/             # Persistence — database, APIs, external services
-    config/              # Cross-cutting — env, constants, routes
+    03-data/             # All external I/O — databases, APIs, cache, storage
   tests/                 # Integration and E2E tests
   public/                # Static files served directly
   Documentation/         # Project docs, ADRs, feature specs
@@ -98,7 +98,7 @@ For the full tier reference with stack-specific placement, read `~/.claude/skill
 2. **Foundation first** — Move data tier files first, then logic, then presentation. Dependencies point downward, so you build from the bottom up.
 3. **Preserve git history** — Use `git mv` for every move.
 4. **Imports must work** — After every batch of moves, update all import paths. The project must build/run at every commit.
-5. **Cross-cutting stays out of tiers** — Config goes in `source/config/`, not in any tier. Tests, public, and docs stay at root outside `source/`.
+5. **Cross-cutting goes in foundation** — Config, shared types, error classes, and pure utilities go in `source/00-foundation/`, not scattered across tiers. Tests, public, and docs stay at root outside `source/`.
 6. **Clean root** — Config files at root, all source code behind one `source/` door. Only `source/`, `tests/`, `public/`, `Documentation/`, config files, and tooling dotfiles belong at root.
 
 ---
@@ -139,12 +139,20 @@ Directories (project structure):
 
 Directories (tooling — dotfiles):
   .claude/             .vscode/             .github/             .git/
+  .devcontainer/       .husky/
 
 Files (required config — tooling needs these at root):
   package.json         package-lock.json    index.html
   tsconfig.json        tsconfig.node.json   vite.config.ts / .js
   eslint.config.js / .cjs / .mjs           .gitignore
   .env.example         README.md            CLAUDE.md
+
+Files (DX infrastructure — optional but recognized):
+  .editorconfig        .prettierrc / .prettierrc.json / prettier.config.js
+  .pre-commit-config.yaml                  commitlint.config.js / .cjs
+  devcontainer.json    justfile             Makefile
+  CHANGELOG.md         CONTRIBUTING.md      LICENSE
+  .npmrc               .nvmrc               .node-version
 
 Gitignored (expected on disk but invisible in tree):
   node_modules/        dist/                build/               coverage/
@@ -429,8 +437,15 @@ Create only the directories that your Phase 2 mapping identified as having files
 mkdir -p source/01-presentation
 mkdir -p source/02-logic
 mkdir -p source/03-data
-mkdir -p source/config
 ```
+
+If the project has cross-cutting code (config, shared types, error classes, pure utilities), also create:
+
+```bash
+mkdir -p source/00-foundation
+```
+
+`00-foundation` is optional — only create it when files need a shared home that doesn't belong to any tier. Don't create it for projects with < 10 source files.
 
 Add subdirectories based on what the project actually needs (from Phase 2 mapping):
 
@@ -439,7 +454,9 @@ Add subdirectories based on what the project actually needs (from Phase 2 mappin
 mkdir -p source/01-presentation/components
 mkdir -p source/01-presentation/styles
 mkdir -p source/02-logic/services
-mkdir -p source/03-data/schemas
+mkdir -p source/03-data/repositories
+mkdir -p source/00-foundation/config    # only if cross-cutting config exists
+mkdir -p source/00-foundation/types     # only if shared types exist
 ```
 
 Don't create empty placeholder folders. If the project has no database layer, don't create `source/03-data/repositories/`.
