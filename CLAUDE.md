@@ -128,6 +128,6 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 - Commands: lowercase (`commit.md`, `clean.md`)
 - Agents: kebab-case (`new-codebase-scout.md`)
 - Skills: `<domain>/skills/<name>/SKILL.md` as main file (some domains nest by sub-category: `<domain>/<sub-category>/skills/<name>/`)
-- Domain folders: lowercase with hyphens (`foundations`, `web-development`, `world-building`, `data`, `productivity`)
+- Domain folders: lowercase with hyphens (`foundations`, `web-development`, `world-building`, `data`)
 - References: kebab-case (`master-user-profile.md`)
 - Architecture references: centralized in `foundations/skills/architecture/references/` (domain-specific files like `web.md`, `unity.md`, `data-iac.md` live here, not in each domain)
