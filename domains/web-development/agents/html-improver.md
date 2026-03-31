@@ -7,9 +7,9 @@ description: >
   says what it IS, not how it looks.
 
 skills:
-  - design
-  - web-accessibility
-  - code-quality
+  - semantic-structure
+  - semantic-content
+  - semantic-interaction
 
 when_to_invoke: |
   - When HTML/JSX has div-soup instead of semantic elements
@@ -89,7 +89,7 @@ Record these numbers — they're your "before" snapshot.
 
 Replace `<div>` wrappers with correct landmark elements.
 
-**Reference:** Read `~/.claude/skills/design/references/semantic-html.md` for the complete element replacement guide and landmark rules.
+**Reference:** Read `~/.claude/skills/semantic-structure/SKILL.md` for landmark elements, heading hierarchy, and document structure rules.
 
 ### Element Replacements
 
@@ -137,7 +137,7 @@ Fix heading levels so the document has a navigable outline.
 
 Fix elements that users click, tap, or interact with.
 
-**Reference:** Read `~/.claude/skills/design/references/accessibility-guide.md` for ARIA patterns, keyboard navigation, and focus management. Read `~/.claude/skills/design/assets/component-states-checklist.md` for required interactive states.
+**Reference:** Read `~/.claude/skills/semantic-interaction/SKILL.md` for buttons vs links, keyboard navigation, focus management, and ARIA patterns.
 
 ### Clickable Divs → Buttons
 
@@ -309,7 +309,7 @@ Only fix these if you encounter them. Don't grep the entire codebase for every `
 
 Clean up class bloat. This phase is about making HTML readable, not about CSS.
 
-**Reference:** Read `~/.claude/skills/design/assets/anti-patterns.md` for common class bloat patterns and fixes.
+**Reference:** Class discipline is a cross-cutting concern. Refer to `~/.claude/skills/css-styling/SKILL.md` for design token usage and `~/.claude/skills/css-selectors/SKILL.md` for naming conventions when extracting classes.
 
 ### What to Fix
 

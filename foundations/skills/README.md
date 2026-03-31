@@ -21,9 +21,13 @@ Web-specific skills with comprehensive SKILL.md content. Located in `web-develop
 
 | Skill | Purpose |
 |-------|---------|
-| [design](../../web-development/skills/design/) | Design system, semantic HTML, CSS formatting, component states |
-| [web-accessibility](../../web-development/skills/web-accessibility/) | WCAG 2.1 AA compliance, ARIA, keyboard nav, focus management |
-| [web-css](../../web-development/skills/web-css/) | CSS architecture, design tokens, BEM naming, responsive patterns |
+| [design](../../web-development/skills/design/) | Design system, design tokens, component states, layout philosophy |
+| [semantic-structure](../../web-development/skills/semantic-structure/) | Document structure, landmarks, headings |
+| [semantic-content](../../web-development/skills/semantic-content/) | Images, lists, tables, text formatting, media |
+| [semantic-interaction](../../web-development/skills/semantic-interaction/) | Buttons, links, forms, keyboard nav, focus, ARIA |
+| [css-selectors](../../web-development/skills/css-selectors/) | Selectors, naming (BEM), specificity, cascade, dead CSS |
+| [css-positioning](../../web-development/skills/css-positioning/) | Box model, grid, flexbox, responsive patterns, property order |
+| [css-styling](../../web-development/skills/css-styling/) | Design tokens, colors, typography, shadows, animation, states |
 | [web-performance](../../web-development/skills/web-performance/) | Performance optimization |
 
 ### Data Engineering Skills
@@ -72,11 +76,14 @@ Skills have defined boundaries to avoid duplication. See each skill's "Scope and
 
     Web Stack              Data Engineering        Unity/VRChat
     ──────────             ────────────────        ────────────
-    design ─────┐          data-python             unity-csharp
-    web-css ◄───┤          data-sql                vrc-udon
-    web-a11y ◄──┘          data-pipelines          vrc-worlds
-    web-performance        data-aws                vrc-avatars
-                           data-iac
+    design                 data-python             unity-csharp
+    semantic-structure     data-sql                vrc-udon
+    semantic-content       data-pipelines          vrc-worlds
+    semantic-interaction   data-aws                vrc-avatars
+    css-selectors          data-iac
+    css-positioning
+    css-styling
+    web-performance
 
     ┌─────────────────────────────────────────────────────────┐
     │                       CROSS-CUTTING                      │
@@ -86,8 +93,8 @@ Skills have defined boundaries to avoid duplication. See each skill's "Scope and
 
 **Key relationships:**
 - `code-quality` is foundational; most skills build on it
-- `design` defines principles; `web-css` implements them
-- `web-accessibility` extends `design` with WCAG compliance
+- `design` defines visual principles; `css-selectors`, `css-positioning`, `css-styling` implement them
+- `semantic-structure`, `semantic-content`, `semantic-interaction` cover HTML element selection (previously split across `design` and `web-accessibility`)
 - `security` is cross-cutting and applies to all domains
 - Domain skills (web, data, unity) are independent of each other
 

@@ -36,12 +36,16 @@ AI agents produce UI that looks plausible but diverges from itself. Each session
 - Premium UI philosophy and anti-patterns
 
 **Defers to other skills:**
-- `web-accessibility`: Deep WCAG compliance, screen reader patterns, ARIA usage, keyboard navigation
-- `web-css`: CSS architecture, file organization, naming conventions (BEM), dark mode implementation
+- `semantic-structure`: Page layout, landmarks, headings, document-level elements
+- `semantic-content`: Images, lists, tables, text formatting, media elements
+- `semantic-interaction`: Buttons, links, forms, inputs, keyboard nav, focus, ARIA
+- `css-selectors`: Naming conventions (BEM), specificity, cascade order
+- `css-positioning`: Layout patterns, responsive breakpoints
+- `css-styling`: Design token implementation, dark mode, component states
 
-**Use this skill when:** You need design principles, token enforcement, or semantic HTML guidance.
-**Use web-accessibility when:** You need WCAG compliance, screen reader support, or focus management.
-**Use web-css when:** You need CSS organization, variable architecture, or responsive implementation details.
+**Use this skill when:** You need design principles, token enforcement, or layout philosophy.
+**Use semantic-structure/content/interaction when:** You need to choose the right HTML element.
+**Use css-selectors/positioning/styling when:** You need CSS implementation details.
 
 ---
 
@@ -438,10 +442,10 @@ These rules are deterministically checked by `check.js` (clean-team). When updat
 
 ## References
 
-- `references/semantic-html.md` — Complete semantic HTML guide
 - `references/css-formatting.md` — CSS best practices
-- `references/accessibility-guide.md` — WCAG AA compliance
 - `references/responsive-breakpoints.md` — Responsive design patterns
+- For semantic HTML: see `semantic-structure`, `semantic-content`, `semantic-interaction` skills
+- For WCAG accessibility: see `semantic-interaction` skill (ARIA, keyboard nav, focus management)
 
 ## Assets
 

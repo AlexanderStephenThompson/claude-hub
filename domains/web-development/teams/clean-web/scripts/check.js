@@ -87,33 +87,33 @@ const WARN = 'warn';
  * "## Enforced Rules" section. See CLAUDE.md for the sync convention.
  */
 const RULE_SKILLS = {
-    // CSS (14) — web-css
-    'no-hardcoded-color':     'web-css',
-    'no-hardcoded-spacing':   'web-css',
-    'no-hardcoded-font-size': 'web-css',
-    'no-hardcoded-radius':    'web-css',
-    'no-hardcoded-shadow':    'web-css',
-    'no-hardcoded-z-index':   'web-css',
-    'css-property-order':     'web-css',
-    'css-import-order':       'web-css',
-    'css-section-order':      'web-css',
-    'token-category-order':   'web-css',
-    'mobile-first':           'web-css',
-    'no-important':           'web-css',
-    'no-id-selector':         'web-css',
-    'unit-zero':              'web-css',
+    // CSS (14) — css-selectors, css-positioning, css-styling
+    'no-hardcoded-color':     'css-styling',
+    'no-hardcoded-spacing':   'css-styling',
+    'no-hardcoded-font-size': 'css-styling',
+    'no-hardcoded-radius':    'css-styling',
+    'no-hardcoded-shadow':    'css-styling',
+    'no-hardcoded-z-index':   'css-positioning',
+    'css-property-order':     'css-positioning',
+    'css-import-order':       'css-selectors',
+    'css-section-order':      'css-selectors',
+    'token-category-order':   'css-styling',
+    'mobile-first':           'css-positioning',
+    'no-important':           'css-selectors',
+    'no-id-selector':         'css-selectors',
+    'unit-zero':              'css-positioning',
 
-    // HTML (11) — design, web-accessibility
-    'no-inline-style':        'design',
-    'img-alt-required':       'web-accessibility',
-    'button-type-required':   'design',
-    'doctype-required':       'design',
-    'title-required':         'web-accessibility',
-    'tabindex-no-positive':   'web-accessibility',
-    'max-classes':            'design',
-    'heading-order':          'web-accessibility',
-    'single-h1':             'web-accessibility',
-    'no-div-as-button':       'web-accessibility',
+    // HTML (11) — semantic-structure, semantic-content, semantic-interaction
+    'no-inline-style':        'semantic-interaction',
+    'img-alt-required':       'semantic-content',
+    'button-type-required':   'semantic-interaction',
+    'doctype-required':       'semantic-structure',
+    'title-required':         'semantic-structure',
+    'tabindex-no-positive':   'semantic-interaction',
+    'max-classes':            'semantic-interaction',
+    'heading-order':          'semantic-structure',
+    'single-h1':             'semantic-structure',
+    'no-div-as-button':       'semantic-interaction',
     'wiki-page-attr':          null, // project-specific, no skill
 
     // JS (10) — code-quality, security, architecture, design
@@ -128,9 +128,9 @@ const RULE_SKILLS = {
     'no-innerHTML':           'security',
     'no-jsx-inline-style':    'design',
 
-    // Project (3) — web-css, architecture
-    'css-file-count':         'web-css',
-    'css-file-names':         'web-css',
+    // Project (3) — css-selectors, architecture
+    'css-file-count':         'css-selectors',
+    'css-file-names':         'css-selectors',
     'tier-structure':         'architecture',
 };
 

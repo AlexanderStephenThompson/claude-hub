@@ -7,8 +7,9 @@ description: >
   mobile-first responsive patterns.
 
 skills:
-  - web-css
-  - code-quality
+  - css-selectors
+  - css-positioning
+  - css-styling
 
 when_to_invoke: |
   - When CSS files need cleanup or consolidation
@@ -59,7 +60,7 @@ You run standalone — invoke directly on any web project with CSS files.
 1. **Don't change visual appearance** — Consolidation should be invisible to users. The page must look identical before and after.
 2. **Tokens are the goal** — Every hardcoded value that appears more than once becomes a CSS variable. One edit, full propagation.
 3. **Structure before content** — Fix file organization first, then work on the CSS inside.
-4. **Skill-informed** — Your `web-css` skill is loaded automatically. It contains the full token system, file architecture, and pattern references.
+4. **Skill-informed** — Your `css-selectors`, `css-positioning`, and `css-styling` skills are loaded automatically. They contain naming conventions, layout patterns, token systems, and file architecture.
 5. **Commit after each phase** — Small, reviewable commits. If a phase makes no changes, skip the commit.
 6. **Preserve what works** — If the project has an existing token system, extend it. Don't replace it with yours.
 
@@ -100,7 +101,7 @@ Search for `:root` blocks. If tokens already exist, note the naming convention s
 
 Get CSS files into the 5-file architecture.
 
-**Reference:** Your `web-css` skill (auto-loaded) describes the architecture. For detailed file descriptions, read `~/.claude/skills/web-css/references/file-architecture.md`.
+**Reference:** Read `~/.claude/skills/css-selectors/SKILL.md` — Cascade and Import Order section for file architecture, and `~/.claude/skills/css-positioning/SKILL.md` — File Architecture section for `layouts.css` structure.
 
 ### CSS Structure Gate
 
@@ -124,7 +125,7 @@ node <team-scripts>/scaffold-css.js <project-styles-directory>
 
 This copies the 5 template files with canonical section headers and default token values. Never overwrites existing files. Then merge any existing CSS rules into the correct files and sections.
 
-For the canonical section structure of each file, read the templates at `~/.claude/skills/web-css/templates/`.
+For the canonical section structure of each file, read the templates at `~/.claude/skills/css-styling/templates/`.
 
 ### Restructure Plan (when triggered)
 
@@ -322,7 +323,7 @@ node <team-scripts>/unit-zero.js <project-css-directory>
 
 This replaces `0px`, `0em`, `0rem`, etc. with unitless `0` across all CSS files. Fewer unique values = better token consolidation.
 
-**Reference:** Read `~/.claude/skills/web-css/assets/token-reference.md` for the canonical token naming convention and complete `:root` definitions.
+**Reference:** Read `~/.claude/skills/css-styling/SKILL.md` — Design Tokens section for token naming conventions, categories, and `:root` organization.
 
 ### Discovery
 
@@ -386,7 +387,7 @@ After running, **Read** a few of the modified files to verify the output looks c
 
 Verify all interactive elements have complete state coverage.
 
-**Reference:** Read `~/.claude/skills/web-css/assets/css-patterns.md` for the component states code example.
+**Reference:** Read `~/.claude/skills/css-styling/SKILL.md` — Component States section for the 5 required states and state consistency patterns.
 
 ### Required States
 

@@ -6,9 +6,9 @@ description: >
   and before code-improver so markup is clean before logic gets polished.
 
 skills:
-  - design
-  - web-accessibility
-  - code-quality
+  - semantic-structure
+  - semantic-content
+  - semantic-interaction
 
 when_to_invoke: |
   - Step 3 of the clean-web pipeline
@@ -110,7 +110,7 @@ Supplementary findings: [N] (for context and before/after tracking)
 
 Replace `<div>` wrappers with correct landmark elements.
 
-**Reference:** Read `~/.claude/skills/design/references/semantic-html.md` for the complete element replacement guide and landmark rules.
+**Reference:** Read `~/.claude/skills/semantic-structure/SKILL.md` for landmark elements, heading hierarchy, and document structure rules.
 
 ### Element Replacements
 
@@ -158,7 +158,7 @@ Fix heading levels so the document has a navigable outline.
 
 Fix elements that users click, tap, or interact with.
 
-**Reference:** Read `~/.claude/skills/design/references/accessibility-guide.md` for ARIA patterns, keyboard navigation, and focus management. Read `~/.claude/skills/design/assets/component-states-checklist.md` for required interactive states.
+**Reference:** Read `~/.claude/skills/semantic-interaction/SKILL.md` for buttons vs links, keyboard navigation, focus management, and ARIA patterns.
 
 ### Clickable Divs → Buttons
 
@@ -191,6 +191,8 @@ Search for `<button` without a `type` attribute. Add `type="button"` (prevents a
 ---
 
 ## Phase 5: Forms
+
+**Reference:** Read `~/.claude/skills/semantic-interaction/SKILL.md` — Forms section for labels, fieldsets, error messages, and input types.
 
 Fix form elements for accessibility.
 
@@ -233,6 +235,8 @@ Error messages should be linked to their input via `aria-describedby`:
 ---
 
 ## Phase 6: Images & Media
+
+**Reference:** Read `~/.claude/skills/semantic-content/SKILL.md` — Images and Media section for alt text rules, lazy loading, figures, and SVG icons.
 
 ### Alt Text
 
@@ -281,6 +285,8 @@ Images with captions should use `<figure>` and `<figcaption>`:
 ---
 
 ## Phase 7: Lists & Data
+
+**Reference:** Read `~/.claude/skills/semantic-content/SKILL.md` — Lists, Tables, and Definition Lists sections for correct element selection.
 
 ### Series of Items
 
@@ -344,7 +350,7 @@ Only fix these if you encounter them. Don't grep the entire codebase for every `
 
 Clean up class bloat. This phase is about making HTML readable, not about CSS.
 
-**Reference:** Read `~/.claude/skills/design/assets/anti-patterns.md` for common class bloat patterns and fixes.
+**Reference:** Class discipline is a cross-cutting concern. Refer to `~/.claude/skills/css-styling/SKILL.md` for design token usage and `~/.claude/skills/css-selectors/SKILL.md` for naming conventions when extracting classes.
 
 **Important:** If css-improver ran before you, check its handoff for deleted/renamed selectors before removing any class. A class that looks unused may have just been renamed — removing it would break styling.
 

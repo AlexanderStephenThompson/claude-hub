@@ -46,7 +46,7 @@ Organizes files into `01-presentation/` → `02-logic/` → `03-data/` with one-
 
 #### Step 2: css-improver — CSS Cleanup & Tokenization
 
-Consolidates CSS to a 5-file architecture (`reset → global → layouts → components → overrides`) with design tokens. Skills: `web-css`, `code-quality`
+Consolidates CSS to a 5-file architecture (`reset → global → layouts → components → overrides`) with design tokens. Skills: `css-selectors`, `css-positioning`, `css-styling`
 
 | Phase | What It Does |
 |-------|-------------|
@@ -63,7 +63,7 @@ Consolidates CSS to a 5-file architecture (`reset → global → layouts → com
 
 #### Step 3: html-improver — Semantic HTML & Accessibility
 
-Replaces div-soup with correct semantic elements and ensures WCAG compliance. Skills: `design`, `web-accessibility`, `code-quality`
+Replaces div-soup with correct semantic elements and ensures WCAG compliance. Skills: `semantic-structure`, `semantic-content`, `semantic-interaction`
 
 | Phase | What It Does |
 |-------|-------------|
@@ -100,11 +100,11 @@ These agents also run independently outside the pipeline. Invoke directly with `
 
 | Agent | Domain | Phases | Skills Loaded |
 |-------|--------|--------|---------------|
-| [css-improver](web-development/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `web-css`, `code-quality` |
-| [html-improver](web-development/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `design`, `web-accessibility`, `code-quality` |
+| [css-improver](web-development/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `css-selectors`, `css-positioning`, `css-styling` |
+| [html-improver](web-development/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `semantic-structure`, `semantic-content`, `semantic-interaction` |
 | [web-restructure](web-development/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` |
 
-Skills: architecture, design, web-css, web-accessibility, web-performance
+Skills: architecture, design, css-selectors, css-positioning, css-styling, semantic-structure, semantic-content, semantic-interaction, web-performance
 
 ---
 

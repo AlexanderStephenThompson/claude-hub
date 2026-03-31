@@ -8,7 +8,7 @@
  * already has some CSS files in place.
  *
  * Templates are resolved relative to this script's install location:
- *   ~/.claude/skills/web-css/templates/
+ *   ~/.claude/skills/css-styling/templates/
  *
  * Usage:
  *   node scaffold-css.js <target-directory>
@@ -30,7 +30,7 @@ const TEMPLATE_FILES = ['reset.css', 'global.css', 'layouts.css', 'components.cs
  * When deployed via sync, this script lives at:
  *   ~/.claude/plugins/cache/claude-hub/clean-web/<version>/scripts/scaffold-css.js
  * Templates live at:
- *   ~/.claude/skills/web-css/templates/
+ *   ~/.claude/skills/css-styling/templates/
  *
  * Fallback: look relative to the repo structure for development use.
  */
@@ -39,11 +39,11 @@ function findTemplatesDir() {
     const claudeDir = process.env.HOME
         ? path.join(process.env.HOME, '.claude')
         : path.join(process.env.USERPROFILE || '', '.claude');
-    const deployedDir = path.join(claudeDir, 'skills', 'web-css', 'templates');
+    const deployedDir = path.join(claudeDir, 'skills', 'css-styling', 'templates');
     if (fs.existsSync(deployedDir)) return deployedDir;
 
     /* Fallback: repo-relative (for development) */
-    const repoDir = path.resolve(__dirname, '..', '..', '..', 'skills', 'web-css', 'templates');
+    const repoDir = path.resolve(__dirname, '..', '..', '..', 'skills', 'css-styling', 'templates');
     if (fs.existsSync(repoDir)) return repoDir;
 
     return null;
@@ -75,7 +75,7 @@ function main() {
 
     if (!templatesDir) {
         console.error('Error: Cannot find CSS templates directory.');
-        console.error('Expected at: ~/.claude/skills/web-css/templates/');
+        console.error('Expected at: ~/.claude/skills/css-styling/templates/');
         process.exit(1);
     }
 

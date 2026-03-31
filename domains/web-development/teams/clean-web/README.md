@@ -20,8 +20,8 @@ The orchestrator detects project shape and skips agents that don't apply.
 | Step | Agent | What It Does | Phases | Skills |
 |------|-------|-------------|--------|--------|
 | 1 | web-restructure | 3-tier architecture + root hygiene | 8 | architecture, code-quality |
-| 2 | css-improver | 5-file CSS architecture + design tokens | 10 | web-css, code-quality |
-| 3 | html-improver | Semantic markup + accessibility | 10 | design, web-accessibility, code-quality |
+| 2 | css-improver | 5-file CSS architecture + design tokens | 10 | css-selectors, css-positioning, css-styling |
+| 3 | html-improver | Semantic markup + accessibility | 10 | semantic-structure, semantic-content, semantic-interaction |
 | 4 | code-improver | Naming, magic values, nesting, error handling | 9 | code-quality |
 
 ### Why This Order

@@ -318,8 +318,12 @@ When building a feature, follow this exact process:
 | `core` | `~/.claude/skills/code-quality/SKILL.md` | Always |
 | `core` | `~/.claude/skills/architecture/SKILL.md` | Always |
 | `ui` | `~/.claude/skills/design/SKILL.md` | `ui` scope active |
-| `ui` | `~/.claude/skills/web-css/SKILL.md` | `ui` scope active |
-| `ui` | `~/.claude/skills/web-accessibility/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/css-selectors/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/css-positioning/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/css-styling/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/semantic-structure/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/semantic-content/SKILL.md` | `ui` scope active |
+| `ui` | `~/.claude/skills/semantic-interaction/SKILL.md` | `ui` scope active |
 | `api`, `auth`, `data` | `~/.claude/skills/security/SKILL.md` | Any of these scopes active |
 
 Also read `01-presentation/styles/global.css` if `ui` scope is active (project-specific design tokens).
