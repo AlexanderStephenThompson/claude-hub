@@ -10,50 +10,50 @@ Fully developed skills with comprehensive standards, examples, and checklists.
 
 | Skill | Purpose | Status |
 |-------|---------|--------|
-| [architecture](./architecture/) | Architecture principles, module boundaries, design patterns. Domain profiles distributed: `web.md` in `web-development/skills/`, `unity/vrchat/blender.md` in `world-building/skills/`, `data-iac.md` in `data/skills/` — all merge on deploy | Complete |
+| [architecture](./architecture/) | Architecture principles, module boundaries, design patterns. Domain profiles distributed: `web.md` in `development/web/skills/`, `unity/vrchat/blender.md` in `development/gamedev/`, `data-iac.md` in `data/skills/` — all merge on deploy | Complete |
 | [code-quality](./code-quality/) | TDD, naming, conventions, docstrings, 3-tier structure, language references | Complete |
 | [documentation](./documentation/) | SemVer, changelog, feature specs, module templates | Complete |
 | [security](./security/) | OWASP Top 10, input validation, auth patterns | Complete |
 
 ### Web Skills
 
-Web-specific skills with comprehensive SKILL.md content. Located in `web-development/skills/`.
+Web-specific skills with comprehensive SKILL.md content. Located in `development/web/skills/`.
 
 | Skill | Purpose |
 |-------|---------|
-| [design](../../web-development/skills/design/) | Design system, design tokens, component states, layout philosophy |
-| [semantic-structure](../../web-development/skills/semantic-structure/) | Document structure, landmarks, headings |
-| [semantic-content](../../web-development/skills/semantic-content/) | Images, lists, tables, text formatting, media |
-| [semantic-interaction](../../web-development/skills/semantic-interaction/) | Buttons, links, forms, keyboard nav, focus, ARIA |
-| [css-selectors](../../web-development/skills/css-selectors/) | Selectors, naming (BEM), specificity, cascade, dead CSS |
-| [css-positioning](../../web-development/skills/css-positioning/) | Box model, grid, flexbox, responsive patterns, property order |
-| [css-styling](../../web-development/skills/css-styling/) | Design tokens, colors, typography, shadows, animation, states |
-| [web-performance](../../web-development/skills/web-performance/) | Performance optimization |
+| [design](../../domains/development/web/skills/design/) | Design system, design tokens, component states, layout philosophy |
+| [semantic-structure](../../domains/development/web/skills/semantic-structure/) | Document structure, landmarks, headings |
+| [semantic-content](../../domains/development/web/skills/semantic-content/) | Images, lists, tables, text formatting, media |
+| [semantic-interaction](../../domains/development/web/skills/semantic-interaction/) | Buttons, links, forms, keyboard nav, focus, ARIA |
+| [css-selectors](../../domains/development/web/skills/css-selectors/) | Selectors, naming (BEM), specificity, cascade, dead CSS |
+| [css-positioning](../../domains/development/web/skills/css-positioning/) | Box model, grid, flexbox, responsive patterns, property order |
+| [css-styling](../../domains/development/web/skills/css-styling/) | Design tokens, colors, typography, shadows, animation, states |
+| [web-performance](../../domains/development/web/skills/web-performance/) | Performance optimization |
 
 ### Data Engineering Skills
 
 Skills for data processing, pipelines, and cloud infrastructure.
 
-Located in `data/skills/`.
+Located in `domains/data/`.
 
 | Skill | Purpose |
 |-------|---------|
-| [data-python](../../data/skills/data-python/) | Python for data processing (pandas, polars, pyspark) |
-| [data-sql](../../data/skills/data-sql/) | Query optimization, window functions, schema design |
-| [data-pipelines](../../data/skills/data-pipelines/) | ETL patterns, orchestration, idempotency, data quality |
-| [data-aws](../../data/skills/data-aws/) | AWS data services (Glue, Lambda, S3, Athena, Redshift) |
-| [data-iac](../../data/skills/data-iac/) | Infrastructure as Code (Terraform, CDK, CloudFormation) |
+| [data-python](../../domains/data/analytics/skills/data-python/) | Python for data processing (pandas, polars, pyspark) |
+| [data-sql](../../domains/data/analytics/skills/data-sql/) | Query optimization, window functions, schema design |
+| [data-pipelines](../../domains/data/engineering/skills/data-pipelines/) | ETL patterns, orchestration, idempotency, data quality |
+| [data-aws](../../domains/data/engineering/skills/data-aws/) | AWS data services (Glue, Lambda, S3, Athena, Redshift) |
+| [data-iac](../../domains/data/engineering/skills/data-iac/) | Infrastructure as Code (Terraform, CDK, CloudFormation) |
 
 ### Unity & VRChat Skills
 
-Skills for Unity game development and VRChat content creation. Located in `world-building/`.
+Skills for Unity game development and VRChat content creation. Located in `domains/development/gamedev/`.
 
 | Skill | Purpose |
 |-------|---------|
-| [unity-csharp](../../world-building/unity/skills/unity-csharp/) | Unity C# scripting, MonoBehaviour patterns, VR/mobile performance |
-| [vrc-udon](../../world-building/vr-chat/skills/vrc-udon/) | Udon/UdonSharp for VRChat worlds, networking |
-| [vrc-worlds](../../world-building/vr-chat/skills/vrc-worlds/) | VRChat world building, lighting, optimization |
-| [vrc-avatars](../../world-building/vr-chat/skills/vrc-avatars/) | VRChat avatars, expressions, PhysBones, performance limits |
+| [unity-csharp](../../domains/development/gamedev/unity/skills/unity-csharp/) | Unity C# scripting, MonoBehaviour patterns, VR/mobile performance |
+| [vrc-udon](../../domains/development/gamedev/vr-chat/skills/vrc-udon/) | Udon/UdonSharp for VRChat worlds, networking |
+| [vrc-worlds](../../domains/development/gamedev/vr-chat/skills/vrc-worlds/) | VRChat world building, lighting, optimization |
+| [vrc-avatars](../../domains/development/gamedev/vr-chat/skills/vrc-avatars/) | VRChat avatars, expressions, PhysBones, performance limits |
 
 ## Skill Relationships
 

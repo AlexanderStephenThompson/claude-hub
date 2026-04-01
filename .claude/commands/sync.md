@@ -60,7 +60,7 @@ One script that deploys flat files, discovers teams, clears stale plugin cache, 
 ```powershell
 $repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Utility\Tools\claude-hub'
 $claude = 'C:\Users\Alexa\.claude'
-$domains = @('foundations', 'domains\web-development', 'domains\world-building', 'domains\data')
+$domains = @('foundations', 'domains\development', 'domains\data', 'domains\business')
 
 # --- Deploy flat files ---
 Remove-Item "$claude\skills\*" -Recurse -Force -ErrorAction SilentlyContinue

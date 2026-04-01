@@ -605,9 +605,9 @@ These rules are deterministically checked by `check.js` (clean-team). When updat
 
 Domain-specific code quality extensions. Each file scaffolds the same categories (structure, naming, testing, error handling, performance) for a project type:
 
-- `templates/web-development.md` — Web-specific quality rules
+- `templates/web.md` — Web-specific quality rules
 - `templates/data.md` — Data pipeline and analytics quality rules
-- `templates/world-building.md` — Unity and VRChat quality rules
+- `templates/gamedev.md` — Unity and VRChat quality rules
 
 ## Scripts
 

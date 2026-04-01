@@ -23,10 +23,10 @@ The orchestrator runs deterministic scripts first (check.js, complexity analysis
 
 **Scripts** (also runnable standalone):
 ```bash
-node web-development/teams/clean-web/scripts/check.js                       # 36 design system rules
-python web-development/teams/clean-web/scripts/analyze_complexity.py <path> # High-complexity functions
-python web-development/teams/clean-web/scripts/analyze_dependencies.py <path> # Circular dependencies
-python web-development/teams/clean-web/scripts/detect_dead_code.py <path>   # Unused exports
+node domains/development/web/teams/clean-web/scripts/check.js                       # 36 design system rules
+python domains/development/web/teams/clean-web/scripts/analyze_complexity.py <path> # High-complexity functions
+python domains/development/web/teams/clean-web/scripts/analyze_dependencies.py <path> # Circular dependencies
+python domains/development/web/teams/clean-web/scripts/detect_dead_code.py <path>   # Unused exports
 ```
 
 #### Step 1: web-restructure — 3-Tier Architecture Migration
@@ -100,9 +100,9 @@ These agents also run independently outside the pipeline. Invoke directly with `
 
 | Agent | Domain | Phases | Skills Loaded |
 |-------|--------|--------|---------------|
-| [css-improver](web-development/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `css-selectors`, `css-positioning`, `css-styling` |
-| [html-improver](web-development/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `semantic-structure`, `semantic-content`, `semantic-interaction` |
-| [web-restructure](web-development/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` |
+| [css-improver](domains/development/web/agents/css-improver.md) | CSS cleanup & tokenization | 10 | `css-selectors`, `css-positioning`, `css-styling` |
+| [html-improver](domains/development/web/agents/html-improver.md) | Semantic HTML & accessibility | 10 | `semantic-structure`, `semantic-content`, `semantic-interaction` |
+| [web-restructure](domains/development/web/agents/web-restructure.md) | 3-tier architecture migration | 8 | `architecture`, `code-quality` |
 
 Skills: architecture, design, css-selectors, css-positioning, css-styling, semantic-structure, semantic-content, semantic-interaction, web-performance
 
@@ -179,7 +179,7 @@ Skills: explaining, organize
 
 ---
 
-## World Building
+## Game Development
 
 Unity game development and VRChat content creation.
 

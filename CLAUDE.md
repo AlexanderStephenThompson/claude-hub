@@ -11,15 +11,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Folder | Purpose |
 |--------|---------|
 | `foundations/` | Universal skills (code-quality, architecture, security, documentation, explaining, organize), commands, agents, templates |
-| `domains/` | Project-specific skill domains (below) |
+| `domains/` | Domain-specific skills, agents, teams (below) |
 
 ### Domains (`domains/`)
 
 | Domain | Contents |
 |--------|----------|
-| `web-development/` | Web skills, agents, clean-web team |
-| `world-building/` | Unity + VRChat skills, organized by platform (unity/, vr-chat/) |
-| `data/` | Data skills by discipline: analytics (Python, SQL), engineering (pipelines, AWS, IaC), science (ML, stats — future) |
+| `development/` | Code-related skills, split by platform |
+| `development/web/` | Web skills (design, CSS, semantic HTML, performance), agents, clean-web team |
+| `development/gamedev/` | Unity + VRChat skills, organized by platform (unity/, vr-chat/) |
+| `data/` | Data skills by discipline: analytics (Python, SQL), engineering (pipelines, AWS, IaC), science (future) |
+| `business/` | Entrepreneurial operations: fulfill, maintain, grow |
+| `business/fulfill/` | Delivery systems, communication |
+| `business/maintain/` | Finance, legal, systems, people, infrastructure, continuous improvement |
+| `business/grow/` | Attract (marketing), convert (sales), retain (loyalty) |
 
 ### Deployment (flat)
 
@@ -82,11 +87,11 @@ Deploy covers: flat files (skills, agents, commands) + `claude plugin marketplac
 
 ### Analysis Scripts (clean-web)
 ```bash
-node domains/web-development/teams/clean-web/scripts/check.js                           # Design system compliance (38 rules)
-node domains/web-development/teams/clean-web/scripts/check.js --validate-registry       # Verify rule ↔ skill links
-python domains/web-development/teams/clean-web/scripts/analyze_complexity.py <path>     # High-complexity functions
-python domains/web-development/teams/clean-web/scripts/analyze_dependencies.py <path>   # Circular dependencies
-python domains/web-development/teams/clean-web/scripts/detect_dead_code.py <path>       # Unused code
+node domains/development/web/teams/clean-web/scripts/check.js                           # Design system compliance (38 rules)
+node domains/development/web/teams/clean-web/scripts/check.js --validate-registry       # Verify rule ↔ skill links
+python domains/development/web/teams/clean-web/scripts/analyze_complexity.py <path>     # High-complexity functions
+python domains/development/web/teams/clean-web/scripts/analyze_dependencies.py <path>   # Circular dependencies
+python domains/development/web/teams/clean-web/scripts/detect_dead_code.py <path>       # Unused code
 ```
 
 ### Analysis Scripts (clean-data)
@@ -111,9 +116,10 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 | Change Type | Edit Location | Then |
 |-------------|---------------|------|
 | Foundation skills | `foundations/skills/<skill>/` | `/sync deploy` |
-| Web skills | `domains/web-development/skills/<skill>/` | `/sync deploy` |
-| World-building skills | `domains/world-building/<platform>/skills/<skill>/` | `/sync deploy` |
+| Web skills | `domains/development/web/skills/<skill>/` | `/sync deploy` |
+| Gamedev skills | `domains/development/gamedev/<platform>/skills/<skill>/` | `/sync deploy` |
 | Data skills | `domains/data/<sub-category>/skills/<skill>/` | `/sync deploy` |
+| Business skills | `domains/business/<pillar>/<sub-category>/skills/<skill>/` | `/sync deploy` |
 | Teams | `*/teams/<team>/` | Update both `plugin.json` AND `.claude-plugin/marketplace.json` (versions must match), then `/sync push` |
 | Agents | `*/agents/` | `/sync deploy` |
 | Commands | `*/commands/` | `/sync deploy` |
@@ -128,6 +134,6 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 - Commands: lowercase (`commit.md`, `clean.md`)
 - Agents: kebab-case (`new-codebase-scout.md`)
 - Skills: `<domain>/skills/<name>/SKILL.md` as main file (some domains nest by sub-category: `<domain>/<sub-category>/skills/<name>/`)
-- Domain folders: lowercase with hyphens (`foundations`, `web-development`, `world-building`, `data`)
+- Domain folders: lowercase with hyphens (`foundations`, `development`, `data`, `business`)
 - References: kebab-case (`master-user-profile.md`)
 - Architecture references: centralized in `foundations/skills/architecture/references/` (domain-specific files like `web.md`, `unity.md`, `data-iac.md` live here, not in each domain)
