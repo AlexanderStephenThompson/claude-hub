@@ -37,7 +37,7 @@ git add -A && git status
 If there are changes to commit:
 1. Review with `git diff --cached`
 2. Create a conventional commit based on what changed
-3. `git push`
+3. Push: `git push 2>&1`. If it fails with "no upstream branch", run `git push --set-upstream origin $(git branch --show-current) 2>&1` instead. Do NOT queue other bash commands until the push completes — it may block on credential prompts.
 
 **Pull mode:**
 
@@ -75,12 +75,12 @@ foreach ($d in $domains) {
 
     # Agents (recursive — finds agents/ at any depth, EXCLUDING .claude/ and templates/)
     Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'agents' -and $_.FullName -notmatch '\\\.claude\\' -and $_.FullName -notmatch '\\templates\\' } |
+        Where-Object { $_.Name -eq 'agents' -and $_.FullName -notlike '*\.claude\*' -and $_.FullName -notlike '*\templates\*' } |
         ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\agents\" -Force }
 
     # Commands (recursive — finds commands/ at any depth, EXCLUDING .claude/ and templates/)
     Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'commands' -and $_.FullName -notmatch '\\\.claude\\' -and $_.FullName -notmatch '\\templates\\' } |
+        Where-Object { $_.Name -eq 'commands' -and $_.FullName -notlike '*\.claude\*' -and $_.FullName -notlike '*\templates\*' } |
         ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\commands\" -Force }
 }
 
@@ -111,16 +111,7 @@ First try the built-in command:
 claude plugin marketplace update
 ```
 
-Then **verify** the mirror is current. If the built-in command didn't pull the latest commit, force-update manually:
-
-```powershell
-cd 'C:\Users\Alexa\.claude\plugins\marketplaces\claude-hub'
-git fetch origin
-git reset --hard origin/main
-git log --oneline -1
-```
-
-The displayed commit should match the latest push from Step 1. If it doesn't, the reinstall below will install stale files.
+The marketplace mirror tracks whatever branch it was cloned from (usually `main`). If you're working on a feature branch, the mirror won't have your changes until they're merged to `main`. This is expected — plugins install from the marketplace mirror, so they reflect the published state, not the working branch. Skip the manual mirror force-update; `claude plugin marketplace update` is sufficient.
 
 ### 2c: Reinstall each team
 

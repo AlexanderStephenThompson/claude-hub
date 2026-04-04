@@ -52,6 +52,14 @@ You detect the language(s) from the files present and apply patterns accordingly
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. You CAN run pre-built team scripts that ship with the pipeline.
 
+### Bash Output Handling
+
+Bash commands may run in the background. When this happens:
+- **Wait for the task completion notification** before reading results. It arrives automatically.
+- **Do NOT** repeatedly Read the output file to poll — you will get empty reads and waste turns.
+- **Do NOT** run additional bash commands (`sleep`, `cat`, `type`) to check on the first one — they queue behind it.
+- Run bash commands **one at a time**. Do not start the next until the previous one's notification arrives.
+
 ## Core Principles
 
 1. **Names are documentation** — A well-named function eliminates the need for a comment. Fix the name before adding a comment.

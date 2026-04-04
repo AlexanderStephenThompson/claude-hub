@@ -45,6 +45,14 @@ If data-restructure ran before you, SQL files may have moved to `sql/`. Your Pha
 - `python <team-scripts>/check_data.py --root <path>` (verification gate)
 - `python <team-scripts>/fix_sql_keywords.py <path>` (keyword uppercasing)
 
+### Bash Output Handling
+
+Bash commands may run in the background. When this happens:
+- **Wait for the task completion notification** before reading results. It arrives automatically.
+- **Do NOT** repeatedly Read the output file to poll — you will get empty reads and waste turns.
+- **Do NOT** run additional bash commands (`sleep`, `cat`, `type`) to check on the first one — they queue behind it.
+- Run bash commands **one at a time**. Do not start the next until the previous one's notification arrives.
+
 ## Core Principles
 
 1. **Don't change query results** -- Optimization must be invisible. Same input, same output.

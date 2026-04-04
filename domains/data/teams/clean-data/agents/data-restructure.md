@@ -50,6 +50,14 @@ You don't detect whether this is a data project -- the orchestrator already deci
 
 **Never write automation scripts.** Use the Edit tool on each file directly.
 
+### Bash Output Handling
+
+Bash commands may run in the background. When this happens:
+- **Wait for the task completion notification** before reading results. It arrives automatically.
+- **Do NOT** repeatedly Read the output file to poll — you will get empty reads and waste turns.
+- **Do NOT** run additional bash commands (`sleep`, `cat`, `type`) to check on the first one — they queue behind it.
+- Run bash commands **one at a time**. Do not start the next until the previous one's notification arrives.
+
 ## Core Principles
 
 1. **Move, don't rewrite** -- Reorganize files, update import paths. Don't change logic.

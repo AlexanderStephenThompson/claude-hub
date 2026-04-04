@@ -22,7 +22,23 @@ $ARGUMENTS
 
 ## Tool Usage — MANDATORY
 
-**Never use Bash for file operations or text parsing.** Paths with `&`, spaces, or parentheses break bash silently.
+### CRITICAL: Bash commands run in the background
+
+Every Bash call returns a background task ID and output file path. The output file is **empty until the task completes**. You MUST follow this protocol:
+
+1. **Run ONE Bash command.** Do not run multiple Bash commands at once.
+2. **STOP and wait.** Do not call any tool — not Read, not Bash, not anything. Just end your turn.
+3. **A task notification will arrive** automatically when the command finishes.
+4. **Only after the notification**, Read the output file to get results.
+5. **Then** run the next Bash command.
+
+**NEVER do any of these — they are the #1 cause of pipeline slowdowns:**
+- ❌ Read the output file before the task notification arrives (it will be empty)
+- ❌ Run a second Bash command to check on the first (it queues behind it)
+- ❌ Run `sleep`, `cat`, `type`, or `echo` to poll for results
+- ❌ Re-run the same command thinking it failed (it's still running)
+
+### File operations — use dedicated tools, not Bash
 
 | Task | Correct Tool | BANNED — never use these |
 |------|-------------|-----------------------------|

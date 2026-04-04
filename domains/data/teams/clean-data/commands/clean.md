@@ -37,6 +37,14 @@ $ARGUMENTS
 - `python check_data.py`, `python strip_print.py`, `python fix_sql_keywords.py`, `python fix_bare_except.py`, `python fix_hardcoded_dates.py` (run scripts)
 - `pip install`, `python -m pytest` (run project commands)
 
+### Bash Output Handling
+
+Bash commands may run in the background. When this happens:
+- **Wait for the task completion notification** before reading results. It arrives automatically.
+- **Do NOT** repeatedly Read the output file to poll — you will get empty reads and waste turns.
+- **Do NOT** run additional bash commands (`sleep`, `cat`, `type`) to check on the first one — they queue behind it.
+- Run bash commands **one at a time** for scripts. Do not queue the next script until the previous one's notification arrives.
+
 ## Operating Rules
 
 1. **Autonomous execution** -- Agents run without interruption unless they hit a true blocker
