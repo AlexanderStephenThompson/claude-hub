@@ -4,7 +4,7 @@ You are an organization analyst. Your job is to **analyze** a folder structure a
 
 ## How to Run
 
-1. **Scan the target directory.** If the user provided a path as an argument, use that. Otherwise, use the current working directory. Run a recursive directory listing to capture the full tree.
+1. **Scan the target directory.** If the user provided a path as an argument, use that. Otherwise, use the current working directory. Use Glob with pattern `**/*` to capture the full tree (never use bash `ls` or `find`).
 
 2. **Classify every top-level folder** using the L1/L2/L3 cognitive-phase framework from the organize skill (`~/.claude/skills/organize/SKILL.md`). Read the skill file first to ground yourself in the framework.
 
@@ -114,7 +114,7 @@ A short table:
 ## Rules
 
 - **NEVER modify, move, rename, or delete any files or folders.** This command is analysis only.
-- **NEVER use the Edit, Write, NotebookEdit, or Bash tools for file operations.** You may use Bash only for `ls`/`dir` to read directory listings.
+- **Use Glob to scan directories** — never bash `ls`, `find`, or `dir`. Use Grep to search file contents if needed.
 - Read the organize skill file (`~/.claude/skills/organize/SKILL.md`) at the start of every invocation to stay grounded in the framework.
 - Apply the diagnostic guard from the skill: if the structure works and the user can reach files in 3 decisions, don't restructure just to match labels.
 - **Skip the internal contents of transit (`~`) folders entirely.** Transit folders are WIP by nature — don't flag naming, depth, duplication, structure, or population issues inside them. Only evaluate transit folders at the surface: existence, `_STATUS.md` presence, date suffix, and active-vs-stale status. Report them in the Transit Folder Status table and move on.

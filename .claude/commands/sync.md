@@ -19,8 +19,8 @@ Sync customizations between this repo and `~/.claude/`. Three modes:
 
 | Name | Path |
 |------|------|
-| Repo | `c:\Users\Alexa\Desktop\_Personal\Utility\Tools\claude-hub` |
-| Claude | `C:\Users\Alexa\.claude` |
+| Repo | `/mnt/c/Users/Alexa/Desktop/_Personal/Utility/Tools/claude-hub` |
+| Claude | `/mnt/c/Users/Alexa/.claude` |
 
 ---
 
@@ -49,76 +49,64 @@ git pull
 
 ## Step 2: Deploy
 
-Handles everything: flat files, plugin marketplace, and plugin installation. All sub-steps run every time regardless of mode.
+Use Claude Code's native tools for file operations. Only use Bash for git, claude CLI, and deletions.
 
-**PowerShell execution:** Write scripts to a temp `.ps1` file and run with `powershell -File <path>` to avoid bash `$` variable escaping issues.
+### 2a: Clear destination folders
 
-### 2a: Flat files, team discovery, and cache cleanup
-
-One script that deploys flat files, discovers teams, clears stale plugin cache, and counts results:
-
-```powershell
-$repo = 'c:\Users\Alexa\Desktop\_Personal\Utility\Tools\claude-hub'
-$claude = 'C:\Users\Alexa\.claude'
-$domains = @('foundations', 'domains\development', 'domains\data', 'domains\business')
-
-# --- Deploy flat files ---
-Remove-Item "$claude\skills\*" -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item "$claude\agents\*.md" -Force -ErrorAction SilentlyContinue
-Remove-Item "$claude\commands\*.md" -Force -ErrorAction SilentlyContinue
-
-foreach ($d in $domains) {
-    # Skills (recursive — finds skills/ at any depth)
-    Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'skills' } |
-        ForEach-Object { Copy-Item "$($_.FullName)\*" "$claude\skills\" -Recurse -Force }
-
-    # Agents (recursive — finds agents/ at any depth, EXCLUDING .claude/ and templates/)
-    Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'agents' -and $_.FullName -notlike '*\.claude\*' -and $_.FullName -notlike '*\templates\*' } |
-        ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\agents\" -Force }
-
-    # Commands (recursive — finds commands/ at any depth, EXCLUDING .claude/ and templates/)
-    Get-ChildItem (Join-Path $repo $d) -Directory -Recurse |
-        Where-Object { $_.Name -eq 'commands' -and $_.FullName -notlike '*\.claude\*' -and $_.FullName -notlike '*\templates\*' } |
-        ForEach-Object { Get-ChildItem "$($_.FullName)\*.md" | Where-Object { $_.Name -ne 'README.md' } | Copy-Item -Destination "$claude\commands\" -Force }
-}
-
-# --- Discover teams ---
-$teams = Get-ChildItem $repo -Directory -Recurse |
-    Where-Object { Test-Path (Join-Path $_.FullName '.claude-plugin\plugin.json') } |
-    ForEach-Object { $_.Name }
-
-# --- Clear plugin cache (rebuilt fresh on install) ---
-$cache = "$claude\plugins\cache\claude-hub"
-if (Test-Path $cache) { Remove-Item $cache -Recurse -Force }
-
-# --- Report counts ---
-$skills = (Get-ChildItem "$claude\skills" -Directory -ErrorAction SilentlyContinue).Count
-$agents = (Get-ChildItem "$claude\agents\*.md" -ErrorAction SilentlyContinue).Count
-$commands = (Get-ChildItem "$claude\commands\*.md" -ErrorAction SilentlyContinue).Count
-"Deployed: $skills skills, $agents agents, $commands commands"
-"Teams: $($teams -join ', ')"
+```bash
+rm -rf /mnt/c/Users/Alexa/.claude/skills/*
+rm -f /mnt/c/Users/Alexa/.claude/agents/*.md
+rm -f /mnt/c/Users/Alexa/.claude/commands/*.md
+rm -rf /mnt/c/Users/Alexa/.claude/plugins/cache/claude-hub
 ```
 
-### 2b: Refresh marketplace mirror
+### 2b: Discover and deploy flat files
 
-**CRITICAL — must run before plugin reinstall.** The plugin system reads from a local git clone, not GitHub directly. Without refreshing, `claude plugin install` pulls stale versions.
+Use **Glob** to find source files, then **Read + Write** to copy each one.
 
-First try the built-in command:
+**Skills** (copy entire skill folders):
+```
+Glob: foundations/**/skills/*/SKILL.md
+Glob: domains/**/skills/*/SKILL.md
+```
+For each match, copy the entire parent folder (the skill folder) to `~/.claude/skills/`.
+
+**Agents** (copy .md files, excluding README.md and paths containing .claude/ or templates/):
+```
+Glob: foundations/**/agents/*.md
+Glob: domains/**/agents/*.md
+```
+Filter out README.md and any path containing `/.claude/` or `/templates/`. Copy each file to `~/.claude/agents/`.
+
+**Commands** (copy .md files, excluding README.md and paths containing .claude/ or templates/):
+```
+Glob: foundations/**/commands/*.md
+Glob: domains/**/commands/*.md
+```
+Filter out README.md and any path containing `/.claude/` or `/templates/`. Copy each file to `~/.claude/commands/`.
+
+### 2c: Discover teams
+
+Use **Glob** to find team plugins:
+```
+Glob: **/.claude-plugin/plugin.json
+```
+Extract the team name from the parent directory of each match. Store for step 2e.
+
+### 2d: Refresh marketplace mirror
 
 ```bash
 claude plugin marketplace update
 ```
 
-The marketplace mirror tracks whatever branch it was cloned from (usually `main`). If you're working on a feature branch, the mirror won't have your changes until they're merged to `main`. This is expected — plugins install from the marketplace mirror, so they reflect the published state, not the working branch. Skip the manual mirror force-update; `claude plugin marketplace update` is sufficient.
+The marketplace mirror tracks whatever branch it was cloned from (usually `main`). If you're working on a feature branch, the mirror won't have your changes until they're merged to `main`. This is expected — plugins install from the marketplace mirror, so they reflect the published state, not the working branch.
 
-### 2c: Reinstall each team
+### 2e: Reinstall each team
 
-For each team from 2a:
+For each team discovered in 2c:
 
 ```bash
-claude plugin uninstall <team-name> && claude plugin install <team-name>
+claude plugin uninstall <team-name> 2>/dev/null; claude plugin install <team-name>
 ```
 
 If a team isn't installed yet, the uninstall fails silently — just install it.

@@ -10,10 +10,12 @@ Before responding to any tasks, thoroughly orient yourself to this project.
 
 ## Required Actions
 
-1. **Read the project root** - List files and directories to understand structure
+Use native tools (Glob, Read, Grep) — never bash for file operations.
+
+1. **Map project root** - Use Glob `*` to list top-level files and directories
 2. **Read README.md** (if exists) - Understand purpose, setup, and conventions
 3. **Read CLAUDE.md** (if exists) - Follow any AI-specific instructions
-4. **Scan key config files** - package.json, pyproject.toml, Cargo.toml, etc. to understand dependencies and scripts
+4. **Scan key config files** - Use Read on package.json, pyproject.toml, Cargo.toml, etc.
 5. **Identify the tech stack** - Languages, frameworks, build tools, testing setup
 6. **Note any existing patterns** - Code organization, naming conventions, architectural decisions
 

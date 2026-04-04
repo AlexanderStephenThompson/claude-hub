@@ -129,6 +129,29 @@ check.js rules and skill files are **linked by rule IDs**. When modifying either
 1. Create the team folder with `.claude-plugin/plugin.json` and agents under `<domain>/teams/<team-name>/`
 2. Add an entry to `.claude-plugin/marketplace.json` — without this, `claude plugin install` cannot find the team
 
+## Tool Usage
+
+**ALWAYS use native tools instead of Bash.** Bypass the shell entirely whenever possible:
+
+| Task | MUST Use | NEVER Use |
+|------|----------|-----------|
+| Read files | `Read` | `cat`, `head`, `tail`, `less`, `more` |
+| Write files | `Write` | `echo >`, `cat <<EOF`, `printf`, redirects |
+| Edit files | `Edit` | `sed`, `awk`, `perl -i`, `ex` |
+| Find files | `Glob` | `find`, `ls`, `locate` |
+| Search content | `Grep` | `grep`, `rg`, `ag`, `ack` |
+| Copy files | `Read` + `Write` | `cp`, `copy` |
+| Explore codebase | `Task` (Explore agent) | Manual grep/find chains |
+| Web content | `WebFetch` | `curl`, `wget` |
+
+**Bash is ONLY acceptable for:**
+- Git operations (`git status`, `git commit`, `git push`)
+- Running executables (`npm`, `pytest`, `cargo`, `make`, `node`)
+- Package managers (`pip`, `apt`, `brew`, `npm install`)
+- Claude CLI (`claude plugin install`, `claude plugin marketplace update`)
+- File deletion (`rm`, `rm -rf`) — no native delete tool
+- Directory creation (`mkdir`) — only when needed before Write
+
 ## File Conventions
 
 - Commands: lowercase (`commit.md`, `clean.md`)
