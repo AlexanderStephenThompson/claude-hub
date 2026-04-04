@@ -31,13 +31,12 @@
       "Bash(wc -l:*)",
       "Bash(git rm:*)",
       "Bash(git fetch:*)",
-      "Bash(git reset:*)",
-      "Bash(\"c:\\\\Users\\\\Alexa\\\\OneDrive\\\\Desktop\\\\_Personal\\\\Utility\\\\Tools\\\\claude-hub\\\\brands\\\\Business\\\\business-acumen.md\")"
+      "Bash(git reset:*)"
     ],
     "additionalDirectories": [
-      "c:\\Users\\Alexa\\OneDrive\\Desktop\\_Personal\\Utility\\Tools\\claude-hub",
-      "c:\\Users\\Alexa\\OneDrive\\Desktop\\_Personal\\Utility\\Tools\\claude-hub\\domains\\development\\web\\templates\\web-project",
-      "c:\\Users\\Alexa\\OneDrive\\Desktop\\_Personal\\Utility\\Business"
+      "c:\\Users\\Alexa\\Desktop\\_Personal\\Utility\\Tools\\claude-hub",
+      "c:\\Users\\Alexa\\Desktop\\_Personal\\Utility\\Tools\\claude-hub\\domains\\development\\web\\templates\\web-project",
+      "c:\\Users\\Alexa\\Desktop\\_Personal\\Utility\\Business"
     ]
   }
 }

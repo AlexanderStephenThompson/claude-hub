@@ -19,7 +19,7 @@ Sync customizations between this repo and `~/.claude/`. Three modes:
 
 | Name | Path |
 |------|------|
-| Repo | `c:\Users\Alexa\OneDrive\Desktop\_Personal\Utility\Tools\claude-hub` |
+| Repo | `c:\Users\Alexa\Desktop\_Personal\Utility\Tools\claude-hub` |
 | Claude | `C:\Users\Alexa\.claude` |
 
 ---
@@ -58,7 +58,7 @@ Handles everything: flat files, plugin marketplace, and plugin installation. All
 One script that deploys flat files, discovers teams, clears stale plugin cache, and counts results:
 
 ```powershell
-$repo = 'c:\Users\Alexa\OneDrive\Desktop\_Personal\Utility\Tools\claude-hub'
+$repo = 'c:\Users\Alexa\Desktop\_Personal\Utility\Tools\claude-hub'
 $claude = 'C:\Users\Alexa\.claude'
 $domains = @('foundations', 'domains\development', 'domains\data', 'domains\business')
 
