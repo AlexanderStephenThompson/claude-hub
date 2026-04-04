@@ -93,7 +93,7 @@ Also parse findings from analysis scripts if provided by the orchestrator:
 
 Group by rule. Record the count per rule, total count, and exact file:line locations. These are the issues your phases must fix — they'll be verified in Phase 9.
 
-If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — proceeding with supplementary scan only" and rely on 1c.
+If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — supplementary scan is now the PRIMARY issue list." Treat 1c results as authoritative and fix every violation found. Do not reduce effort or scope because the deterministic baseline is missing.
 
 **1c. Supplementary scan:**
 

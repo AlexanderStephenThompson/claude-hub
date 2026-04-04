@@ -85,11 +85,11 @@ Parse the findings and extract violations for these 16 rules (your MY_RULES):
 
 `no-hardcoded-color`, `no-hardcoded-spacing`, `no-hardcoded-font-size`, `no-hardcoded-radius`, `no-hardcoded-shadow`, `no-hardcoded-z-index`, `css-property-order`, `css-import-order`, `css-section-order`, `token-category-order`, `mobile-first`, `no-important`, `no-id-selector`, `unit-zero`, `css-file-count`, `css-file-names`
 
-Note: The orchestrator already ran `unit-zero.js` — the `unit-zero` rule should show 0 or near-0 violations. Any remaining are edge cases the script missed.
+Note: The orchestrator already ran `unit-zero.js`, `fix-imports-order.js`, `sort-css-properties.js`, and `fix-no-important.js` in its pre-fix phase. The `unit-zero`, `css-import-order`, `css-property-order`, and `no-important` rules should show 0 or near-0 violations. Any remaining are edge cases the scripts missed.
 
 Group by rule. Record the count per rule, total count, and exact file:line locations. These are the issues your phases must fix — they'll be verified in Phase 9.
 
-If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — proceeding with supplementary scan only" and rely on 1c.
+If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — supplementary scan is now the PRIMARY issue list." Treat 1c results as authoritative and fix every violation found. Do not reduce effort or scope because the deterministic baseline is missing.
 
 **1c. Supplementary scan:**
 
@@ -194,7 +194,7 @@ When merging, mark where content came from so it's reviewable:
 
 ### Import Order
 
-After consolidation, run the pre-built import order fixer:
+**Note:** The orchestrator already ran `fix-imports-order.js` in its pre-fix phase. Import order should already be correct. Only re-run if Phase 2 restructuring moved files or changed imports.
 
 ```bash
 node <team-scripts>/fix-imports-order.js <project-path>
@@ -370,6 +370,8 @@ Scan all CSS files for repeated hardcoded values:
 ---
 
 ## Phase 6: Property Order
+
+**Note:** The orchestrator already ran `sort-css-properties.js` in its pre-fix phase. Property order should already be correct. Only re-run if earlier phases added new CSS rules. The script is idempotent — it won't break already-sorted files.
 
 Normalize property order within each rule to the 5-group convention.
 

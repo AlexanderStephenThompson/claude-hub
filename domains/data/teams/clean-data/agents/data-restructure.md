@@ -114,7 +114,7 @@ The orchestrator passes post-pre-fix check_data.py findings in your invocation m
 
 `data-layer-structure`, `dag-naming`, `config-separation`, `test-presence`
 
-If not provided, note "Deterministic scan not available" and proceed with inventory analysis.
+If not provided, note "Deterministic scan not available — inventory analysis is now the PRIMARY issue source." Do not reduce effort or scope because the deterministic baseline is missing — run every phase fully.
 
 **Output:** Full inventory + root audit + framework detection + deterministic findings -- no changes, no commits.
 

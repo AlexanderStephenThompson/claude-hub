@@ -42,6 +42,10 @@ $ARGUMENTS
 - `node strip-debug.js <path>` (remove console/debugger statements)
 - `node fix-double-equals.js <path>` (== to ===, != to !==)
 - `node fix-var.js <path>` (var to let)
+- `node fix-button-type.js <path>` (add type="button" to buttons)
+- `node fix-positive-tabindex.js <path>` (positive tabindex to 0)
+- `node fix-no-important.js <path>` (remove !important from CSS)
+- `node add-doctype.js <path>` (add <!DOCTYPE html> to HTML files)
 - `npm run build`, `npm run test`, `npm run validate` (run project commands)
 
 **Never write automation scripts** (`.js`, `.py`, `.sh`) to process files in bulk. Agents CAN run pre-built team scripts that ship with the pipeline.
@@ -212,16 +216,46 @@ node <team-scripts>/fix-double-equals.js <project-source-directory> 2>&1 || true
 node <team-scripts>/unit-zero.js <project-css-directory> 2>&1 || true
 ```
 
+```bash
+node <team-scripts>/fix-imports-order.js <project-path> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/sort-css-properties.js <project-css-directory> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/fix-no-important.js <project-css-directory> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/fix-button-type.js <project-path> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/fix-positive-tabindex.js <project-path> 2>&1 || true
+```
+
+```bash
+node <team-scripts>/add-doctype.js <project-path> 2>&1 || true
+```
+
 These handle:
 - `strip-debug.js` — removes `console.log`, `console.debug`, `console.warn`, `debugger`
 - `fix-var.js` — converts `var` to `let`
 - `fix-double-equals.js` — converts `==` to `===`, `!=` to `!==`
 - `unit-zero.js` — replaces `0px`, `0em`, `0rem` with unitless `0`
+- `fix-imports-order.js` — reorders `@import`/`<link>` tags to cascade order (reset → global → layouts → components → overrides)
+- `sort-css-properties.js` — sorts CSS properties within each rule to 5-group convention (positioning → box model → typography → visual → animation)
+- `fix-no-important.js` — removes `!important` flags from CSS declarations
+- `fix-button-type.js` — adds `type="button"` to `<button>` elements missing a type attribute
+- `fix-positive-tabindex.js` — replaces positive `tabindex` values with `0`
+- `add-doctype.js` — adds `<!DOCTYPE html>` to HTML files missing it
 
 **Read** the output of each script to confirm what was changed. If any script modified files, stage and commit once:
 
 ```bash
-git add -A && git commit -m "fix: apply deterministic pre-fixes (debug, var, ===, unit-zero)"
+git add -A && git commit -m "fix: apply deterministic pre-fixes (debug, var, ===, unit-zero, import-order, property-order, !important, button-type, tabindex, doctype)"
 ```
 
 If no scripts made changes, skip the commit.
@@ -240,7 +274,7 @@ node <team-scripts>/check.js --root <project-path> 2>&1 || true
 
 ```
 Deterministic pre-fix:
-  Scripts run:     4 (strip-debug, fix-var, fix-double-equals, unit-zero)
+  Scripts run:     10 (strip-debug, fix-var, fix-double-equals, unit-zero, fix-imports-order, sort-css-properties, fix-no-important, fix-button-type, fix-positive-tabindex, add-doctype)
   Files modified:  [N] files across [N] scripts
   Commit:          [hash] (or "no changes")
 
@@ -275,7 +309,7 @@ Mark skipped agents as completed immediately with a note. Update each to in_prog
 
 Tell the user: "Step 1/4: web-restructure — Moving files into 3-tier architecture and cleaning the project root."
 
-Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`. If the deterministic scan ran, include: "check.js found these tier-structure violations (post-pre-fix): [list]. analyze_dependencies.py found these circular dependencies: [list]. Fix these first, then proceed with your normal phases."
+Invoke the **@web-restructure** agent. Pass any scope from `$ARGUMENTS`. Always include the deterministic findings — if the scan ran, pass: "check.js found these tier-structure violations (post-pre-fix): [list]. analyze_dependencies.py found these circular dependencies: [list]. Fix these first, then proceed with your normal phases." If the scan was skipped, pass: "Deterministic scan was not available. No check.js baseline exists. Your Phase 1 inventory is the sole authority — run every phase fully with no reduced scope."
 
 **After it returns:**
 
@@ -300,7 +334,7 @@ Save `TIER_PATHS` and `CSS_LOCATIONS` for Step 2.
 
 Tell the user: "Step 2/4: css-improver — Consolidating CSS to 5-file architecture and replacing hardcoded values with design tokens."
 
-Invoke the **@css-improver** agent. If web-restructure ran, pass in the context: "CSS files may have moved to `source/01-presentation/styles/`. The project now uses 3-tier architecture." If web-restructure was SKIPPED, pass: "web-restructure was skipped. Source files remain in their original structure. Detect CSS file locations in your Phase 1 inventory." Include: "The orchestrator already ran `unit-zero.js` — zero values are clean. Don't re-run it." If the deterministic scan ran, include: "check.js found these CSS violations (post-pre-fix): [list the 14 CSS rule findings + css-file-count + css-file-names]. Fix these remaining findings first, then proceed with your normal phases."
+Invoke the **@css-improver** agent. If web-restructure ran, pass in the context: "CSS files may have moved to `source/01-presentation/styles/`. The project now uses 3-tier architecture." If web-restructure was SKIPPED, pass: "web-restructure was skipped. Source files remain in their original structure. Detect CSS file locations in your Phase 1 inventory." Include: "The orchestrator already ran `unit-zero.js`, `fix-imports-order.js`, `sort-css-properties.js`, and `fix-no-important.js` — zero values, import order, property order, and !important flags are clean. Don't re-run them unless your restructuring in Phase 2 moves files or changes imports." Always include the deterministic findings — if the scan ran, pass: "check.js found these CSS violations (post-pre-fix): [list the 14 CSS rule findings + css-file-count + css-file-names]. Fix these remaining findings first, then proceed with your normal phases." If the scan was skipped, pass: "Deterministic scan was not available. No check.js baseline exists. Your Phase 1 supplementary scan is the sole authority — fix every violation it finds with no reduced scope."
 
 **After it returns:**
 
@@ -323,7 +357,7 @@ Parse its structured handoff fields:
 
 Tell the user: "Step 3/4: html-improver — Replacing div-soup with semantic landmarks, fixing interactive elements, and cleaning class bloat."
 
-Invoke the **@html-improver** agent. If css-improver ran, pass in the context: "css-improver deleted/renamed these selectors: `SELECTORS_DELETED`: [list], `SELECTORS_RENAMED`: [list]. In Phase 9 (Class Discipline), do not remove classes that were renamed — only remove classes confirmed as unused." If the deterministic scan ran, include: "check.js found these HTML violations (post-pre-fix): [list the 11 HTML rule findings]. Fix these remaining findings first, then proceed with your normal phases."
+Invoke the **@html-improver** agent. Include: "The orchestrator already ran `fix-button-type.js`, `fix-positive-tabindex.js`, and `add-doctype.js` — button types, tabindex values, and doctypes are clean. Don't re-fix these." If css-improver ran, pass in the context: "css-improver deleted/renamed these selectors: `SELECTORS_DELETED`: [list], `SELECTORS_RENAMED`: [list]. In Phase 9 (Class Discipline), do not remove classes that were renamed — only remove classes confirmed as unused." If css-improver returned no handoff or an empty/malformed handoff, pass: "WARNING: css-improver handoff is missing or malformed. In Phase 9 (Class Discipline), do NOT remove any classes — you cannot verify which classes were renamed vs. unused. Only fix non-class HTML violations." Always include the deterministic findings — if the scan ran, pass: "check.js found these HTML violations (post-pre-fix): [list the 11 HTML rule findings]. Fix these remaining findings first, then proceed with your normal phases." If the scan was skipped, pass: "Deterministic scan was not available. No check.js baseline exists. Your Phase 1 supplementary scan is the sole authority — fix every violation it finds with no reduced scope."
 
 **After it returns:**
 
@@ -345,7 +379,7 @@ Parse its structured handoff fields:
 
 Tell the user: "Step 4/4: code-improver — Fixing naming, extracting magic values, flattening nesting, and improving error handling."
 
-Invoke the **@code-improver** agent. If web-restructure ran, pass in the context: "The project uses 3-tier architecture. Source files are in `source/01-presentation/`, `source/02-logic/`, `source/03-data/`." If web-restructure was SKIPPED, pass: "web-restructure was skipped. Source files remain in their original structure." Include: "The orchestrator already ran `strip-debug.js`, `fix-var.js`, and `fix-double-equals.js` — debug statements, `var`, and `==` are clean. Don't re-run these scripts." If the deterministic scan ran, include: "check.js found these JS violations (post-pre-fix): [list the 8 JS rule findings]. analyze_complexity.py found these high-complexity functions: [list]. detect_dead_code.py found these unused exports: [list]. Fix these remaining findings first, then proceed with your normal phases."
+Invoke the **@code-improver** agent. If web-restructure ran, pass in the context: "The project uses 3-tier architecture. Source files are in `source/01-presentation/`, `source/02-logic/`, `source/03-data/`." If web-restructure was SKIPPED, pass: "web-restructure was skipped. Source files remain in their original structure." Include: "The orchestrator already ran `strip-debug.js`, `fix-var.js`, and `fix-double-equals.js` — debug statements, `var`, and `==` are clean. Don't re-run these scripts." Always include the deterministic findings — if the scan ran, pass: "check.js found these JS violations (post-pre-fix): [list the 8 JS rule findings]. analyze_complexity.py found these high-complexity functions: [list]. detect_dead_code.py found these unused exports: [list]. Fix these remaining findings first, then proceed with your normal phases." If the scan was skipped, pass: "Deterministic scan was not available. No check.js baseline exists. Your Phase 1 supplementary scan is the sole authority — fix every violation it finds with no reduced scope."
 
 **After it returns:**
 
@@ -412,6 +446,12 @@ Pre-fix scripts:
   fix-var:           [N files changed / no changes]
   fix-double-equals: [N files changed / no changes]
   unit-zero:         [N files changed / no changes]
+  fix-imports-order: [N files changed / no changes]
+  sort-css-properties: [N files changed / no changes]
+  fix-no-important:  [N files changed / no changes]
+  fix-button-type:   [N files changed / no changes]
+  fix-positive-tabindex: [N files changed / no changes]
+  add-doctype:       [N files changed / no changes]
 
 Analysis scripts:
   Complexity:        [N] high-complexity functions → [N] addressed by code-improver
@@ -439,4 +479,4 @@ Total commits: [N] (1 pre-fix + [N] agent commits)
 | css-improver finds nothing to do | Mark "SKIPPED (already clean)", proceed |
 | html-improver finds nothing to do | Mark "SKIPPED (already clean)", proceed |
 | code-improver mid-phase failure | Report what completed, ask: continue / stop |
-| Agent returns no handoff | Proceed without context — next agent's Phase 1 scan will detect the current state |
+| Agent returns no handoff | **WARN the next agent explicitly.** Pass: "[previous-agent] returned no structured handoff. Handoff-dependent phases (e.g., html-improver Phase 9 class removal) must be SKIPPED — you cannot safely act on missing data. Run all other phases normally." Never silently proceed as if the handoff was empty. |

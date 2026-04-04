@@ -34,7 +34,7 @@ $ARGUMENTS
 
 **Bash is ONLY for:**
 - `git add`, `git commit` (git write operations)
-- `python check_data.py`, `python strip_print.py`, `python fix_sql_keywords.py` (run scripts)
+- `python check_data.py`, `python strip_print.py`, `python fix_sql_keywords.py`, `python fix_bare_except.py`, `python fix_hardcoded_dates.py` (run scripts)
 - `pip install`, `python -m pytest` (run project commands)
 
 ## Operating Rules
@@ -157,10 +157,18 @@ python <team-scripts>/strip_print.py <project-root> 2>&1 || true
 python <team-scripts>/fix_sql_keywords.py <project-root> 2>&1 || true
 ```
 
+```bash
+python <team-scripts>/fix_bare_except.py <project-root> 2>&1 || true
+```
+
+```bash
+python <team-scripts>/fix_hardcoded_dates.py <project-root> 2>&1 || true
+```
+
 If any script modified files, commit once:
 
 ```bash
-git add -A && git commit -m "fix: apply deterministic pre-fixes (print removal, SQL keywords)"
+git add -A && git commit -m "fix: apply deterministic pre-fixes (print removal, SQL keywords, bare excepts, hardcoded dates)"
 ```
 
 If no changes, skip the commit.
@@ -177,7 +185,7 @@ If the initial scan was skipped (check_data.py not available), skip the re-scan 
 
 ```
 Deterministic pre-fix:
-  Scripts run:     2 (strip-print, fix-sql-keywords)
+  Scripts run:     4 (strip-print, fix-sql-keywords, fix-bare-except, fix-hardcoded-dates)
   Files modified:  [N] files
   Commit:          [hash] (or "no changes")
 
@@ -208,7 +216,7 @@ Use post-pre-fix numbers in all agent invocations.
 
 Tell the user: "Step 1/4: data-restructure -- Organizing project into proper layer structure."
 
-Invoke **@data-restructure**. Pass scope from `$ARGUMENTS`. If the deterministic scan ran, include: "check_data.py found these structure violations (post-pre-fix): [list]. Fix these first, then proceed."
+Invoke **@data-restructure**. Pass scope from `$ARGUMENTS`. Always include the deterministic findings — if the scan ran, pass: "check_data.py found these structure violations (post-pre-fix): [list]. Fix these first, then proceed." If the scan was skipped, pass: "Deterministic scan was not available. No check_data.py baseline exists. Your Phase 1 inventory is the sole authority — run every phase fully with no reduced scope."
 
 **After it returns:**
 
@@ -231,7 +239,7 @@ Parse structured handoff fields:
 
 Tell the user: "Step 2/4: sql-improver -- Optimizing queries, adding CTEs, fixing joins."
 
-Invoke **@sql-improver**. If data-restructure ran, pass: "SQL files are in [SQL_LOCATIONS]. Project uses [FRAMEWORK]." If data-restructure was SKIPPED, pass: "data-restructure was skipped. Detect SQL file locations in Phase 1." Include: "The orchestrator already ran `fix_sql_keywords.py` -- keywords are uppercased. Don't re-run it." If scan ran, include: "check_data.py found these SQL violations (post-pre-fix): [list]. Fix these first."
+Invoke **@sql-improver**. If data-restructure ran, pass: "SQL files are in [SQL_LOCATIONS]. Project uses [FRAMEWORK]." If data-restructure was SKIPPED, pass: "data-restructure was skipped. Detect SQL file locations in Phase 1." Include: "The orchestrator already ran `fix_sql_keywords.py` -- keywords are uppercased. Don't re-run it." Always include the deterministic findings — if the scan ran, pass: "check_data.py found these SQL violations (post-pre-fix): [list]. Fix these first." If the scan was skipped, pass: "Deterministic scan was not available. Your Phase 1 supplementary scan is the sole authority — fix every violation it finds with no reduced scope."
 
 **After it returns:**
 
@@ -253,7 +261,7 @@ Parse structured handoff fields:
 
 Tell the user: "Step 3/4: python-improver -- Vectorizing, adding schemas, fixing error handling."
 
-Invoke **@python-improver**. If data-restructure ran, pass: "Python files are in [PYTHON_LOCATIONS]. Project uses [FRAMEWORK]." If data-restructure was SKIPPED, pass: "data-restructure was skipped. Detect file locations in Phase 1." Include: "The orchestrator already ran `strip_print.py` -- print statements are clean. Don't re-run it." If scan ran, include: "check_data.py found these Python violations (post-pre-fix): [list]. Fix these first."
+Invoke **@python-improver**. If data-restructure ran, pass: "Python files are in [PYTHON_LOCATIONS]. Project uses [FRAMEWORK]." If data-restructure was SKIPPED, pass: "data-restructure was skipped. Detect file locations in Phase 1." Include: "The orchestrator already ran `strip_print.py`, `fix_bare_except.py`, and `fix_hardcoded_dates.py` -- print statements, bare excepts, and hardcoded dates are clean. Don't re-run them." Always include the deterministic findings — if the scan ran, pass: "check_data.py found these Python violations (post-pre-fix): [list]. Fix these first." If the scan was skipped, pass: "Deterministic scan was not available. Your Phase 1 supplementary scan is the sole authority — fix every violation it finds with no reduced scope."
 
 **After it returns:**
 
@@ -276,7 +284,7 @@ Parse structured handoff fields:
 
 Tell the user: "Step 4/4: pipeline-improver -- Fixing idempotency, quality gates, IaC patterns."
 
-Invoke **@pipeline-improver**. If data-restructure ran, pass: "Project uses [FRAMEWORK]. Files are organized in [LAYER_PATHS]." If data-restructure was SKIPPED, pass: "data-restructure was skipped. Detect structure in Phase 1." If scan ran, include: "check_data.py found these pipeline/IaC violations (post-pre-fix): [list]. Fix these first."
+Invoke **@pipeline-improver**. If data-restructure ran, pass: "Project uses [FRAMEWORK]. Files are organized in [LAYER_PATHS]." If data-restructure was SKIPPED, pass: "data-restructure was skipped. Detect structure in Phase 1." Always include the deterministic findings — if the scan ran, pass: "check_data.py found these pipeline/IaC violations (post-pre-fix): [list]. Fix these first." If the scan was skipped, pass: "Deterministic scan was not available. Your Phase 1 supplementary scan is the sole authority — fix every violation it finds with no reduced scope."
 
 **After it returns:**
 
@@ -336,6 +344,8 @@ Deterministic results (check_data.py):
 Pre-fix scripts:
   strip-print:       [N files changed / no changes]
   fix-sql-keywords:  [N files changed / no changes]
+  fix-bare-except:   [N files changed / no changes]
+  fix-hardcoded-dates: [N files changed / no changes]
 
 Agents:
   data-restructure:  [ran -- N commits / SKIPPED]
@@ -358,4 +368,4 @@ Total commits: [N]
 | sql-improver finds nothing to do | Mark "SKIPPED (already clean)", proceed |
 | python-improver finds nothing to do | Mark "SKIPPED (already clean)", proceed |
 | pipeline-improver mid-phase failure | Report what completed, ask: continue / stop |
-| Agent returns no handoff | Proceed without context -- next agent's Phase 1 will detect state |
+| Agent returns no handoff | **WARN the next agent explicitly.** Pass: "[previous-agent] returned no structured handoff. Handoff-dependent decisions must use your own Phase 1 scan — do not assume prior work was completed." Never silently proceed as if the handoff was empty. |

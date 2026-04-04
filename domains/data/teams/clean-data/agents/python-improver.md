@@ -73,9 +73,9 @@ The orchestrator passes post-pre-fix check_data.py findings. These are your **pr
 
 `no-iterrows`, `no-chained-indexing`, `explicit-dtypes`, `schema-validation`, `boto3-outside-handler`, `no-hardcoded-dates`, `no-print-logging`, `idempotent-writes`, `no-bare-except`, `no-secrets`
 
-Note: The orchestrator already ran `strip_print.py` -- print statements should be at 0 or near-0. Any remaining are edge cases the script missed.
+Note: The orchestrator already ran `strip_print.py`, `fix_bare_except.py`, and `fix_hardcoded_dates.py` in its pre-fix phase. The `no-print-logging`, `no-bare-except`, and `no-hardcoded-dates` rules should show 0 or near-0 violations. Any remaining are edge cases the scripts missed.
 
-If not provided, note "Deterministic scan not available" and rely on 1c.
+If not provided, note "Deterministic scan not available — supplementary scan is now the PRIMARY issue list." Treat 1c results as authoritative and fix every violation found. Do not reduce effort or scope because the deterministic baseline is missing.
 
 **1c. Supplementary scan:**
 

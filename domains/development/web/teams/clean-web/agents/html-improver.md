@@ -78,9 +78,11 @@ Parse the findings and extract violations for these 11 rules (your MY_RULES):
 
 `no-inline-style`, `no-jsx-inline-style`, `button-type-required`, `doctype-required`, `img-alt-required`, `title-required`, `tabindex-no-positive`, `max-classes`, `heading-order`, `single-h1`, `no-div-as-button`
 
+Note: The orchestrator already ran `fix-button-type.js`, `fix-positive-tabindex.js`, and `add-doctype.js` in its pre-fix phase. The `button-type-required`, `tabindex-no-positive`, and `doctype-required` rules should show 0 or near-0 violations. Any remaining are edge cases the scripts missed.
+
 Group by rule. Record the count per rule, total count, and exact file:line locations. These are the issues your phases must fix — they'll be verified in Phase 10.
 
-If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — proceeding with supplementary scan only" and rely on 1c.
+If no check.js findings were provided (orchestrator skipped the scan), note "Deterministic scan not available — supplementary scan is now the PRIMARY issue list." Treat 1c results as authoritative and fix every violation found. Do not reduce effort or scope because the deterministic baseline is missing.
 
 **1c. Supplementary scan:**
 
@@ -352,7 +354,12 @@ Clean up class bloat. This phase is about making HTML readable, not about CSS.
 
 **Reference:** Class discipline is a cross-cutting concern. Refer to `~/.claude/skills/css-styling/SKILL.md` for design token usage and `~/.claude/skills/css-selectors/SKILL.md` for naming conventions when extracting classes.
 
-**Important:** If css-improver ran before you, check its handoff for deleted/renamed selectors before removing any class. A class that looks unused may have just been renamed — removing it would break styling.
+**CRITICAL — Handoff-dependent phase.** Before removing ANY class in this phase:
+
+1. Check your invocation message for `SELECTORS_DELETED` and `SELECTORS_RENAMED` from css-improver's handoff.
+2. If these fields are present: do not remove any class listed in `SELECTORS_RENAMED` — it was just renamed, not deleted.
+3. If these fields are MISSING (handoff was lost, css-improver was skipped, or data is malformed): **do NOT remove any classes in this phase.** You cannot distinguish renamed classes from unused ones without the handoff. Skip class removal entirely and note: "Phase 9 class removal skipped — css-improver handoff not available. Classes may include renames that would break if removed."
+4. Only proceed with class removal if you have explicit confirmation that css-improver did not run (orchestrator passed "css-improver was SKIPPED") OR you have valid handoff data.
 
 ### What to Fix
 

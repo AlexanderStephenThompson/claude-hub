@@ -75,7 +75,7 @@ The orchestrator passes post-pre-fix check_data.py findings. These are your **pr
 
 Note: `no-secrets` violations are also relevant -- the orchestrator may pass these from the Python checker. Fix any that remain.
 
-If not provided, note "Deterministic scan not available" and rely on 1c.
+If not provided, note "Deterministic scan not available — supplementary scan is now the PRIMARY issue list." Treat 1c results as authoritative and fix every violation found. Do not reduce effort or scope because the deterministic baseline is missing.
 
 **1c. Supplementary scan:**
 
